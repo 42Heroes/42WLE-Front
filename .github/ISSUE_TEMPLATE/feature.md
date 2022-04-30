@@ -9,7 +9,7 @@ assignees: ''
 
 ## ✨ Feature Request check list
 
-- [x] 이슈 제목: [FEATURE] '기능 내용 상세'
+- [x] 이슈 제목: [Jira Ticket No] [feat] '기능 내용 상세'
 - [ ] Assignees, Label을 붙여주세요.
 
 ## 추가할 기능 개요

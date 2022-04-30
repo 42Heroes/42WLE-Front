@@ -9,7 +9,7 @@ assignees: ''
 
 ## 🐛 Bug Report check list
 
-- [x] 이슈 제목: [BUG] '버그 내용 상세'
+- [ ] 이슈 제목:  [Jira Ticket No] [Bug] '버그 내용 상세'
 - [ ] Assignees, Label을 붙여주세요.
 
 ## 버그 개요
