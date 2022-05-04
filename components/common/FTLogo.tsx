@@ -5,7 +5,7 @@ interface Props {
   className?: string;
 }
 
-export default function Logo({ width, className }: Props) {
+export default function FTLogo({ width, className }: Props) {
   return (
     <Svg
       version="1.1"

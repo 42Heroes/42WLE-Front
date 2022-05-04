@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '../components/common/Button';
 import Image from 'next/image';
 import media from '../styles/media';
-import Logo from '../components/common/FTLogo';
+import FTLogo from '../components/common/FTLogo';
 import { ReactElement } from 'react';
 
 export default function Home() {
@@ -91,6 +91,6 @@ const StyledButton = styled(Button)`
   border-radius: 1rem;
 `;
 
-const StyledLogo = styled(Logo)`
+const StyledLogo = styled(FTLogo)`
   margin-left: 1rem;
 `;
