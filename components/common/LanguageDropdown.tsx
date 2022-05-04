@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import languages from '../../library/languages';
+import Image from 'next/image';
 
 export default function LanguageDropdown() {
   return (
@@ -7,7 +8,15 @@ export default function LanguageDropdown() {
       <Input type="text" placeholder="Enter your language" />
       <ul>
         {languages.map((language) => (
-          <List key={language.language}>{language.language}</List>
+          <LanguageBox key={language.language}>
+            <Image
+              alt={language.language}
+              src={language.flag}
+              width={18}
+              height={11}
+            />
+            <List>{language.language}</List>
+          </LanguageBox>
         ))}
       </ul>
     </Container>
@@ -29,4 +38,12 @@ const Input = styled.input`
 
 const List = styled.li`
   color: ${({ theme }) => theme.fontColor.titleColor};
+  margin-left: 0.7rem;
+  text-transform: uppercase;
+`;
+
+const LanguageBox = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
 `;
