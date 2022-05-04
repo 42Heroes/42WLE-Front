@@ -3,12 +3,14 @@ import Button from '../components/common/Button';
 import Image from 'next/image';
 import media from '../styles/media';
 import Logo from '../components/common/FTLogo';
+import Dropdown from '../components/common/Dropdown';
 import { ReactElement } from 'react';
 
 export default function Home() {
   return (
     <Container>
       <LeftSide>
+        <Dropdown />
         <TextContainer>
           <h1>
             Master your language <br /> with
