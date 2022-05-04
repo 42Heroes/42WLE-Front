@@ -24,10 +24,8 @@ Login.getLayout = function getLayout(page: ReactElement) {
 
 const Container = styled.div`
   display: flex;
-  /* width: 50rem; */
   height: 100%;
   margin: 0 auto;
-  /* margin-top: 20rem; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -45,7 +43,7 @@ const MainMsg = styled.div`
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  line-height: 5rem;
+  line-height: 9rem;
 `;
 
 const StyledButton = styled(Button)`
@@ -57,5 +55,3 @@ const StyledButton = styled(Button)`
   }
   padding: 3rem;
 `;
-
-// const FTLogo = styled

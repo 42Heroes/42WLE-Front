@@ -5,10 +5,10 @@ interface Props {
 }
 
 export default function LoginLayout({ children }: Props) {
-  return <Contaniner>{children}</Contaniner>;
+  return <Container>{children}</Container>;
 }
 
-const Contaniner = styled.div`
+const Container = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
