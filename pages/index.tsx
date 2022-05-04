@@ -1,11 +1,11 @@
-import type { NextPage } from 'next';
 import styled from 'styled-components';
 import Button from '../components/common/Button';
 import Image from 'next/image';
 import media from '../styles/media';
 import Logo from '../components/common/FTLogo';
+import { ReactElement } from 'react';
 
-const Home: NextPage = () => {
+export default function Home() {
   return (
     <Container>
       <LeftSide>
@@ -20,11 +20,9 @@ const Home: NextPage = () => {
             and be a global software developer.
           </p>
         </TextContainer>
-        <ButtonContainer>
-          <StyledButton type="button" size="large" color="blue">
-            START LEARNING
-          </StyledButton>
-        </ButtonContainer>
+        <StyledButton type="button" size="large" color="blue">
+          START LEARNING
+        </StyledButton>
       </LeftSide>
       <ImageWrapper>
         <Image
@@ -37,6 +35,10 @@ const Home: NextPage = () => {
       </ImageWrapper>
     </Container>
   );
+}
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <>{page}</>;
 };
 
 const Container = styled.div`
@@ -48,14 +50,20 @@ const Container = styled.div`
 `;
 
 const LeftSide = styled.div`
-  margin-left: 15rem;
-  min-width: 60rem;
+  ${media.medium} {
+    margin-left: 15rem;
+  }
+  margin: 0 auto;
+  max-width: 60rem;
+  width: 100%;
 `;
 
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   vertical-align: middle;
+  margin-bottom: 6rem;
+
   h1 {
     color: ${({ theme }) => theme.fontColor.titleColor};
     font-size: 7rem;
@@ -78,10 +86,6 @@ const ImageWrapper = styled.div`
   }
 `;
 
-const ButtonContainer = styled.div`
-  margin-top: 6rem;
-`;
-
 const StyledButton = styled(Button)`
   background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
@@ -90,5 +94,3 @@ const StyledButton = styled(Button)`
 const StyledLogo = styled(Logo)`
   margin-left: 1rem;
 `;
-
-export default Home;
