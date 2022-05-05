@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 interface Props {
-  question: string;
+  children: React.ReactNode;
 }
 
-export default function Title({ question }: Props) {
-  return <Titlebox>{question}</Titlebox>;
+export default function Title({ children }: Props) {
+  return <Titlebox>{children}</Titlebox>;
 }
 
 const Titlebox = styled.h1`

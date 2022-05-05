@@ -8,7 +8,7 @@ import LoginLayout from '../../components/layout/LoginLayout';
 export default function Learn() {
   return (
     <Container>
-      <Title question="Which languages do you want to practice?" />
+      <Title>Which languages do you want to practice?</Title>
       <LanguageDropdown />
       <StyledButton type="button" size="medium" color="blue">
         NEXT

@@ -8,7 +8,7 @@ import LoginLayout from '../../components/layout/LoginLayout';
 export default function Native() {
   return (
     <Container>
-      <Title question="Which languages can you speak fluently?" />
+      <Title>Which languages can you speak fluently?</Title>
       <LanguageDropdown />
       <StyledButton type="button" size="medium" color="blue">
         NEXT
