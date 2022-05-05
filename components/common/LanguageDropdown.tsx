@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import languages from '../../library/languages';
 import Image from 'next/image';
 
-interface Props {
+interface LanguageInfo {
   flag: string;
   language: string;
 }
@@ -14,14 +14,21 @@ export default function LanguageDropdown() {
   const [searchedItems, setSearchedItems] = useState([
     { flag: '', language: '' },
   ]);
+
   const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
     setSearchedItems(
-      languages.filter((item: Props) =>
+      languages.filter((item: LanguageInfo) =>
         item.language.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
   };
+
+  const handleClickLanguage = (language: string) => {
+    console.log(language);
+    setToggle(false);
+  };
+
   return (
     <div>
       <PlusButton onClick={() => setToggle(!toggle)}>+</PlusButton>
@@ -35,8 +42,11 @@ export default function LanguageDropdown() {
           />
           <ul>
             {inputText
-              ? searchedItems.map((item: Props) => (
-                  <LanguageList key={item.language}>
+              ? searchedItems.map((item: LanguageInfo) => (
+                  <LanguageList
+                    key={item.language}
+                    onClick={() => handleClickLanguage(item.language)}
+                  >
                     <Image
                       alt={item.language}
                       src={item.flag}
@@ -46,15 +56,18 @@ export default function LanguageDropdown() {
                     <LanguageName>{item.language}</LanguageName>
                   </LanguageList>
                 ))
-              : languages.map((language: Props) => (
-                  <LanguageList key={language.language}>
+              : languages.map((item: LanguageInfo) => (
+                  <LanguageList
+                    key={item.language}
+                    onClick={() => handleClickLanguage(item.language)}
+                  >
                     <Image
-                      alt={language.language}
-                      src={language.flag}
+                      alt={item.language}
+                      src={item.flag}
                       width={18}
                       height={11}
                     />
-                    <LanguageName>{language.language}</LanguageName>
+                    <LanguageName>{item.language}</LanguageName>
                   </LanguageList>
                 ))}
           </ul>
@@ -88,8 +101,12 @@ const Input = styled.input`
   border: 1px solid ${({ theme }) => theme.grayColor};
   font-size: 0.9rem;
   width: 100%;
-  &::placeholder {
-    padding-left: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  font-family: JetBrainsMono, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  &:focus {
+    outline: none;
   }
 `;
 
