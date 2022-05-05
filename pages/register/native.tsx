@@ -5,10 +5,10 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
 
-export default function Learn() {
+export default function Native() {
   return (
     <Container>
-      <Title question="Which languages do you want to practice?" />
+      <Title question="Which languages can you speak fluently?" />
       <LanguageDropdown />
       <StyledButton type="button" size="medium" color="blue">
         NEXT
@@ -17,7 +17,7 @@ export default function Learn() {
   );
 }
 
-Learn.getLayout = function getLayout(page: ReactElement) {
+Native.getLayout = function getLayout(page: ReactElement) {
   return <LoginLayout>{page}</LoginLayout>;
 };
 
