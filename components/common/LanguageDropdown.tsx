@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeConsumer } from 'styled-components';
 import languages from '../../library/languages';
 import Image from 'next/image';
 
@@ -93,6 +93,20 @@ const Container = styled.div`
   ul {
     overflow-y: scroll;
   }
+  /* ul::-webkit-scrollbar {
+    width: 0.5rem;
+    background-color: ${({ theme }) => theme.grayColor};
+    border-radius: 1.5rem;
+  }
+  ul::-webkit-scrollbar-thumb {
+    background-color: #2f3542;
+    border-radius: 1.5rem;
+  }
+  ul::-webkit-scrollbar-track {
+    background-color: grey;
+    border-radius: 1rem;
+    box-shadow: inset 0px 0px 5px white; */
+  /* } */
 `;
 
 const Input = styled.input`
