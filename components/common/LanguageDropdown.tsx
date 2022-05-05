@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import styled, { ThemeConsumer } from 'styled-components';
+import styled from 'styled-components';
 import languages from '../../library/languages';
 import Image from 'next/image';
 
@@ -8,12 +8,14 @@ interface LanguageInfo {
   language: string;
 }
 
-export default function LanguageDropdown() {
+interface Props {
+  onClickLanguage: (item: LanguageInfo) => void;
+}
+
+export default function LanguageDropdown({ onClickLanguage }: Props) {
   const [toggle, setToggle] = useState(false);
   const [inputText, setInputText] = useState('');
-  const [searchedItems, setSearchedItems] = useState([
-    { flag: '', language: '' },
-  ]);
+  const [searchedItems, setSearchedItems] = useState<LanguageInfo[]>([]);
 
   const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -22,11 +24,6 @@ export default function LanguageDropdown() {
         item.language.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
-  };
-
-  const handleClickLanguage = (language: string) => {
-    console.log(language);
-    setToggle(false);
   };
 
   return (
@@ -45,7 +42,7 @@ export default function LanguageDropdown() {
               ? searchedItems.map((item: LanguageInfo) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => handleClickLanguage(item.language)}
+                    onClick={() => onClickLanguage(item)}
                   >
                     <Image
                       alt={item.language}
@@ -59,7 +56,7 @@ export default function LanguageDropdown() {
               : languages.map((item: LanguageInfo) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => handleClickLanguage(item.language)}
+                    onClick={() => onClickLanguage(item)}
                   >
                     <Image
                       alt={item.language}
@@ -93,20 +90,6 @@ const Container = styled.div`
   ul {
     overflow-y: scroll;
   }
-  /* ul::-webkit-scrollbar {
-    width: 0.5rem;
-    background-color: ${({ theme }) => theme.grayColor};
-    border-radius: 1.5rem;
-  }
-  ul::-webkit-scrollbar-thumb {
-    background-color: #2f3542;
-    border-radius: 1.5rem;
-  }
-  ul::-webkit-scrollbar-track {
-    background-color: grey;
-    border-radius: 1rem;
-    box-shadow: inset 0px 0px 5px white; */
-  /* } */
 `;
 
 const Input = styled.input`
