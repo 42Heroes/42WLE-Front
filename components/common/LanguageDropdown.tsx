@@ -36,26 +36,26 @@ export default function LanguageDropdown() {
           <ul>
             {inputText
               ? searchedItems.map((item: Props) => (
-                  <LanguageBox key={item.language}>
+                  <LanguageList key={item.language}>
                     <Image
                       alt={item.language}
                       src={item.flag}
                       width={18}
                       height={11}
                     />
-                    <List>{item.language}</List>
-                  </LanguageBox>
+                    <LanguageName>{item.language}</LanguageName>
+                  </LanguageList>
                 ))
               : languages.map((language: Props) => (
-                  <LanguageBox key={language.language}>
+                  <LanguageList key={language.language}>
                     <Image
                       alt={language.language}
                       src={language.flag}
                       width={18}
                       height={11}
                     />
-                    <List>{language.language}</List>
-                  </LanguageBox>
+                    <LanguageName>{language.language}</LanguageName>
+                  </LanguageList>
                 ))}
           </ul>
         </Container>
@@ -81,13 +81,13 @@ const Input = styled.input`
   font-size: 0.9rem;
 `;
 
-const List = styled.li`
+const LanguageName = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   margin-left: 0.7rem;
   text-transform: uppercase;
 `;
 
-const LanguageBox = styled.div`
+const LanguageList = styled.li`
   display: flex;
   align-items: center;
   padding: 0.5rem;
