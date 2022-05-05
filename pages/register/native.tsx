@@ -3,7 +3,7 @@ import SelectLanguage from '../../components/common/SelectLanguage';
 import LoginLayout from '../../components/layout/LoginLayout';
 
 export default function Learn() {
-  return <SelectLanguage question="Which languages do you want to practice?" />;
+  return <SelectLanguage question="Which languages can you speak fluently?" />;
 }
 
 Learn.getLayout = function getLayout(page: ReactElement) {
