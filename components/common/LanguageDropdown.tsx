@@ -72,6 +72,14 @@ const Container = styled.div`
   width: 17rem;
   height: 14rem;
   background-color: ${({ theme }) => theme.grayColor + '20'};
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  border-top-left-radius: 0;
+  display: flex;
+  flex-direction: column;
+  ul {
+    overflow-y: scroll;
+  }
 `;
 
 const Input = styled.input`
@@ -79,10 +87,13 @@ const Input = styled.input`
   color: ${({ theme }) => theme.fontColor.titleColor};
   border: 1px solid ${({ theme }) => theme.grayColor};
   font-size: 0.9rem;
+  width: 100%;
+  &::placeholder {
+    padding-left: 0.5rem;
+  }
 `;
 
 const LanguageName = styled.div`
-  color: ${({ theme }) => theme.fontColor.titleColor};
   margin-left: 0.7rem;
   text-transform: uppercase;
 `;
@@ -91,4 +102,14 @@ const LanguageList = styled.li`
   display: flex;
   align-items: center;
   padding: 0.5rem;
+  color: ${({ theme }) => theme.fontColor.commentColor};
+  cursor: pointer;
+
+  span {
+    color: ${({ theme }) => theme.fontColor.titleColor};
+  }
+  &:hover {
+    color: ${({ theme }) => theme.fontColor.titleColor};
+    background-color: ${({ theme }) => theme.fontColor.commentColor};
+  }
 `;
