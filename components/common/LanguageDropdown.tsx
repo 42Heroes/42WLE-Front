@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-import languages from '../../library/languages';
 import Image from 'next/image';
 
 interface LanguageInfo {
@@ -9,10 +8,14 @@ interface LanguageInfo {
 }
 
 interface Props {
-  onClickLanguage: (item: LanguageInfo) => void;
+  onClickLanguage: (item: LanguageInfo, index: number) => void;
+  languages: LanguageInfo[];
 }
 
-export default function LanguageDropdown({ onClickLanguage }: Props) {
+export default function LanguageDropdown({
+  onClickLanguage,
+  languages,
+}: Props) {
   const [toggle, setToggle] = useState(false);
   const [inputText, setInputText] = useState('');
   const [searchedItems, setSearchedItems] = useState<LanguageInfo[]>([]);
@@ -39,10 +42,10 @@ export default function LanguageDropdown({ onClickLanguage }: Props) {
           />
           <ul>
             {inputText
-              ? searchedItems.map((item: LanguageInfo) => (
+              ? searchedItems.map((item: LanguageInfo, index: number) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => onClickLanguage(item)}
+                    onClick={() => onClickLanguage(item, index)}
                   >
                     <Image
                       alt={item.language}
@@ -53,10 +56,10 @@ export default function LanguageDropdown({ onClickLanguage }: Props) {
                     <LanguageName>{item.language}</LanguageName>
                   </LanguageList>
                 ))
-              : languages.map((item: LanguageInfo) => (
+              : languages.map((item: LanguageInfo, index: number) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => onClickLanguage(item)}
+                    onClick={() => onClickLanguage(item, index)}
                   >
                     <Image
                       alt={item.language}
