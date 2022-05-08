@@ -29,7 +29,8 @@ export default function Learn() {
     setSelectedLanguages(
       selectedLanguages.filter((_, ind: number) => ind !== index),
     );
-    console.log('clicked!');
+    setLanguages([...languages, clickedLanguage]);
+    /* have to sort languages */
   };
   return (
     <div>

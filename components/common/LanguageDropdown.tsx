@@ -30,7 +30,8 @@ export default function LanguageDropdown({
   };
 
   return (
-    <div>
+    <TopContainer>
+      <AddBox>ADD LANGUAGE</AddBox>
       <PlusButton onClick={() => setToggle(!toggle)}>+</PlusButton>
       {toggle && (
         <Container>
@@ -79,9 +80,26 @@ export default function LanguageDropdown({
           </ul>
         </Container>
       )}
-    </div>
+    </TopContainer>
   );
 }
+
+const TopContainer = styled.div`
+  display: flex;
+`;
+
+const AddBox = styled.div`
+  border: 0.1rem solid;
+  border-color: ${({ theme }) => theme.grayColor};
+  height: 5rem;
+  width: 34rem;
+  color: ${({ theme }) => theme.grayColor};
+  font-size: ${({ theme }) => theme.font.subTitleBold};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5rem;
+`;
 
 const PlusButton = styled.button`
   color: white;
