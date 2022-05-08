@@ -1,3 +1,3 @@
-import * as apiHandlers from './user';
+import * as userHandlers from './user';
 
-export const handlers = [...Object.values(apiHandlers)];
+export const handlers = [...Object.values(userHandlers)];
