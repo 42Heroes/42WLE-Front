@@ -45,7 +45,10 @@ export default function LanguageDropdown({
               ? searchedItems.map((item: LanguageInfo, index: number) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => onClickLanguage(item, index)}
+                    onClick={() => {
+                      onClickLanguage(item, index);
+                      setToggle(!toggle);
+                    }}
                   >
                     <Image
                       alt={item.language}
@@ -59,7 +62,10 @@ export default function LanguageDropdown({
               : languages.map((item: LanguageInfo, index: number) => (
                   <LanguageList
                     key={item.language}
-                    onClick={() => onClickLanguage(item, index)}
+                    onClick={() => {
+                      onClickLanguage(item, index);
+                      setToggle(!toggle);
+                    }}
                   >
                     <Image
                       alt={item.language}
