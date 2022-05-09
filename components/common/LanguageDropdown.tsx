@@ -46,61 +46,49 @@ export default function LanguageDropdown({
           <ul>
             {inputText
               ? searchedItems.map((item) =>
-                  selectedLanguages.some((selectedItem) =>
-                    selectedItem.language === item.language ? (
-                      <LanguageList
-                        key={item.language}
-                        onClick={() => {
-                          onClickLanguage(item);
-                          setToggle(!toggle);
-                        }}
-                      >
-                        <Image
-                          alt={item.language}
-                          src={item.flag}
-                          width={18}
-                          height={11}
-                        />
-                        <LanguageName>{item.language}</LanguageName>
-                      </LanguageList>
-                    ) : (
-                      languages.map((item: LanguageInfo) => (
-                        <LanguageList
-                          key={item.language}
-                          onClick={() => {
-                            onClickLanguage(item);
-                            setToggle(!toggle);
-                          }}
-                        >
-                          <Image
-                            alt={item.language}
-                            src={item.flag}
-                            width={18}
-                            height={11}
-                          />
-                          <LanguageName>{item.language}</LanguageName>
-                        </LanguageList>
-                      ))
-                    ),
+                  selectedLanguages.some(
+                    (selectedLanguage) =>
+                      selectedLanguage.language === item.language,
+                  ) ? null : (
+                    <LanguageList
+                      key={item.language}
+                      onClick={() => {
+                        onClickLanguage(item);
+                        setToggle(!toggle);
+                      }}
+                    >
+                      <Image
+                        alt={item.language}
+                        src={item.flag}
+                        width={18}
+                        height={11}
+                      />
+                      <LanguageName>{item.language}</LanguageName>
+                    </LanguageList>
                   ),
                 )
-              : languages.map((item) => (
-                  <LanguageList
-                    key={item.language}
-                    onClick={() => {
-                      onClickLanguage(item);
-                      setToggle(!toggle);
-                    }}
-                  >
-                    <Image
-                      alt={item.language}
-                      src={item.flag}
-                      width={18}
-                      height={11}
-                    />
-                    <LanguageName>{item.language}</LanguageName>
-                  </LanguageList>
-                ))}
+              : languages.map((item) =>
+                  selectedLanguages.some(
+                    (selectedLanguage) =>
+                      selectedLanguage.language === item.language,
+                  ) ? null : (
+                    <LanguageList
+                      key={item.language}
+                      onClick={() => {
+                        onClickLanguage(item);
+                        setToggle(!toggle);
+                      }}
+                    >
+                      <Image
+                        alt={item.language}
+                        src={item.flag}
+                        width={18}
+                        height={11}
+                      />
+                      <LanguageName>{item.language}</LanguageName>
+                    </LanguageList>
+                  ),
+                )}
           </ul>
         </Container>
       )}

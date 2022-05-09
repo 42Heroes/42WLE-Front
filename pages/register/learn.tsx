@@ -14,6 +14,7 @@ export default function Learn() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
+
   const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
     setSelectedLanguages([...selectedLanguages, clickedLanguage]);
   };
@@ -22,8 +23,8 @@ export default function Learn() {
     setSelectedLanguages(
       selectedLanguages.filter((item) => item !== clickedLanguage),
     );
-    setLanguages([...languages, clickedLanguage]);
   };
+
   return (
     <div>
       <LanguageDropdown
