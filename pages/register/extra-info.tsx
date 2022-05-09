@@ -1,23 +1,32 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useInput from '../../hooks/useInput';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export default function ExtraInfo() {
-  const [github, setGithub] = useState('');
-  const [inputTag, setInputTag] = useState('');
+  const inputTagValidator = (value: string) => {
+    if (value.length > 20) {
+      return false;
+    }
+    return true;
+  };
+
+  const [inputTag, onChangeInputTag, setInputTag] = useInput(
+    '',
+    inputTagValidator,
+  );
+  const [github, onChangeGithub, setGithub] = useInput('');
   const [hashTags, setHashTags] = useState<string[]>([]);
 
   const addHashTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputTag) {
       setHashTags((prevTags) => {
-        return [...prevTags, '#' + inputTag];
+        return [...prevTags, inputTag];
       });
       setInputTag('');
-      console.log(inputTag);
-      console.log(hashTags);
     }
   };
 
@@ -28,6 +37,26 @@ export default function ExtraInfo() {
       });
     });
   };
+
+  const handleClickButton = () => {
+    if (hashTags.length) {
+      localStorage.setItem('HashTags', JSON.stringify(hashTags));
+    }
+    if (github.length) {
+      localStorage.setItem('Github', github);
+    }
+  };
+
+  useEffect(() => {
+    const persistGithub = localStorage.getItem('Github');
+    const persistHashTags = localStorage.getItem('HashTags');
+    if (persistGithub) {
+      setGithub(persistGithub);
+    }
+    if (persistHashTags) {
+      setHashTags(JSON.parse(persistHashTags));
+    }
+  }, []);
 
   return (
     <Container>
@@ -41,13 +70,13 @@ export default function ExtraInfo() {
           type="text"
           placeholder="ex) React"
           value={inputTag}
-          onChange={(e) => setInputTag(e.target.value)}
+          onChange={onChangeInputTag}
           onKeyDown={addHashTag}
         />
         <HashTagContainer>
           {hashTags.map((tag, i) => (
             <HashTag key={i} onClick={() => deleteTag(i)}>
-              {tag}
+              #{tag}
               <IconContainer>
                 <ClearIcon />
               </IconContainer>
@@ -59,11 +88,7 @@ export default function ExtraInfo() {
         <InputLabel>Github</InputLabel>
         <GithubContainer>
           <FixedAddress>https://github.com/</FixedAddress>
-          <Input
-            type="text"
-            value={github}
-            onChange={(e) => setGithub(e.target.value)}
-          />
+          <Input type="text" value={github} onChange={onChangeGithub} />
         </GithubContainer>
       </InputContainer>
       <ButtonContainer>
@@ -71,17 +96,11 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
-          // disabled={!nickname.length}
-          // onClick={handleClickButton}
+          onClick={handleClickButton}
         >
           NEXT
         </NextButton>
-        <SkipButton
-          type="button"
-          size="medium"
-          fullWidth
-          // onClick={handleClickButton}
-        >
+        <SkipButton type="button" size="medium" fullWidth>
           SKIP
         </SkipButton>
       </ButtonContainer>
