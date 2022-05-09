@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export default function ExtraInfo() {
   const [github, setGithub] = useState('https://github.com/');
@@ -18,6 +19,14 @@ export default function ExtraInfo() {
       console.log(inputTag);
       console.log(hashTags);
     }
+  };
+
+  const deleteTag = (i: number) => {
+    setHashTags((prevTags) => {
+      return prevTags.filter((tag, index) => {
+        return index !== i;
+      });
+    });
   };
 
   return (
@@ -36,8 +45,13 @@ export default function ExtraInfo() {
           onKeyDown={addHashTag}
         />
         <HashTagContainer>
-          {hashTags.map((tag) => (
-            <HashTag key={tag}>{tag}</HashTag>
+          {hashTags.map((tag, i) => (
+            <HashTag key={i} onClick={() => deleteTag(i)}>
+              {tag}
+              <IconContainer>
+                <ClearIcon />
+              </IconContainer>
+            </HashTag>
           ))}
         </HashTagContainer>
       </InputContainer>
@@ -49,21 +63,25 @@ export default function ExtraInfo() {
           onChange={(e) => setGithub(e.target.value)}
         />
       </InputContainer>
-      <NextButton
-        type="button"
-        size="medium"
-        // disabled={!nickname.length}
-        // onClick={handleClickButton}
-      >
-        NEXT
-      </NextButton>
-      <SkipButton
-        type="button"
-        size="medium"
-        // onClick={handleClickButton}
-      >
-        SKIP
-      </SkipButton>
+      <ButtonContainer>
+        <NextButton
+          type="button"
+          size="medium"
+          fullWidth
+          // disabled={!nickname.length}
+          // onClick={handleClickButton}
+        >
+          NEXT
+        </NextButton>
+        <SkipButton
+          type="button"
+          size="medium"
+          fullWidth
+          // onClick={handleClickButton}
+        >
+          SKIP
+        </SkipButton>
+      </ButtonContainer>
     </Container>
   );
 }
@@ -77,6 +95,10 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const ButtonContainer = styled.div`
+  width: 50%;
 `;
 
 const NextButton = styled(Button)`
@@ -133,10 +155,24 @@ const HashTagContainer = styled.div`
   display: flex;
 `;
 
+const IconContainer = styled.div`
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+`;
+
 const HashTag = styled.div`
   color: ${({ theme }) => theme.grayColor};
   border: 1px solid ${({ theme }) => theme.grayColor};
   padding: 0.5rem 1rem;
   border-radius: 3rem;
   margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.fontColor.commentColor};
+    color: ${({ theme }) => theme.fontColor.titleColor};
+  }
 `;
