@@ -39,12 +39,8 @@ export default function ExtraInfo() {
   };
 
   const handleClickButton = () => {
-    if (hashTags.length) {
-      localStorage.setItem('HashTags', JSON.stringify(hashTags));
-    }
-    if (github.length) {
-      localStorage.setItem('Github', github);
-    }
+    localStorage.setItem('HashTags', JSON.stringify(hashTags));
+    localStorage.setItem('Github', github);
   };
 
   useEffect(() => {
