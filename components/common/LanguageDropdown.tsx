@@ -8,13 +8,15 @@ interface LanguageInfo {
 }
 
 interface Props {
-  onClickLanguage: (item: LanguageInfo, index: number) => void;
+  onClickLanguage: (item: LanguageInfo) => void;
   languages: LanguageInfo[];
+  selectedLanguages: LanguageInfo[];
 }
 
 export default function LanguageDropdown({
   onClickLanguage,
   languages,
+  selectedLanguages,
 }: Props) {
   const [toggle, setToggle] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -43,28 +45,50 @@ export default function LanguageDropdown({
           />
           <ul>
             {inputText
-              ? searchedItems.map((item: LanguageInfo, index: number) => (
+              ? searchedItems.map((item) =>
+                  selectedLanguages.some((selectedItem) =>
+                    selectedItem.language === item.language ? (
+                      <LanguageList
+                        key={item.language}
+                        onClick={() => {
+                          onClickLanguage(item);
+                          setToggle(!toggle);
+                        }}
+                      >
+                        <Image
+                          alt={item.language}
+                          src={item.flag}
+                          width={18}
+                          height={11}
+                        />
+                        <LanguageName>{item.language}</LanguageName>
+                      </LanguageList>
+                    ) : (
+                      languages.map((item: LanguageInfo) => (
+                        <LanguageList
+                          key={item.language}
+                          onClick={() => {
+                            onClickLanguage(item);
+                            setToggle(!toggle);
+                          }}
+                        >
+                          <Image
+                            alt={item.language}
+                            src={item.flag}
+                            width={18}
+                            height={11}
+                          />
+                          <LanguageName>{item.language}</LanguageName>
+                        </LanguageList>
+                      ))
+                    ),
+                  ),
+                )
+              : languages.map((item) => (
                   <LanguageList
                     key={item.language}
                     onClick={() => {
-                      onClickLanguage(item, index);
-                      setToggle(!toggle);
-                    }}
-                  >
-                    <Image
-                      alt={item.language}
-                      src={item.flag}
-                      width={18}
-                      height={11}
-                    />
-                    <LanguageName>{item.language}</LanguageName>
-                  </LanguageList>
-                ))
-              : languages.map((item: LanguageInfo, index: number) => (
-                  <LanguageList
-                    key={item.language}
-                    onClick={() => {
-                      onClickLanguage(item, index);
+                      onClickLanguage(item);
                       setToggle(!toggle);
                     }}
                   >

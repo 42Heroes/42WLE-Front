@@ -14,29 +14,22 @@ export default function Learn() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
-  const handleSelectedLanguage = (
-    clickedLanguage: LanguageInfo,
-    index: number,
-  ) => {
+  const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
     setSelectedLanguages([...selectedLanguages, clickedLanguage]);
-    setLanguages(languages.filter((_, ind: number) => ind !== index));
   };
 
-  const handleDeletedLanguage = (
-    clickedLanguage: LanguageInfo,
-    index: number,
-  ) => {
+  const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
     setSelectedLanguages(
-      selectedLanguages.filter((_, ind: number) => ind !== index),
+      selectedLanguages.filter((item) => item !== clickedLanguage),
     );
     setLanguages([...languages, clickedLanguage]);
-    /* have to sort languages */
   };
   return (
     <div>
       <LanguageDropdown
         onClickLanguage={handleSelectedLanguage}
         languages={languages}
+        selectedLanguages={selectedLanguages}
       />
       <LanguageSelected
         onClickDelete={handleDeletedLanguage}
