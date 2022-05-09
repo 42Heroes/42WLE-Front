@@ -22,7 +22,6 @@ export default function Learn() {
     setSelectedLanguages(
       selectedLanguages.filter((item) => item !== clickedLanguage),
     );
-    setLanguages([...languages, clickedLanguage]);
   };
   return (
     <div>

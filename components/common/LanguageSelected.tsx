@@ -7,21 +7,17 @@ interface LanguageInfo {
 }
 
 interface Props {
-  onClickDelete: (item: LanguageInfo, index: number) => void;
+  onClickDelete: (item: LanguageInfo) => void;
   selectedLanguages: LanguageInfo[];
 }
 export default function LanguageSelected({
   onClickDelete,
   selectedLanguages,
 }: Props) {
-  console.log(selectedLanguages);
   return (
     <ul>
-      {selectedLanguages?.map((item: LanguageInfo, index: number) => (
-        <SelectedList
-          key={item.language}
-          onClick={() => onClickDelete(item, index)}
-        >
+      {selectedLanguages?.map((item: LanguageInfo) => (
+        <SelectedList key={item.language} onClick={() => onClickDelete(item)}>
           <Image alt={item.language} src={item.flag} width={18} height={11} />
           <LanguageName>{item.language.toUpperCase()}</LanguageName>
         </SelectedList>
