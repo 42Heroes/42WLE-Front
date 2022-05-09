@@ -34,6 +34,7 @@ const SelectedList = styled.li`
   border-color: ${({ theme }) => theme.grayColor};
   height: 5rem;
   width: 34rem;
+  margin: 3rem 0rem;
   cursor: pointer;
 `;
 const LanguageName = styled.div`

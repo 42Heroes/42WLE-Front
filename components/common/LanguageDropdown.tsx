@@ -37,7 +37,6 @@ export default function LanguageDropdown({
         key={item.language}
         onClick={() => {
           onClickLanguage(item);
-          setToggle(!toggle);
         }}
       >
         <Image alt={item.language} src={item.flag} width={18} height={11} />
@@ -48,8 +47,7 @@ export default function LanguageDropdown({
 
   return (
     <TopContainer>
-      <AddBox>ADD LANGUAGE</AddBox>
-      <PlusButton onClick={() => setToggle(!toggle)}>+</PlusButton>
+      <AddBox onClick={() => setToggle(!toggle)}>ADD LANGUAGE</AddBox>
       {toggle && (
         <Container>
           <Input
@@ -82,14 +80,16 @@ export default function LanguageDropdown({
 }
 
 const TopContainer = styled.div`
-  display: flex;
+  cursor: pointer;
+  position: relative;
+  width: 34rem;
 `;
 
 const AddBox = styled.div`
   border: 0.1rem solid;
   border-color: ${({ theme }) => theme.grayColor};
   height: 5rem;
-  width: 34rem;
+  /* width: 34rem; */
   color: ${({ theme }) => theme.grayColor};
   font-size: ${({ theme }) => theme.font.subTitleBold};
   display: flex;
@@ -98,11 +98,10 @@ const AddBox = styled.div`
   margin-bottom: 5rem;
 `;
 
-const PlusButton = styled.button`
-  color: white;
-`;
-
 const Container = styled.div`
+  position: absolute;
+  left: 100%;
+  top: 0;
   width: 17rem;
   height: 14rem;
   background-color: ${({ theme }) => theme.grayColor + '20'};
@@ -141,7 +140,6 @@ const LanguageList = styled.li`
   align-items: center;
   padding: 0.5rem;
   color: ${({ theme }) => theme.fontColor.commentColor};
-  cursor: pointer;
 
   span {
     color: ${({ theme }) => theme.fontColor.titleColor};
