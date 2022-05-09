@@ -6,7 +6,7 @@ import LoginLayout from '../../components/layout/LoginLayout';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export default function ExtraInfo() {
-  const [github, setGithub] = useState('https://github.com/');
+  const [github, setGithub] = useState('');
   const [inputTag, setInputTag] = useState('');
   const [hashTags, setHashTags] = useState<string[]>([]);
 
@@ -57,11 +57,14 @@ export default function ExtraInfo() {
       </InputContainer>
       <InputContainer>
         <InputLabel>Github</InputLabel>
-        <Input
-          type="text"
-          value={github}
-          onChange={(e) => setGithub(e.target.value)}
-        />
+        <GithubContainer>
+          <FixedAddress>https://github.com/</FixedAddress>
+          <Input
+            type="text"
+            value={github}
+            onChange={(e) => setGithub(e.target.value)}
+          />
+        </GithubContainer>
       </InputContainer>
       <ButtonContainer>
         <NextButton
@@ -113,6 +116,10 @@ const SkipButton = styled(Button)`
   border-radius: 1rem;
   color: ${({ theme }) => theme.grayColor};
   padding: 0 10rem;
+  &:hover {
+    background-color: ${({ theme }) => theme.grayColor};
+    color: ${({ theme }) => theme.fontColor.commentColor};
+  }
 `;
 
 const InputContainer = styled.div`
@@ -175,4 +182,12 @@ const HashTag = styled.div`
     background-color: ${({ theme }) => theme.fontColor.commentColor};
     color: ${({ theme }) => theme.fontColor.titleColor};
   }
+`;
+
+const GithubContainer = styled.div`
+  display: flex;
+`;
+
+const FixedAddress = styled.div`
+  color: ${({ theme }) => theme.fontColor.contentColor};
 `;
