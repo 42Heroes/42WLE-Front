@@ -89,13 +89,7 @@ export default function Profile({ userData, className }: Props) {
       <Introduction>{userData.introduction}</Introduction>
       {isUserModal && (
         <ButtonContainer>
-          <MessageButton
-            type="button"
-            size="medium"
-            color="gray6"
-            // fullWidth
-            outline
-          >
+          <MessageButton type="button" size="medium" color="gray6" outline>
             Message
           </MessageButton>
           <LikeButton type="button" size="medium" color="gray6" outline>
