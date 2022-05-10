@@ -1,15 +1,42 @@
-import { ReactElement } from 'react';
 import styled from 'styled-components';
 import Title from '../../components/common/Title';
 import LanguageDropdown from '../../components/common/LanguageDropdown';
+import LanguageSelected from '../../components/common/LanguageSelected';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
+import languagesBase from '../../library/languages';
+import { ReactElement, useState } from 'react';
 
+interface LanguageInfo {
+  language: string;
+  flag: string;
+}
 export default function Native() {
+  const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
+  const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
+    [],
+  );
+  const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
+    setSelectedLanguages([...selectedLanguages, clickedLanguage]);
+  };
+
+  const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
+    setSelectedLanguages(
+      selectedLanguages.filter((item) => item !== clickedLanguage),
+    );
+  };
   return (
     <Container>
       <Title>Which languages can you speak fluently?</Title>
-      <LanguageDropdown />
+      <LanguageDropdown
+        onClickLanguage={handleSelectedLanguage}
+        languages={languages}
+        selectedLanguages={selectedLanguages}
+      />
+      <LanguageSelected
+        onClickDelete={handleDeletedLanguage}
+        selectedLanguages={selectedLanguages}
+      />
       <StyledButton type="button" size="medium" color="blue">
         NEXT
       </StyledButton>
