@@ -5,7 +5,7 @@ import LanguageSelected from '../../components/common/LanguageSelected';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useState, useEffect } from 'react';
 
 interface LanguageInfo {
   language: string;
@@ -16,14 +16,29 @@ export default function Native() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
+
+  useEffect(() => {
+    const persistSelected = localStorage.getItem('nativeLanguages');
+    console.log(persistSelected);
+    if (persistSelected) {
+      setSelectedLanguages(JSON.parse(persistSelected));
+    }
+  }, []);
   const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages([...selectedLanguages, clickedLanguage]);
+    const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
+    setSelectedLanguages(addSelectedLanguages);
+    localStorage.setItem(
+      'nativeLanguages',
+      JSON.stringify(addSelectedLanguages),
+    );
   };
 
   const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages(
-      selectedLanguages.filter((item) => item !== clickedLanguage),
+    const filteredLanguages = selectedLanguages.filter(
+      (item) => item !== clickedLanguage,
     );
+    setSelectedLanguages(filteredLanguages);
+    localStorage.setItem('nativeLanguages', JSON.stringify(filteredLanguages));
   };
   return (
     <Container>

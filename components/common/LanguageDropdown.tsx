@@ -37,6 +37,7 @@ export default function LanguageDropdown({
         key={item.language}
         onClick={() => {
           onClickLanguage(item);
+          setToggle(!toggle);
         }}
       >
         <Image alt={item.language} src={item.flag} width={18} height={11} />
@@ -47,7 +48,9 @@ export default function LanguageDropdown({
 
   return (
     <TopContainer>
-      <AddBox onClick={() => setToggle(!toggle)}>ADD LANGUAGE</AddBox>
+      {selectedLanguages.length < 3 && (
+        <AddBox onClick={() => setToggle(!toggle)}>ADD LANGUAGE</AddBox>
+      )}
       {toggle && (
         <Container>
           <Input
@@ -88,14 +91,19 @@ const TopContainer = styled.div`
 const AddBox = styled.div`
   border: 0.1rem solid;
   border-color: ${({ theme }) => theme.grayColor};
+  border-radius: 0.5rem;
   height: 5rem;
-  /* width: 34rem; */
   color: ${({ theme }) => theme.grayColor};
-  font-size: ${({ theme }) => theme.font.subTitleBold};
+  font-size: 2.5rem;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 5rem;
+  justify-content: flex-start;
+  padding-left: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  font-family: JetBrainsMono, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 `;
 
 const Container = styled.div`
