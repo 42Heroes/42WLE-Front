@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import media from '../../styles/media';
 import Button from '../common/Button';
-import FTLogo from '../common/FTLogo';
+
+import FTLogo from '../../public/icons/42Logo.svg';
 import Language from '../common/Language';
 
 interface LanguageInfo {
@@ -29,7 +30,7 @@ interface Props {
 
 export default function Profile({ userData, className }: Props) {
   const router = useRouter();
-  const isUserModal = router.asPath === '/register/preview';
+  const isUserModal = router.asPath !== '/register/preview';
   // TODO: isModal 로 변경 or preview 페이지나 myProfile 페이지 예외처리 필요
   return (
     <Container className={className}>
@@ -76,7 +77,7 @@ export default function Profile({ userData, className }: Props) {
       </UserInfo>
       <SocialInfoContainer>
         <SocialInfo>
-          <FTLogo width="23" />
+          <FTLogo />
           {userData.intra_id}
         </SocialInfo>
         <SocialInfo>{userData.country}</SocialInfo>
@@ -193,6 +194,10 @@ const SocialInfoContainer = styled.ul`
 const SocialInfo = styled.li`
   display: flex;
   gap: 1rem;
+  svg {
+    width: 2.3rem;
+    fill: white;
+  }
 `;
 
 const HashTags = styled.div`

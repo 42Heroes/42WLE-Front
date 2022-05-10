@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import Button from '../components/common/Button';
 import { ReactElement } from 'react';
 import LoginLayout from '../components/layout/LoginLayout';
-import FTLogo from '../components/common/FTLogo';
+import FTLogo from '../public/icons/42Logo.svg';
+
 export default function Login() {
   const handleClickLoginButton = () => {
     // TODO: oAuth 로그인 로직
@@ -19,7 +20,7 @@ export default function Login() {
         color="blue"
         onClick={handleClickLoginButton}
       >
-        <FTLogo width="40" />
+        <FTLogo />
         Sign In with 42 Intra
       </StyledButton>
     </Container>
@@ -59,5 +60,7 @@ const StyledButton = styled(Button)`
   padding: 3rem;
   svg {
     margin-right: 1rem;
+    width: 4rem;
+    fill: white;
   }
 `;
