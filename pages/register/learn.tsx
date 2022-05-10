@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Title from '../../components/common/Title';
 import Button from '../../components/common/Button';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useState, useEffect } from 'react';
 import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import LoginLayout from '../../components/layout/LoginLayout';
@@ -17,14 +17,30 @@ export default function Learn() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
+
+  useEffect(() => {
+    const persistSelected = localStorage.getItem('learnLanguages');
+    console.log(persistSelected);
+    if (persistSelected) {
+      setSelectedLanguages(JSON.parse(persistSelected));
+    }
+  }, []);
+
   const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages([...selectedLanguages, clickedLanguage]);
+    const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
+    setSelectedLanguages(addSelectedLanguages);
+    localStorage.setItem(
+      'learnLanguages',
+      JSON.stringify(addSelectedLanguages),
+    );
   };
 
   const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages(
-      selectedLanguages.filter((item) => item !== clickedLanguage),
+    const filteredLanguages = selectedLanguages.filter(
+      (item) => item !== clickedLanguage,
     );
+    setSelectedLanguages(filteredLanguages);
+    localStorage.setItem('learnLanguages', JSON.stringify(filteredLanguages));
   };
   return (
     <Container>
