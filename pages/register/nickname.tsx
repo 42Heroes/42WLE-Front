@@ -1,4 +1,5 @@
-import { ReactElement, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
@@ -6,23 +7,27 @@ import LoginLayout from '../../components/layout/LoginLayout';
 import useInput from '../../hooks/useInput';
 
 export default function Nickname() {
+  const router = useRouter();
+
   const maximumLength = 20;
-  const nicknameValidator = (value: string) => {
+  const nicknameValidator = useCallback((value: string) => {
     if (value.length > maximumLength) {
       return false;
     }
     return true;
-  };
+  }, []);
+
   const [nickname, onChangeNickname, setNickname] = useInput(
     '',
     nicknameValidator,
   );
 
-  const handleClickButton = () => {
+  const handleClickNextButton = () => {
     if (nickname.length === 0 || nickname.length > 20) {
       return;
     }
-    localStorage.setItem('Nickname', nickname);
+    localStorage.setItem('sign_up-nickname', nickname);
+    router.push('/register/photo');
   };
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export default function Nickname() {
         size="medium"
         color="blue"
         disabled={!nickname.length}
-        onClick={handleClickButton}
+        onClick={handleClickNextButton}
       >
         NEXT
       </StyledButton>
@@ -75,7 +80,7 @@ const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 6rem;
-  margin-bottom: 20rem;
+  margin-bottom: 15rem;
   align-items: flex-end;
   span {
     font-size: 1.6rem;
