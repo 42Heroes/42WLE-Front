@@ -1,26 +1,39 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import Title from '../../components/common/Title';
 import styled from 'styled-components';
 import LoginLayout from '../../components/layout/LoginLayout';
 import Button from '../../components/common/Button';
+import { useRouter } from 'next/router';
 
 export default function Introduction() {
+  const router = useRouter();
+
   const maximumLength = 500;
+  const [introduction, setIntroduction] = useState('');
+
   const handleInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const {
       currentTarget: { value },
     } = e;
-    if (value.length <= maximumLength) setIntroduction(value);
+    if (value.length <= maximumLength) {
+      setIntroduction(value);
+    }
   };
-
-  const [introduction, setIntroduction] = useState('');
 
   const handleClickButton = () => {
     if (introduction.length < 10 || introduction.length > maximumLength) {
       return;
     }
-    localStorage.setItem('Introduction', introduction);
+    localStorage.setItem('sign_up-introduction', introduction);
+    router.push('/register/extra-info');
   };
+
+  useEffect(() => {
+    const persistIntroduction = localStorage.getItem('sign_up-introduction');
+    if (persistIntroduction) {
+      setIntroduction(persistIntroduction);
+    }
+  }, []);
 
   return (
     <Container>
