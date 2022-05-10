@@ -4,7 +4,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  experimental: { images: { layoutRaw: true } }
+  experimental: { images: { layoutRaw: true } },
 };
 
 module.exports = nextConfig;

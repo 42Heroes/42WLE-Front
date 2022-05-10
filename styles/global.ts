@@ -118,6 +118,21 @@ mark {
 i {
   font-style: normal;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+::-webkit-scrollbar-track {
+    background: var(--lightestgrey);
+  }
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;
 
 export default GlobalStyle;
