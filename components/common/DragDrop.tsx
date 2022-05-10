@@ -1,7 +1,9 @@
 import Image from 'next/image';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import useDragDrop from '../../hooks/useDragDrop';
+import { encodeBase64ImageFile } from '../../library/ImageConverter';
+import CameraIcon from '../../public/icons/camera.svg';
 
 interface Props {
   image: string | null;
@@ -13,7 +15,7 @@ export default function DragDrop({ image, setImage }: Props) {
   const dragContainerRef = useRef<HTMLDivElement | null>(null);
 
   const onChangeImage = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement> | any) => {
+    async (e: React.ChangeEvent<HTMLInputElement> | any) => {
       let selectedImage;
       if (e.type === 'change') {
         selectedImage = e.target.files[0];
@@ -21,28 +23,15 @@ export default function DragDrop({ image, setImage }: Props) {
         selectedImage = e.dataTransfer.files[0];
       }
       if (selectedImage && selectedImage.size <= 2000000) {
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedImage);
-        reader.onload = () => {
-          const { result } = reader;
-          if (typeof result === 'string') {
-            localStorage.setItem('sign-up-profile', result);
-            setImage(result);
-          }
-        };
+        const data = await encodeBase64ImageFile(selectedImage as File);
+        localStorage.setItem('sign_up-photo', data);
+        setImage(data);
       }
     },
     [],
   );
 
   const isDragging = useDragDrop(onChangeImage, dragRef);
-
-  useEffect(() => {
-    const persistImage = localStorage.getItem('sign-up-profile');
-    if (persistImage) {
-      setImage(persistImage);
-    }
-  }, []);
 
   return (
     <Container ref={dragContainerRef}>
@@ -65,7 +54,8 @@ export default function DragDrop({ image, setImage }: Props) {
             : '사진을 드래그 드롭하여 추가해주세요'}
         </DragDropArea>
         <CameraWrapper as="label" htmlFor="profile-image_upload">
-          <Image alt="camera" src="/camera.svg" width={50} height={50} />
+          <CameraIcon />
+          {/* <Image alt="camera" src="/camera.svg" width={50} height={50} /> */}
         </CameraWrapper>
       </PreviewWrapper>
       <InputContainer>
@@ -73,7 +63,6 @@ export default function DragDrop({ image, setImage }: Props) {
           id="profile-image_upload"
           type="file"
           accept="image/png, image/jpeg, image/jpg"
-          multiple={false}
           onChange={onChangeImage}
         />
       </InputContainer>
@@ -116,6 +105,9 @@ const CameraWrapper = styled.div`
   border-radius: 1rem;
   background-color: ${({ theme }) => theme.grayColor};
   border: 2px solid ${({ theme }) => theme.fontColor.contentColor};
+  svg {
+    width: 5rem;
+  }
 `;
 
 const DragDropArea = styled.label<{ isDragging: boolean }>`
