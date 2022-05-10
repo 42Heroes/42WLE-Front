@@ -1,4 +1,5 @@
-import { ReactElement, useState } from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import DragDrop from '../../components/common/DragDrop';
@@ -6,13 +7,22 @@ import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 
 export default function ProfileImage() {
+  const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
 
   const handleClickButton = () => {
     if (!image) {
       return;
     }
+    router.push('/register/introduction');
   };
+
+  useEffect(() => {
+    const persistImage = localStorage.getItem('sign_up-photo');
+    if (persistImage) {
+      setImage(persistImage);
+    }
+  }, []);
 
   return (
     <Container>
