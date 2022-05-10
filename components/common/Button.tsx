@@ -9,6 +9,7 @@ interface Props {
   outline?: boolean;
   fullWidth?: boolean;
   className?: string;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
@@ -109,6 +110,9 @@ const StyledButton = styled.button<Props>`
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   & + & {
     margin-left: 1rem;
+  }
+  &:disabled {
+    opacity: 0.6;
   }
   ${colorStyles}
   ${sizeStyles}
