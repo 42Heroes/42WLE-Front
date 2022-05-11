@@ -3,8 +3,8 @@ import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import useDragDrop from '../../hooks/useDragDrop';
 import { encodeBase64ImageFile } from '../../library/ImageConverter';
-import CameraIcon from '../../public/icons/camera.svg';
-import UserIcon from '../../public/icons/user.svg';
+import CameraIcon from '../../public/assets/icons/camera.svg';
+import UserIcon from '../../public/assets/icons/user.svg';
 
 interface Props {
   image: string | null;

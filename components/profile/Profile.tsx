@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import media from '../../styles/media';
 import Button from '../common/Button';
-import FTLogo from '../../public/icons/42Logo.svg';
+import FTLogo from '../../public/assets/icons/42Logo.svg';
 import Language from '../common/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GitHubIcon from '@mui/icons-material/GitHub';

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '../components/common/Button';
 import Image from 'next/image';
 import media from '../styles/media';
-import FTLogo from '../components/common/FTLogo';
+import FTLogo from '../public/assets/icons/42Logo.svg';
 import { ReactElement } from 'react';
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
         <TextContainer>
           <h1>
             Master your language <br /> with
-            <StyledLogo width="60" />
+            <FTLogo />
           </h1>
           <p>
             Communicate with 42 cadets worldwide. <br />
@@ -27,7 +27,7 @@ export default function Home() {
       <ImageWrapper>
         <Image
           alt="World Map"
-          src="/worldMap.svg"
+          src="/assets/worldMap.svg"
           width={3000}
           height={2000}
           objectFit="cover"
@@ -63,7 +63,6 @@ const TextContainer = styled.div`
   flex-direction: column;
   vertical-align: middle;
   margin-bottom: 6rem;
-
   h1 {
     color: ${({ theme }) => theme.fontColor.titleColor};
     font-size: 7rem;
@@ -75,6 +74,11 @@ const TextContainer = styled.div`
     color: ${({ theme }) => theme.fontColor.contentColor};
     font-size: 2rem;
     line-height: 2.5rem;
+  }
+  svg {
+    width: 6rem;
+    fill: white;
+    margin-left: 1rem;
   }
 `;
 

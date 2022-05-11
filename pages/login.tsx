@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import Button from '../components/common/Button';
 import { ReactElement } from 'react';
 import LoginLayout from '../components/layout/LoginLayout';
-import FTLogo from '../public/icons/42Logo.svg';
+import FTLogo from '../public/assets/icons/42Logo.svg';
 
 export default function Login() {
-  const handleClickLoginButton = () => {
+  const handleLoginButtonClick = () => {
     // TODO: oAuth 로그인 로직
   };
   return (
@@ -18,7 +18,7 @@ export default function Login() {
         type="button"
         size="large"
         color="blue"
-        onClick={handleClickLoginButton}
+        onClick={handleLoginButtonClick}
       >
         <FTLogo />
         Sign In with 42 Intra
