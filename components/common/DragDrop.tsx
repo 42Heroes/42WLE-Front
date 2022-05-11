@@ -4,10 +4,11 @@ import styled from 'styled-components';
 import useDragDrop from '../../hooks/useDragDrop';
 import { encodeBase64ImageFile } from '../../library/ImageConverter';
 import CameraIcon from '../../public/icons/camera.svg';
+import UserIcon from '../../public/icons/user.svg';
 
 interface Props {
   image: string | null;
-  setImage: React.Dispatch<React.SetStateAction<string | null>>;
+  setImage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function DragDrop({ image, setImage }: Props) {
@@ -36,26 +37,32 @@ export default function DragDrop({ image, setImage }: Props) {
   return (
     <Container ref={dragContainerRef}>
       <PreviewWrapper>
-        <Image
-          className="profile-image"
-          alt="profile image preview"
-          // TODO: default Image 설정해주기
-          src={image ?? '/languages/korean.svg'}
-          width={280}
-          height={280}
-        />
-        <DragDropArea
-          htmlFor="profile-image_upload"
-          ref={dragRef}
-          isDragging={isDragging}
-        >
-          {isDragging
-            ? '사진을 올려주세용'
-            : '사진을 드래그 드롭하여 추가해주세요'}
-        </DragDropArea>
+        <ImageWrapper isEmpty={!image}>
+          {image ? (
+            <Image
+              className="profile-image"
+              alt="profile image preview"
+              src={image}
+              width={280}
+              height={280}
+            />
+          ) : (
+            <UserIcon />
+          )}
+          <DragDropArea
+            htmlFor="profile-image_upload"
+            ref={dragRef}
+            isDragging={isDragging}
+          >
+            {image
+              ? isDragging && 'Drag your file here'
+              : isDragging
+              ? 'Drop your file here'
+              : 'Drag your file here'}
+          </DragDropArea>
+        </ImageWrapper>
         <CameraWrapper as="label" htmlFor="profile-image_upload">
           <CameraIcon />
-          {/* <Image alt="camera" src="/camera.svg" width={50} height={50} /> */}
         </CameraWrapper>
       </PreviewWrapper>
       <InputContainer>
@@ -84,6 +91,17 @@ const InputContainer = styled.div`
   margin-bottom: 5rem;
   input {
     display: none;
+  }
+`;
+
+const ImageWrapper = styled.div<{ isEmpty: boolean }>`
+  border: 8px solid;
+  border-radius: 1rem;
+  border-color: ${({ theme, isEmpty }) =>
+    isEmpty ? theme.fontColor.contentColor : theme.bgColor};
+  svg {
+    width: 28rem;
+    fill: ${({ theme }) => theme.fontColor.contentColor};
   }
 `;
 
@@ -119,6 +137,7 @@ const DragDropArea = styled.label<{ isDragging: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 2rem;
   transition: background-color 0.2s ease-in-out;
   color: ${({ theme }) => theme.fontColor.titleColor};
   background-color: ${({ isDragging }) =>
