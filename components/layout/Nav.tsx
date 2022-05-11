@@ -54,6 +54,8 @@ export default function Nav() {
 }
 
 const Container = styled.nav`
+  /* position: fixed;
+  top: 6rem; */
   display: grid;
   grid-template-rows: 2fr 1fr;
   border-right: 1px solid ${({ theme }) => theme.grayColor};

@@ -23,13 +23,14 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 6rem 1fr;
   grid-template-rows: 6rem 1fr;
-  min-height: 100vh;
-  min-width: 100vw;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const Main = styled.main`
   min-width: 100%;
   min-height: 100%;
+  overflow-y: scroll;
 `;
 
 const EmptyBox = styled.div`
