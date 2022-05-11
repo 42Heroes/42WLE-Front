@@ -18,23 +18,31 @@ export default function Nav() {
     <Container>
       <UpperNav>
         <Link href="/find" passHref>
-          <IconContainer isActive={router.pathname === '/find' ? true : false}>
+          <IconContainer
+            isActive={router.pathname.includes('/find') ? true : false}
+          >
             <PersonAddAltOutlinedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
         <Link href="/chat" passHref>
-          <IconContainer isActive={router.pathname === '/chat' ? true : false}>
+          <IconContainer
+            isActive={router.pathname.includes('/chat') ? true : false}
+          >
             <ChatRoundedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
         <Link href="/board" passHref>
-          <IconContainer isActive={router.pathname === '/board' ? true : false}>
+          <IconContainer
+            isActive={router.pathname.includes('/board') ? true : false}
+          >
             <LibraryBooksRoundedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
       </UpperNav>
       <LowerNav>
-        <IconContainer isActive={router.pathname === '/mypage' ? true : false}>
+        <IconContainer
+          isActive={router.pathname.includes('/mypage') ? true : false}
+        >
           <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
         </IconContainer>
         <IconContainer isActive={false}>
@@ -52,11 +60,11 @@ const Container = styled.nav`
 `;
 
 const IconContainer = styled.div<Prop>`
-  color: ${(props) =>
-    props.isActive
+  color: ${(prop) =>
+    prop.isActive
       ? ({ theme }) => theme.pointColor
       : ({ theme }) => theme.fontColor.contentColor};
-  background-color: ${(props) => (props.isActive ? '#242526' : 'none')};
+  background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
   margin-top: 3rem;
   padding: 1rem 1.5rem;
   border-radius: 1rem;

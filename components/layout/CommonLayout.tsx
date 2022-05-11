@@ -5,13 +5,14 @@ import Nav from './Nav';
 
 interface Props {
   children: React.ReactElement;
+  headerText: string;
 }
 
-export default function CommonLayout({ children }: Props) {
+export default function CommonLayout({ children, headerText }: Props) {
   return (
     <Container>
       <EmptyBox />
-      <Header />
+      <Header headerText={headerText} />
       <Nav />
       <Main>{children}</Main>
     </Container>

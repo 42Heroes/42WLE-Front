@@ -1,18 +1,10 @@
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-function getHeaderText(pathname: string) {
-  if (pathname.includes('/find')) return 'Find';
-  if (pathname.includes('/chat')) return 'Chat';
-  if (pathname.includes('/board')) return 'Board';
-  if (pathname.includes('/mypage')) return 'My Page';
-  if (pathname.includes('/profile-setting')) return 'Profile Setting';
+interface Props {
+  headerText: string;
 }
 
-export default function Header() {
-  const router = useRouter();
-  const headerText = getHeaderText(router.pathname);
-
+export default function Header({ headerText }: Props) {
   return <Container>{headerText}</Container>;
 }
 
