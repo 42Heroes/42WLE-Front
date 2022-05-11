@@ -75,4 +75,8 @@ const UpperNav = styled.div`
     bottom: 0;
   }
 `;
-const LowerNav = styled.div``;
+const LowerNav = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;

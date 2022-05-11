@@ -31,6 +31,10 @@ const Main = styled.main`
   min-width: 100%;
   min-height: 100%;
   overflow-y: scroll;
+  -ms-overflow-style: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const EmptyBox = styled.div`
