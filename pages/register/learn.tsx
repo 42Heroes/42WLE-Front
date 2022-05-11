@@ -6,6 +6,7 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
+import { useRouter } from 'next/router';
 
 interface LanguageInfo {
   language: string;
@@ -13,48 +14,68 @@ interface LanguageInfo {
 }
 
 export default function Learn() {
-  const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
+  const router = useRouter();
+
+  const [languages] = useState(languagesBase as LanguageInfo[]);
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
 
-  useEffect(() => {
-    const persistSelected = localStorage.getItem('learnLanguages');
-    console.log(persistSelected);
-    if (persistSelected) {
-      setSelectedLanguages(JSON.parse(persistSelected));
-    }
-  }, []);
-
-  const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
+  const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
     const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
     setSelectedLanguages(addSelectedLanguages);
     localStorage.setItem(
-      'learnLanguages',
+      'sign_up-learn-languages',
       JSON.stringify(addSelectedLanguages),
     );
   };
 
-  const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
+  const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
     const filteredLanguages = selectedLanguages.filter(
       (item) => item !== clickedLanguage,
     );
     setSelectedLanguages(filteredLanguages);
-    localStorage.setItem('learnLanguages', JSON.stringify(filteredLanguages));
+    localStorage.setItem(
+      'sign_up-learn-languages',
+      JSON.stringify(filteredLanguages),
+    );
   };
+
+  const handleNextButtonClick = () => {
+    if (selectedLanguages.length < 1) {
+      return;
+    }
+    router.push('/register/native');
+  };
+
+  useEffect(() => {
+    const persistSelectedLearnLanguages = JSON.parse(
+      localStorage.getItem('sign_up-learn-languages') ?? 'null',
+    );
+    if (persistSelectedLearnLanguages && persistSelectedLearnLanguages.length) {
+      setSelectedLanguages(persistSelectedLearnLanguages);
+    }
+  }, []);
+
   return (
     <Container>
       <Title>Which languages do you want to practice?</Title>
       <LanguageDropdown
-        onClickLanguage={handleSelectedLanguage}
+        onClickLanguage={handleLanguageClick}
         languages={languages}
         selectedLanguages={selectedLanguages}
       />
       <LanguageSelected
-        onClickDelete={handleDeletedLanguage}
+        onClickLanguage={handleSelectedLanguageClick}
         selectedLanguages={selectedLanguages}
       />
-      <StyledButton type="button" size="medium" color="blue">
+      <StyledButton
+        type="button"
+        size="medium"
+        color="blue"
+        onClick={handleNextButtonClick}
+        disabled={!selectedLanguages.length}
+      >
         NEXT
       </StyledButton>
     </Container>

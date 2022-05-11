@@ -22,29 +22,29 @@ export default function ExtraInfo() {
     inputTagValidator,
   );
   const [github, onChangeGithub, setGithub] = useInput('');
-  const [hashTags, setHashTags] = useState<string[]>([]);
+  const [hashTags, setHashTags] = useState(['']);
 
-  const addHashTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputTag) {
       setHashTags([...hashTags, inputTag.trim()]);
       setInputTag('');
     }
   };
 
-  const deleteTag = (targetIndex: number) => {
+  const handleHashtagClick = (targetIndex: number) => {
     const filteredHashTags = hashTags.filter(
       (_, index) => index !== targetIndex,
     );
     setHashTags(filteredHashTags);
   };
 
-  const handleClickNextButton = () => {
+  const handleNextButtonClick = () => {
     localStorage.setItem('sign_up-hashTag', JSON.stringify(hashTags));
     localStorage.setItem('sign_up-github', github);
     router.push('/register/preview');
   };
 
-  const handleClickSkipButton = () => {
+  const handleSkipButtonClick = () => {
     router.push('/register/preview');
   };
 
@@ -72,11 +72,11 @@ export default function ExtraInfo() {
           placeholder="ex) React"
           value={inputTag}
           onChange={onChangeInputTag}
-          onKeyDown={addHashTag}
+          onKeyDown={handleKeydown}
         />
         <HashTagContainer>
           {hashTags.map((tag, i) => (
-            <HashTag key={tag + i} onClick={() => deleteTag(i)}>
+            <HashTag key={tag + i} onClick={() => handleHashtagClick(i)}>
               #{tag}
               <IconWrapper>
                 <ClearIcon />
@@ -97,7 +97,7 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
-          onClick={handleClickNextButton}
+          onClick={handleNextButtonClick}
         >
           NEXT
         </NextButton>
@@ -105,7 +105,7 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
-          onClick={handleClickSkipButton}
+          onClick={handleSkipButtonClick}
         >
           SKIP
         </SkipButton>

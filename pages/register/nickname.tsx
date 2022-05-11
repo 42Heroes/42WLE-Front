@@ -22,7 +22,7 @@ export default function Nickname() {
     nicknameValidator,
   );
 
-  const handleClickNextButton = () => {
+  const handleNextButtonClick = () => {
     if (nickname.length === 0 || nickname.length > 20) {
       return;
     }
@@ -31,9 +31,19 @@ export default function Nickname() {
   };
 
   useEffect(() => {
-    const persistNickname = localStorage.getItem('Nickname');
-    if (persistNickname) {
-      setNickname(persistNickname);
+    const persistSelectedNativeLanguages = JSON.parse(
+      localStorage.getItem('sign_up-native-languages') ?? 'null',
+    );
+    const persistNickname = localStorage.getItem('sign_up-nickname');
+    if (
+      persistSelectedNativeLanguages &&
+      persistSelectedNativeLanguages.length
+    ) {
+      if (persistNickname) {
+        setNickname(persistNickname);
+      }
+    } else {
+      router.replace('/register/native');
     }
   }, []);
 
@@ -49,7 +59,7 @@ export default function Nickname() {
         size="medium"
         color="blue"
         disabled={!nickname.length}
-        onClick={handleClickNextButton}
+        onClick={handleNextButtonClick}
       >
         NEXT
       </StyledButton>
@@ -100,6 +110,7 @@ const Input = styled.input`
   transition: border-color 0.2s ease-in-out;
   padding-bottom: 1rem;
   ${({ theme }) => theme.font.bodyRegular};
+  font-size: 4rem;
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.fontColor.titleColor};

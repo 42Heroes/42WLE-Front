@@ -6,53 +6,108 @@ import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
 import { ReactElement, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 interface LanguageInfo {
   language: string;
   flag: string;
 }
 export default function Native() {
+  const router = useRouter();
+
   const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
 
-  useEffect(() => {
-    const persistSelected = localStorage.getItem('nativeLanguages');
-    console.log(persistSelected);
-    if (persistSelected) {
-      setSelectedLanguages(JSON.parse(persistSelected));
-    }
-  }, []);
-  const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
-    const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
-    setSelectedLanguages(addSelectedLanguages);
+  const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
+    const newSelectedLanguages = [...selectedLanguages, clickedLanguage];
+    setSelectedLanguages(newSelectedLanguages);
     localStorage.setItem(
-      'nativeLanguages',
-      JSON.stringify(addSelectedLanguages),
+      'sign_up-native-languages',
+      JSON.stringify(newSelectedLanguages),
     );
   };
 
-  const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
+  const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
     const filteredLanguages = selectedLanguages.filter(
-      (item) => item !== clickedLanguage,
+      (language) => language !== clickedLanguage,
     );
     setSelectedLanguages(filteredLanguages);
-    localStorage.setItem('nativeLanguages', JSON.stringify(filteredLanguages));
+    localStorage.setItem(
+      'sign_up-native-languages',
+      JSON.stringify(filteredLanguages),
+    );
   };
+
+  const handleClickNextButton = () => {
+    if (!selectedLanguages.length) {
+      return;
+    }
+    localStorage.setItem(
+      'sign_up-native-languages',
+      JSON.stringify(selectedLanguages),
+    );
+    router.push('/register/nickname');
+  };
+
+  useEffect(() => {
+    const persistSelectedLearnLanguages: LanguageInfo[] = JSON.parse(
+      localStorage.getItem('sign_up-learn-languages') ?? 'null',
+    );
+    const persistSelectedNativeLanguages: LanguageInfo[] = JSON.parse(
+      localStorage.getItem('sign_up-native-languages') ?? 'null',
+    );
+    if (persistSelectedLearnLanguages && persistSelectedLearnLanguages.length) {
+      const filteredLanguages = languages
+        .map((item) =>
+          persistSelectedLearnLanguages.some(
+            (selectedLanguage) => selectedLanguage.language === item.language,
+          )
+            ? null
+            : item,
+        )
+        .filter((element) => element !== null);
+      setLanguages(filteredLanguages as LanguageInfo[]);
+      if (
+        persistSelectedNativeLanguages &&
+        persistSelectedNativeLanguages.length
+      ) {
+        const filteredSelectedNativeLanguages = persistSelectedNativeLanguages
+          .map((item) =>
+            persistSelectedLearnLanguages.some(
+              (selectedLanguage) => selectedLanguage.language === item.language,
+            )
+              ? null
+              : item,
+          )
+          .filter((item) => item !== null);
+        setSelectedLanguages(filteredSelectedNativeLanguages as LanguageInfo[]);
+      }
+    } else {
+      router.replace('/register/learn');
+    }
+  }, []);
+
   return (
     <Container>
       <Title>Which languages can you speak fluently?</Title>
       <LanguageDropdown
-        onClickLanguage={handleSelectedLanguage}
+        onClickLanguage={handleLanguageClick}
         languages={languages}
         selectedLanguages={selectedLanguages}
       />
       <LanguageSelected
-        onClickDelete={handleDeletedLanguage}
+        onClickLanguage={handleSelectedLanguageClick}
         selectedLanguages={selectedLanguages}
       />
-      <StyledButton type="button" size="medium" color="blue">
+      <StyledButton
+        type="button"
+        size="medium"
+        color="blue"
+        onClick={handleClickNextButton}
+        disabled={!selectedLanguages.length}
+      >
         NEXT
       </StyledButton>
     </Container>
@@ -74,5 +129,5 @@ const Container = styled.div`
 const StyledButton = styled(Button)`
   background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
-  padding: 0 10rem 0 10rem;
+  padding: 0 10rem;
 `;

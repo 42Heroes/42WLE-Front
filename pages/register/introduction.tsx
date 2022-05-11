@@ -11,7 +11,7 @@ export default function Introduction() {
   const maximumLength = 500;
   const [introduction, setIntroduction] = useState('');
 
-  const handleInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  const onChangeInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const {
       currentTarget: { value },
     } = e;
@@ -20,7 +20,7 @@ export default function Introduction() {
     }
   };
 
-  const handleClickButton = () => {
+  const handleButtonClick = () => {
     if (introduction.length < 10 || introduction.length > maximumLength) {
       return;
     }
@@ -29,9 +29,14 @@ export default function Introduction() {
   };
 
   useEffect(() => {
+    const persistPhoto = localStorage.getItem('sign_up-photo');
     const persistIntroduction = localStorage.getItem('sign_up-introduction');
-    if (persistIntroduction) {
-      setIntroduction(persistIntroduction);
+    if (persistPhoto) {
+      if (persistIntroduction) {
+        setIntroduction(persistIntroduction);
+      }
+    } else {
+      router.replace('/register/photo');
     }
   }, []);
 
@@ -39,7 +44,7 @@ export default function Introduction() {
     <Container>
       <Title>Tell us about yourself!</Title>
       <InputContainer>
-        <Input value={introduction} onChange={handleInputChange} />
+        <Input value={introduction} onChange={onChangeInput} />
         <span>{`${introduction.length} / ${maximumLength}`}</span>
       </InputContainer>
       <StyledButton
@@ -47,7 +52,7 @@ export default function Introduction() {
         size="medium"
         color="blue"
         disabled={!introduction.length || introduction.length < 10}
-        onClick={handleClickButton}
+        onClick={handleButtonClick}
       >
         NEXT
       </StyledButton>

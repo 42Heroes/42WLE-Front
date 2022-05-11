@@ -8,9 +8,9 @@ import LoginLayout from '../../components/layout/LoginLayout';
 
 export default function ProfileImage() {
   const router = useRouter();
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState('');
 
-  const handleClickButton = () => {
+  const handleNextButtonClick = () => {
     if (!image) {
       return;
     }
@@ -18,9 +18,14 @@ export default function ProfileImage() {
   };
 
   useEffect(() => {
+    const persistNickname = localStorage.getItem('sign_up-nickname');
     const persistImage = localStorage.getItem('sign_up-photo');
-    if (persistImage) {
-      setImage(persistImage);
+    if (!persistNickname) {
+      router.replace('/register/nickname');
+    } else {
+      if (persistImage) {
+        setImage(persistImage);
+      }
     }
   }, []);
 
@@ -32,8 +37,8 @@ export default function ProfileImage() {
         type="button"
         size="medium"
         color="blue"
-        disabled={!image?.length}
-        onClick={handleClickButton}
+        disabled={!image.length}
+        onClick={handleNextButtonClick}
       >
         NEXT
       </StyledButton>
