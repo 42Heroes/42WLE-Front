@@ -2,10 +2,11 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 function getHeaderText(pathname: string) {
-  if (pathname === '/find') return 'Find';
-  if (pathname === '/chat') return 'Chat';
-  if (pathname === '/board') return 'Board';
-  if (pathname === '/mypage') return 'My Page';
+  if (pathname.includes('/find')) return 'Find';
+  if (pathname.includes('/chat')) return 'Chat';
+  if (pathname.includes('/board')) return 'Board';
+  if (pathname.includes('/mypage')) return 'My Page';
+  if (pathname.includes('/profile-setting')) return 'Profile Setting';
 }
 
 export default function Header() {
