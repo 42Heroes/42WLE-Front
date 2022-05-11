@@ -4,9 +4,10 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import media from '../../styles/media';
 import Button from '../common/Button';
-
 import FTLogo from '../../public/icons/42Logo.svg';
 import Language from '../common/Language';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 interface LanguageInfo {
   language: string;
@@ -65,14 +66,16 @@ export default function Profile({ userData, className }: Props) {
               </LanguageList>
             </div>
           </LanguageContainer>
-          <HashTags>
-            <h3>Hashtags</h3>
-            <div>
-              {userData.hashtags.map((hashTag) => (
-                <HashTag key={hashTag}>#{hashTag}</HashTag>
-              ))}
-            </div>
-          </HashTags>
+          {userData.hashtags.length ? (
+            <HashTags>
+              <h3>Hashtags</h3>
+              <div>
+                {userData.hashtags.map((hashTag) => (
+                  <HashTag key={hashTag}>#{hashTag}</HashTag>
+                ))}
+              </div>
+            </HashTags>
+          ) : null}
         </UserInfoContainer>
       </UserInfo>
       <SocialInfoContainer>
@@ -80,8 +83,12 @@ export default function Profile({ userData, className }: Props) {
           <FTLogo />
           {userData.intra_id}
         </SocialInfo>
-        <SocialInfo>{userData.country}</SocialInfo>
         <SocialInfo>
+          <LocationOnIcon sx={{ fontSize: 25 }} />
+          {userData.country}
+        </SocialInfo>
+        <SocialInfo>
+          <GitHubIcon sx={{ fontSize: 25 }} />
           <Link href={`https://github.com/${userData.github_id}`}>
             <a target="_blank">https://github.com/{userData.github_id}</a>
           </Link>
@@ -122,7 +129,7 @@ const UserInfo = styled.div`
   ${media.small} {
     justify-content: space-between;
     flex-direction: row;
-    gap: 0rem;
+    gap: 6rem;
   }
 `;
 
@@ -141,6 +148,7 @@ const UserInfoContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  min-width: 26rem;
   color: ${({ theme }) => theme.grayColor};
   ${media.small} {
     align-items: flex-start;
@@ -159,6 +167,10 @@ const UserInfoContainer = styled.div`
   h2,
   h3 {
     color: ${({ theme }) => theme.fontColor.titleColor};
+    text-align: center;
+    ${media.small} {
+      text-align: left;
+    }
   }
 `;
 
@@ -193,6 +205,7 @@ const SocialInfoContainer = styled.ul`
 
 const SocialInfo = styled.li`
   display: flex;
+  align-items: center;
   gap: 1rem;
   svg {
     width: 2.3rem;
@@ -203,7 +216,6 @@ const SocialInfo = styled.li`
 const HashTags = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   h3 {
     margin-bottom: 0.8rem;
   }
