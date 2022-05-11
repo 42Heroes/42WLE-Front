@@ -18,31 +18,23 @@ export default function Nav() {
     <Container>
       <UpperNav>
         <Link href="/find" passHref>
-          <IconContainer
-            isActive={router.pathname.includes('/find') ? true : false}
-          >
+          <IconContainer isActive={router.pathname.includes('/find')}>
             <PersonAddAltOutlinedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
         <Link href="/chat" passHref>
-          <IconContainer
-            isActive={router.pathname.includes('/chat') ? true : false}
-          >
+          <IconContainer isActive={router.pathname.includes('/chat')}>
             <ChatRoundedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
         <Link href="/board" passHref>
-          <IconContainer
-            isActive={router.pathname.includes('/board') ? true : false}
-          >
+          <IconContainer isActive={router.pathname.includes('/board')}>
             <LibraryBooksRoundedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
       </UpperNav>
       <LowerNav>
-        <IconContainer
-          isActive={router.pathname.includes('/mypage') ? true : false}
-        >
+        <IconContainer isActive={router.pathname.includes('/mypage')}>
           <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
         </IconContainer>
         <IconContainer isActive={false}>
@@ -54,18 +46,14 @@ export default function Nav() {
 }
 
 const Container = styled.nav`
-  /* position: fixed;
-  top: 6rem; */
   display: grid;
   grid-template-rows: 2fr 1fr;
   border-right: 1px solid ${({ theme }) => theme.grayColor};
 `;
 
 const IconContainer = styled.div<Prop>`
-  color: ${(prop) =>
-    prop.isActive
-      ? ({ theme }) => theme.pointColor
-      : ({ theme }) => theme.fontColor.contentColor};
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.pointColor : theme.fontColor.contentColor};
   background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
   margin-top: 3rem;
   padding: 1rem 1.5rem;
