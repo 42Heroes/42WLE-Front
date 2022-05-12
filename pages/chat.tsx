@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { ReactElement } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function Chat() {
   return (
@@ -8,6 +9,8 @@ export default function Chat() {
       <LeftContainer>
         <SearchContainer>
           <input placeholder="Search" />
+
+          <SearchIcon sx={{ fontSize: 25 }} />
         </SearchContainer>
       </LeftContainer>
       <RightContainer>
@@ -32,7 +35,8 @@ const Container = styled.div`
 `;
 
 const LeftContainer = styled.div`
-  width: 40%;
+  width: 35%;
+  min-width: 30rem;
   height: 100%;
   border-right: 1px solid ${({ theme }) => theme.grayColor};
 `;
@@ -41,11 +45,16 @@ const SearchContainer = styled.div`
   width: 100%;
   height: 6rem;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  color: ${({ theme }) => theme.grayColor};
   input {
     width: 100%;
     height: 100%;
     background-color: ${({ theme }) => theme.bgColor};
-    padding: 2rem;
+    /* padding: 2rem; */
     color: ${({ theme }) => theme.grayColor};
     &:focus {
       outline: none;
@@ -54,7 +63,7 @@ const SearchContainer = styled.div`
 `;
 
 const RightContainer = styled.div`
-  width: 60%;
+  width: 65%;
   display: flex;
   flex-direction: column;
 `;
@@ -84,6 +93,9 @@ const MessageInputContainer = styled.div`
     color: ${({ theme }) => theme.fontColor.contentColor};
     ::placeholder {
       color: ${({ theme }) => theme.fontColor.contentColor};
+    }
+    &:focus {
+      outline: none;
     }
   }
 `;
