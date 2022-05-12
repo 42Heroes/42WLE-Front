@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ReactElement, useEffect, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
-import axios from 'axios';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
 
 export default function Chat() {
@@ -52,10 +52,11 @@ export default function Chat() {
         </ChatRoomList>
       </LeftContainer>
       <RightContainer>
-        {/* <NameContainer>{chats.map((chat) => chat.users. )}</NameContainer> */}
+        <NameContainer></NameContainer>
         <MessageContainer></MessageContainer>
         <MessageInputContainer>
           <input placeholder="Your messages..." />
+          <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
         </MessageInputContainer>
       </RightContainer>
     </Container>
@@ -121,12 +122,14 @@ const MessageInputContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 1rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  padding: 2rem;
+  background-color: #242526;
   input {
-    width: 95%;
-    height: 4.5rem;
-    border-radius: 1rem;
-    padding: 2rem;
-    background-color: #242526;
+    width: 100%;
+    background-color: inherit;
     color: ${({ theme }) => theme.fontColor.contentColor};
     ::placeholder {
       color: ${({ theme }) => theme.fontColor.contentColor};
@@ -134,6 +137,10 @@ const MessageInputContainer = styled.div`
     &:focus {
       outline: none;
     }
+  }
+  svg {
+    transform: rotateZ(-45deg);
+    margin-bottom: 0.5rem;
   }
 `;
 
