@@ -1,6 +1,7 @@
-import { ChangeEvent, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
+import useInput from '../../hooks/useInput';
+import LanguageDropdownItem from './LanguageDropdownList';
 
 interface LanguageInfo {
   flag: string;
@@ -11,104 +12,96 @@ interface Props {
   onClickLanguage: (item: LanguageInfo) => void;
   languages: LanguageInfo[];
   selectedLanguages: LanguageInfo[];
+  isOpened: boolean;
+  className?: string;
 }
 
 export default function LanguageDropdown({
   onClickLanguage,
   languages,
   selectedLanguages,
+  isOpened,
+  className,
 }: Props) {
-  const [toggle, setToggle] = useState<boolean>(false);
-  const [inputText, setInputText] = useState<string>('');
+  const [inputText, onChangeInputText] = useInput('');
   const [searchedItems, setSearchedItems] = useState<LanguageInfo[]>([]);
 
-  const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
+  const removedDuplicateLanguages = useMemo(
+    () =>
+      languages.map((item) =>
+        selectedLanguages.some(
+          (selectedItem) => selectedItem.language === item.language,
+        )
+          ? null
+          : item,
+      ),
+    [selectedLanguages, languages],
+  );
+
+  const removedDuplicateSearchLanguages = useMemo(
+    () =>
+      searchedItems.map((item) =>
+        selectedLanguages.some(
+          (selectedItem) => selectedItem.language === item.language,
+        )
+          ? null
+          : item,
+      ),
+    [selectedLanguages, searchedItems],
+  );
+
+  useEffect(() => {
     setSearchedItems(
-      languages.filter((item: LanguageInfo) =>
-        item.language.toLowerCase().includes(e.target.value.toLowerCase()),
+      languages.filter(({ language }: LanguageInfo) =>
+        language.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
-  };
-
-  const htmlPrint = (item: LanguageInfo) => {
-    return (
-      <LanguageList
-        key={item.language}
-        onClick={() => {
-          onClickLanguage(item);
-          setToggle(!toggle);
-        }}
-      >
-        <Image alt={item.language} src={item.flag} width={18} height={11} />
-        <LanguageName>{item.language}</LanguageName>
-      </LanguageList>
-    );
-  };
+  }, [inputText]);
 
   return (
-    <TopContainer>
-      {selectedLanguages.length < 3 && (
-        <AddBox onClick={() => setToggle(!toggle)}>ADD LANGUAGE</AddBox>
-      )}
-      {toggle && (
-        <Container>
+    <>
+      {isOpened && (
+        <Container className={className}>
           <Input
             value={inputText}
-            onChange={handleInputText}
+            onChange={onChangeInputText}
             type="text"
             placeholder="Enter your language"
           />
           <ul>
             {inputText
-              ? searchedItems.map((item) =>
-                  selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
-                  )
-                    ? null
-                    : htmlPrint(item),
+              ? removedDuplicateSearchLanguages.map(
+                  (item) =>
+                    item && (
+                      <LanguageDropdownItem
+                        key={item.language}
+                        language={item}
+                        onClickLanguage={onClickLanguage}
+                      />
+                    ),
                 )
-              : languages.map((item) =>
-                  selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
-                  )
-                    ? null
-                    : htmlPrint(item),
+              : removedDuplicateLanguages.map(
+                  (item) =>
+                    item && (
+                      <LanguageDropdownItem
+                        key={item.language}
+                        language={item}
+                        onClickLanguage={onClickLanguage}
+                      />
+                    ),
                 )}
           </ul>
         </Container>
       )}
-    </TopContainer>
+    </>
   );
 }
 
-const TopContainer = styled.div`
-  cursor: pointer;
-  position: relative;
-  width: 34rem;
-`;
-
-const AddBox = styled.div`
-  border: 0.1rem solid;
-  border-color: ${({ theme }) => theme.grayColor};
-  border-radius: 0.5rem;
-  height: 5rem;
-  color: ${({ theme }) => theme.grayColor};
-  font-size: 2.5rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 1.5rem;
-  margin-top: 2rem;
-  margin-bottom: 4rem;
-  font-family: JetBrainsMono, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-`;
-
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  left: 100%;
+  left: 105%;
   top: 0;
   width: 17rem;
   height: 14rem;
@@ -116,8 +109,6 @@ const Container = styled.div`
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   border-top-left-radius: 0;
-  display: flex;
-  flex-direction: column;
   ul {
     overflow-y: scroll;
   }
@@ -135,25 +126,5 @@ const Input = styled.input`
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   &:focus {
     outline: none;
-  }
-`;
-
-const LanguageName = styled.div`
-  margin-left: 0.7rem;
-  text-transform: uppercase;
-`;
-
-const LanguageList = styled.li`
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  color: ${({ theme }) => theme.fontColor.commentColor};
-
-  span {
-    color: ${({ theme }) => theme.fontColor.titleColor};
-  }
-  &:hover {
-    color: ${({ theme }) => theme.fontColor.titleColor};
-    background-color: ${({ theme }) => theme.fontColor.commentColor};
   }
 `;

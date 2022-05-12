@@ -35,12 +35,11 @@ const SelectedList = styled.li`
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border: 0.1rem solid;
+  border: 0.1rem solid ${({ theme }) => theme.grayColor};
   border-radius: 0.5rem;
-  border-color: ${({ theme }) => theme.grayColor};
   height: 5rem;
   width: 34rem;
-  margin: 2rem 0rem;
+  margin-bottom: 2rem;
   font-family: JetBrainsMono, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: ${({ theme }) => theme.grayColor};

@@ -20,6 +20,7 @@ export default function Learn() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );
+  const [isDropdownOpened, setIsDropdownOpened] = useState(false);
 
   const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
     const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
@@ -28,6 +29,7 @@ export default function Learn() {
       'sign_up-learn-languages',
       JSON.stringify(addSelectedLanguages),
     );
+    setIsDropdownOpened(false);
   };
 
   const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
@@ -60,16 +62,30 @@ export default function Learn() {
   return (
     <Container>
       <Title>Which languages do you want to practice?</Title>
-      <LanguageDropdown
-        onClickLanguage={handleLanguageClick}
-        languages={languages}
-        selectedLanguages={selectedLanguages}
-      />
-      <LanguageSelected
-        onClickLanguage={handleSelectedLanguageClick}
-        selectedLanguages={selectedLanguages}
-      />
-      <StyledButton
+      <LanguageContainer>
+        {selectedLanguages.length < 3 && (
+          <StyledAddButton
+            type="button"
+            color="blue"
+            size="medium"
+            fullWidth
+            onClick={() => setIsDropdownOpened(!isDropdownOpened)}
+          >
+            ADD LANGUAGE
+          </StyledAddButton>
+        )}
+        <LanguageDropdown
+          onClickLanguage={handleLanguageClick}
+          languages={languages}
+          selectedLanguages={selectedLanguages}
+          isOpened={isDropdownOpened}
+        />
+        <LanguageSelected
+          onClickLanguage={handleSelectedLanguageClick}
+          selectedLanguages={selectedLanguages}
+        />
+      </LanguageContainer>
+      <StyledNextButton
         type="button"
         size="medium"
         color="blue"
@@ -77,7 +93,7 @@ export default function Learn() {
         disabled={!selectedLanguages.length}
       >
         NEXT
-      </StyledButton>
+      </StyledNextButton>
     </Container>
   );
 }
@@ -94,8 +110,26 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const StyledButton = styled(Button)`
+const StyledNextButton = styled(Button)`
   background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
-  padding: 0 10rem 0 10rem;
+  padding: 0 10rem;
+`;
+
+const LanguageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+
+const StyledAddButton = styled(Button)`
+  height: 5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: ${({ theme }) => theme.grayColor};
+  border: 0.1rem solid ${({ theme }) => theme.grayColor};
+  background-color: inherit;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  width: 34rem;
 `;
