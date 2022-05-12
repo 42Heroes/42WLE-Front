@@ -1,20 +1,58 @@
 import styled from 'styled-components';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
+import ChatRoom from '../components/chat/ChatRoom';
 
 export default function Chat() {
+  // const [user, setUser] = useState([]);
+
+  // useEffect(() => {
+  //   fetch('/me/chats')
+  //     .then((response) => response.json())
+  //     .then((json) => setUser(json));
+  // }, []);
+
+  const [user, setUser] = useState({ nickname: 'sjo' });
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await (await fetch('/me/chats')).json();
+      setChats(res);
+      // console.log(res);
+      // console.log(
+      //   res[0].users[0].nickname === user.nickname
+      //     ? res[0].users[1].nickname
+      //     : res[1].users[0].nickname,
+      // );
+      // console.log(
+      //   res[0].users.filter((a) => a.nickname !== user.nickname).nickname,
+      // );
+    })();
+    console.log('1');
+  }, []);
+
+  // console.log(chats[0].users.filter((a) => a.nickname !== user.nickname));
+
+  // const chatRoomName =
+
   return (
     <Container>
       <LeftContainer>
         <SearchContainer>
           <input placeholder="Search" />
-
           <SearchIcon sx={{ fontSize: 25 }} />
         </SearchContainer>
+        <ChatRoomList>
+          {chats.map((chat) => (
+            <ChatRoom key={chat._id} chat={chat} user={user} />
+          ))}
+        </ChatRoomList>
       </LeftContainer>
       <RightContainer>
-        <NameContainer></NameContainer>
+        {/* <NameContainer>{chats.map((chat) => chat.users. )}</NameContainer> */}
         <MessageContainer></MessageContainer>
         <MessageInputContainer>
           <input placeholder="Your messages..." />
@@ -54,7 +92,6 @@ const SearchContainer = styled.div`
     width: 100%;
     height: 100%;
     background-color: ${({ theme }) => theme.bgColor};
-    /* padding: 2rem; */
     color: ${({ theme }) => theme.grayColor};
     &:focus {
       outline: none;
@@ -98,4 +135,9 @@ const MessageInputContainer = styled.div`
       outline: none;
     }
   }
+`;
+
+const ChatRoomList = styled.ul`
+  display: flex;
+  flex-direction: column;
 `;
