@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { ReactElement, useEffect, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
 
@@ -55,6 +56,7 @@ export default function Chat() {
         <NameContainer></NameContainer>
         <MessageContainer></MessageContainer>
         <MessageInputContainer>
+          <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
           <input placeholder="Your messages..." />
           <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
         </MessageInputContainer>
@@ -125,11 +127,12 @@ const MessageInputContainer = styled.div`
   margin: 1rem;
   height: 4.5rem;
   border-radius: 1rem;
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: #242526;
   input {
     width: 100%;
     background-color: inherit;
+    margin-left: 1rem;
     color: ${({ theme }) => theme.fontColor.contentColor};
     ::placeholder {
       color: ${({ theme }) => theme.fontColor.contentColor};
@@ -139,8 +142,10 @@ const MessageInputContainer = styled.div`
     }
   }
   svg {
-    transform: rotateZ(-45deg);
-    margin-bottom: 0.5rem;
+    &:last-child {
+      transform: rotateZ(-45deg);
+      margin-bottom: 0.5rem;
+    }
   }
 `;
 
