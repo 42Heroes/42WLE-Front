@@ -1,8 +1,12 @@
-import { UserCardProps } from '../../interfaces/user_interfaces';
+import { UserProps } from '../../interfaces/user_interfaces';
 import styled from 'styled-components';
 import Image from 'next/image';
-let userCardProps: UserCardProps;
-export default function UserCard(userCardData: UserCardProps) {
+
+interface Props {
+  userCardData: UserProps;
+}
+
+export default function UserCard({ userCardData }: Props) {
   return (
     <Container>
       <Userimg>

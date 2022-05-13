@@ -3,14 +3,12 @@ export interface LanguageProps {
   flag: string;
 }
 
-export interface UserCardProps {
+export interface UserProps {
+  _id: number;
   nickname: string;
   image_url: string;
   n_language: LanguageProps[];
   l_language: LanguageProps[];
-}
-
-export interface UserProps extends UserCardProps {
   intra_id: string;
   campus: string;
   createdAt: Date;
@@ -18,7 +16,7 @@ export interface UserProps extends UserCardProps {
   country: string;
   github_id: string;
   introduction: string;
-  chat_room: string[];
+  chat_room: number[];
   liked_users: string[];
   saved_posts: string[];
   posts: string[];
