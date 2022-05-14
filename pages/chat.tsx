@@ -5,6 +5,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
+import ChatContent from '../components/chat/ChatContent';
 import { dummyData } from '../library/chatData';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../library/user_atom';
@@ -34,7 +35,12 @@ export default function Chat() {
       </LeftContainer>
       <RightContainer>
         <NameContainer></NameContainer>
-        <MessageContainer></MessageContainer>
+        <MessageContainer>
+          <ChatContent
+            user={user.nickname}
+            chat={dummyData.filter((chat) => chat._id === activeChatRoom)}
+          />
+        </MessageContainer>
         <MessageInputContainer>
           <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
           <input placeholder="Your messages..." />
