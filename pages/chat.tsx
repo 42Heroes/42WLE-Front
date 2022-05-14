@@ -1,13 +1,17 @@
 import styled from 'styled-components';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
 import { dummyData } from '../library/chatData';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../library/user_atom';
 
 export default function Chat() {
+  const user = useRecoilValue(userState);
+
   return (
     <Container>
       <LeftContainer>
@@ -17,7 +21,7 @@ export default function Chat() {
         </SearchContainer>
         <ChatRoomList>
           {dummyData.map((chat) => (
-            <ChatRoom key={chat._id} chat={chat} user="user" />
+            <ChatRoom key={chat._id} chat={chat} user={user.nickname} />
           ))}
         </ChatRoomList>
       </LeftContainer>

@@ -9,6 +9,7 @@ interface Props {
 export default function ChatRoom({ chat, user }: Props) {
   const chatRoomName = chat.users.filter((a: any) => a.nickname !== user)[0];
   const lastMessage = chat.messages[chat.messages.length - 1].content;
+
   return (
     <Container>
       <ImageContainer>

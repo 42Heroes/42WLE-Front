@@ -20,7 +20,7 @@ interface userProps {
     join_data:Date
 }
 
-export const userData = [{
+export const userData = ({
     _id: 124352,
     nickname:'junseo',
     intra_id: "junseo",
@@ -39,7 +39,7 @@ export const userData = [{
     l_language:['english', 'japanese'],
     join_data: new Date('2015-04-20T15:37:23')
     
-}];
+});
 
 export const userState = atom<userProps[]>({
     key: 'userState', 
