@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -11,6 +11,7 @@ import { userState } from '../library/user_atom';
 
 export default function Chat() {
   const user = useRecoilValue(userState);
+  const [activeChatRoom, setActiveChatRoom] = useState('123');
 
   return (
     <Container>
@@ -21,7 +22,13 @@ export default function Chat() {
         </SearchContainer>
         <ChatRoomList>
           {dummyData.map((chat) => (
-            <ChatRoom key={chat._id} chat={chat} user={user.nickname} />
+            <div key={chat._id} onClick={() => setActiveChatRoom(chat._id)}>
+              <ChatRoom
+                chat={chat}
+                user={user.nickname}
+                isActive={activeChatRoom === chat._id}
+              />
+            </div>
           ))}
         </ChatRoomList>
       </LeftContainer>

@@ -4,23 +4,25 @@ import styled from 'styled-components';
 interface Props {
   chat: Record<string, unknown>;
   user: string;
+  isActive: boolean;
 }
 
-export default function ChatRoom({ chat, user }: Props) {
+export default function ChatRoom({ chat, user, isActive }: Props) {
   const chatRoomName = chat.users.filter((a: any) => a.nickname !== user)[0];
   const lastMessage = chat.messages[chat.messages.length - 1].content;
 
   return (
-    <Container>
+    <Container isActive={isActive}>
       <ImageContainer>
-        <Image
-          alt="pic"
-          src={chatRoomName.image}
-          width={60}
-          height={60}
-          layout="responsive"
-          // objectFit="cover"
-        />
+        {chatRoomName.image && (
+          <Image
+            alt="pic"
+            src={chatRoomName.image}
+            width={60}
+            height={60}
+            objectFit="cover"
+          />
+        )}
       </ImageContainer>
       <MessageContainer>
         <h1>{chatRoomName.nickname}</h1>
@@ -35,6 +37,8 @@ const Container = styled.li`
   height: 10rem;
   display: flex;
   padding: 2rem;
+  background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
+  cursor: pointer;
 `;
 
 const ImageContainer = styled.div`
