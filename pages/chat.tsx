@@ -5,40 +5,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
+import { dummyData } from '../library/chatData';
 
 export default function Chat() {
-  // const [user, setUser] = useState([]);
-
-  // useEffect(() => {
-  //   fetch('/me/chats')
-  //     .then((response) => response.json())
-  //     .then((json) => setUser(json));
-  // }, []);
-
-  const [user, setUser] = useState({ nickname: 'sjo' });
-  const [chats, setChats] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const res = await (await fetch('/me/chats')).json();
-      setChats(res);
-      // console.log(res);
-      // console.log(
-      //   res[0].users[0].nickname === user.nickname
-      //     ? res[0].users[1].nickname
-      //     : res[1].users[0].nickname,
-      // );
-      // console.log(
-      //   res[0].users.filter((a) => a.nickname !== user.nickname).nickname,
-      // );
-    })();
-    console.log('1');
-  }, []);
-
-  // console.log(chats[0].users.filter((a) => a.nickname !== user.nickname));
-
-  // const chatRoomName =
-
   return (
     <Container>
       <LeftContainer>
@@ -47,8 +16,8 @@ export default function Chat() {
           <SearchIcon sx={{ fontSize: 25 }} />
         </SearchContainer>
         <ChatRoomList>
-          {chats.map((chat) => (
-            <ChatRoom key={chat._id} chat={chat} user={user} />
+          {dummyData.map((chat) => (
+            <ChatRoom key={chat._id} chat={chat} user="user" />
           ))}
         </ChatRoomList>
       </LeftContainer>
@@ -96,6 +65,9 @@ const SearchContainer = styled.div`
     height: 100%;
     background-color: ${({ theme }) => theme.bgColor};
     color: ${({ theme }) => theme.grayColor};
+    ::placeholder {
+      font-weight: 600;
+    }
     &:focus {
       outline: none;
     }
