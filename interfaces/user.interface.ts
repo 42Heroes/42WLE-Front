@@ -21,3 +21,15 @@ export interface User {
   l_language: LanguageInfo[];
   join_data: Date;
 }
+
+export interface RegisterUser {
+  n_language: LanguageInfo[];
+  l_language: LanguageInfo[];
+  nickname: string;
+  image_url: string;
+  introduction: string;
+  hashtags: string[];
+  github_id: string;
+  intra_id: string;
+  country: string;
+}
