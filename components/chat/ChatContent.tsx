@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import styled from 'styled-components';
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
 }
 
 export default function ChatContent({ user, chat }: Props) {
-  console.log(chat[0].messages);
+  const chatRoomName = chat[0].users.filter((a: any) => a.nickname !== user)[0];
 
   return (
     <Container>
@@ -19,7 +20,20 @@ export default function ChatContent({ user, chat }: Props) {
               </UserMessage>
             );
           else
-            return <PartnerMessage key={i}>{message.content}</PartnerMessage>;
+            return (
+              <PartnerMessageContainer>
+                {chatRoomName.image && (
+                  <Image
+                    alt="pic"
+                    src={chatRoomName.image}
+                    width={60}
+                    height={60}
+                    objectFit="cover"
+                  />
+                )}
+                <PartnerMessage key={i}>{message.content}</PartnerMessage>
+              </PartnerMessageContainer>
+            );
         })}
     </Container>
   );
@@ -45,6 +59,12 @@ const UserMessage = styled.div`
     border-top-right-radius: 0;
   }
 `;
+
+const PartnerMessageContainer = styled.div`
+  display: flex;
+  margin: 2rem;
+`;
+
 const PartnerMessage = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};

@@ -9,10 +9,14 @@ import ChatContent from '../components/chat/ChatContent';
 import { dummyData } from '../library/chatData';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../library/user_atom';
+import Image from 'next/image';
 
 export default function Chat() {
   const user = useRecoilValue(userState);
   const [activeChatRoom, setActiveChatRoom] = useState('123');
+  const activePartner = dummyData
+    .filter((a) => a._id === activeChatRoom)[0]
+    .users.filter((a) => a.nickname !== user.nickname)[0];
 
   return (
     <Container>
@@ -34,7 +38,16 @@ export default function Chat() {
         </ChatRoomList>
       </LeftContainer>
       <RightContainer>
-        <NameContainer></NameContainer>
+        <NameContainer>
+          <Image
+            alt="pic"
+            src={activePartner.image}
+            width={50}
+            height={50}
+            objectFit="cover"
+          />
+          <h1>{activePartner.nickname}</h1>
+        </NameContainer>
         <MessageContainer>
           <ChatContent
             user={user.nickname}
@@ -98,9 +111,16 @@ const RightContainer = styled.div`
 `;
 
 const NameContainer = styled.div`
-  color: white;
+  color: ${({ theme }) => theme.fontColor.titleColor};
   height: 6rem;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  h1 {
+    margin-left: 2rem;
+    font-size: 2rem;
+  }
 `;
 
 const MessageContainer = styled.div`
