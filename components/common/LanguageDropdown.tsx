@@ -2,11 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
 import LanguageDropdownItem from './LanguageDropdownList';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   onClickLanguage: (item: LanguageInfo) => void;
@@ -30,7 +26,7 @@ export default function LanguageDropdown({
     () =>
       languages.map((item) =>
         selectedLanguages.some(
-          (selectedItem) => selectedItem.language === item.language,
+          (selectedItem) => selectedItem.name === item.name,
         )
           ? null
           : item,
@@ -42,7 +38,7 @@ export default function LanguageDropdown({
     () =>
       searchedItems.map((item) =>
         selectedLanguages.some(
-          (selectedItem) => selectedItem.language === item.language,
+          (selectedItem) => selectedItem.name === item.name,
         )
           ? null
           : item,
@@ -52,8 +48,8 @@ export default function LanguageDropdown({
 
   useEffect(() => {
     setSearchedItems(
-      languages.filter(({ language }: LanguageInfo) =>
-        language.toLowerCase().includes(inputText.toLowerCase()),
+      languages.filter((language) =>
+        language.name.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
   }, [inputText]);
@@ -71,21 +67,21 @@ export default function LanguageDropdown({
           <ul>
             {inputText
               ? removedDuplicateSearchLanguages.map(
-                  (item) =>
-                    item && (
+                  (language) =>
+                    language && (
                       <LanguageDropdownItem
-                        key={item.language}
-                        language={item}
+                        key={language.name}
+                        language={language}
                         onClickLanguage={onClickLanguage}
                       />
                     ),
                 )
               : removedDuplicateLanguages.map(
-                  (item) =>
-                    item && (
+                  (language) =>
+                    language && (
                       <LanguageDropdownItem
-                        key={item.language}
-                        language={item}
+                        key={language.name}
+                        language={language}
                         onClickLanguage={onClickLanguage}
                       />
                     ),

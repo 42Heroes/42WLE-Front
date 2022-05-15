@@ -4,14 +4,11 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
-import languagesBase from '../../library/languages';
 import { ReactElement, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import languagesBase from '../../library/languages';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
 export default function Native() {
   const router = useRouter();
 
@@ -64,7 +61,7 @@ export default function Native() {
       const filteredLanguages = languages
         .map((item) =>
           persistSelectedLearnLanguages.some(
-            (selectedLanguage) => selectedLanguage.language === item.language,
+            (selectedLanguage) => selectedLanguage.name === item.name,
           )
             ? null
             : item,
@@ -78,7 +75,7 @@ export default function Native() {
         const filteredSelectedNativeLanguages = persistSelectedNativeLanguages
           .map((item) =>
             persistSelectedLearnLanguages.some(
-              (selectedLanguage) => selectedLanguage.language === item.language,
+              (selectedLanguage) => selectedLanguage.name === item.name,
             )
               ? null
               : item,

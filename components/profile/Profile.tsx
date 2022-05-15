@@ -2,17 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { LanguageInfo } from '../../interfaces/user.interface';
 import media from '../../styles/media';
 import Button from '../common/Button';
 import FTLogo from '../../public/assets/icons/42Logo.svg';
 import Language from '../common/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GitHubIcon from '@mui/icons-material/GitHub';
-
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
 
 interface Props {
   userData: {
@@ -53,7 +49,7 @@ export default function Profile({ userData, className }: Props) {
               <h3>Native in</h3>
               <LanguageList>
                 {userData.n_language.map((language) => (
-                  <Language key={language.language} language={language} />
+                  <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>
@@ -61,7 +57,7 @@ export default function Profile({ userData, className }: Props) {
               <h3>Learning</h3>
               <LanguageList>
                 {userData.l_language.map((language) => (
-                  <Language key={language.language} language={language} />
+                  <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>

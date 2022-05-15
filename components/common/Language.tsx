@@ -1,28 +1,26 @@
 import Image from 'next/image';
 import styled from 'styled-components';
+import { LanguageInfo } from '../../interfaces/user.interface';
+import { getFlagImage } from '../../library/utils';
 
 interface Props {
-  language: {
-    language: string;
-    flag: string;
-  };
+  language: LanguageInfo;
 }
 
 export default function Language({ language }: Props) {
   return (
     <Container>
-      <FlagWrapper>
-        <Image
-          alt={language.language}
-          src={language.flag}
-          width={23}
-          height={14}
-        />
-      </FlagWrapper>
-      <LanguageName>{language.language.toUpperCase()}</LanguageName>
+      <Image
+        alt={language.name}
+        src={getFlagImage(language.name)}
+        width={23}
+        height={14}
+      />
+      <LanguageName>{language.name.toUpperCase()}</LanguageName>
     </Container>
   );
 }
+
 const LanguageName = styled.span`
   text-transform: uppercase;
   color: ${({ theme }) => theme.grayColor};

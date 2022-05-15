@@ -1,27 +1,33 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import ClearIcon from '@mui/icons-material/Clear';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import { getFlagImage } from '../../library/utils';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   onClickLanguage: (item: LanguageInfo) => void;
   selectedLanguages: LanguageInfo[];
 }
+
 export default function LanguageSelected({
   onClickLanguage,
   selectedLanguages,
 }: Props) {
   return (
     <ul>
-      {selectedLanguages.map((item: LanguageInfo) => (
-        <SelectedList key={item.language} onClick={() => onClickLanguage(item)}>
+      {selectedLanguages.map((language) => (
+        <SelectedList
+          key={language.name}
+          onClick={() => onClickLanguage(language)}
+        >
           <Contents>
-            <Image alt={item.language} src={item.flag} width={23} height={14} />
-            <LanguageName>{item.language.toUpperCase()}</LanguageName>
+            <Image
+              alt={language.name}
+              src={getFlagImage(language.name)}
+              width={23}
+              height={14}
+            />
+            <LanguageName>{language.name.toUpperCase()}</LanguageName>
           </Contents>
           <ClearIcon fontSize="large" />
         </SelectedList>

@@ -7,11 +7,7 @@ import LanguageSelected from '../../components/common/LanguageSelected';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
 import { useRouter } from 'next/router';
-
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 export default function Learn() {
   const router = useRouter();

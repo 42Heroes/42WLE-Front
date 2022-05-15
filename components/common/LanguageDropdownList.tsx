@@ -1,10 +1,6 @@
 import Image from 'next/image';
 import styled from 'styled-components';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   language: LanguageInfo;
