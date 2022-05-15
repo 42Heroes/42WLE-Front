@@ -12,7 +12,7 @@ import { LanguageInfo } from '../../interfaces/user.interface';
 export default function Learn() {
   const router = useRouter();
 
-  const [languages] = useState(languagesBase as LanguageInfo[]);
+  const [languages] = useState(languagesBase);
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
     [],
   );

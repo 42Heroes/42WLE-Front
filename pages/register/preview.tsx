@@ -15,30 +15,24 @@ const dummyUserData = {
   github_id: '',
   n_language: [
     {
-      language: 'arabic',
-      flag: '/languages/arabic.svg',
+      name: 'arabic',
     },
     {
-      language: 'chinese',
-      flag: '/languages/chinese.svg',
+      name: 'chinese',
     },
     {
-      language: 'german',
-      flag: '/languages/german.svg',
+      name: 'german',
     },
   ],
   l_language: [
     {
-      language: 'korean',
-      flag: '/languages/korean.svg',
+      name: 'korean',
     },
     {
-      language: 'english',
-      flag: '/languages/english.svg',
+      name: 'english',
     },
     {
-      language: 'finnish',
-      flag: '/languages/finnish.svg',
+      name: 'finnish',
     },
   ],
   introduction:

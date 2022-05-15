@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import styled from 'styled-components';
 import { LanguageInfo } from '../../interfaces/user.interface';
+import { getFlagImage } from '../../library/utils';
 
 interface Props {
   language: LanguageInfo;
@@ -13,18 +14,18 @@ export default function LanguageDropdownItem({
 }: Props) {
   return (
     <LanguageList
-      key={language.language}
+      key={language.name}
       onClick={() => {
         onClickLanguage(language);
       }}
     >
       <Image
-        alt={language.language}
-        src={language.flag}
+        alt={language.name}
+        src={getFlagImage(language.name)}
         width={18}
         height={11}
       />
-      <LanguageName>{language.language}</LanguageName>
+      <LanguageName>{language.name}</LanguageName>
     </LanguageList>
   );
 }
