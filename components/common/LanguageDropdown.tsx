@@ -24,25 +24,15 @@ export default function LanguageDropdown({
 
   const removedDuplicateLanguages = useMemo(
     () =>
-      languages.map((item) =>
-        selectedLanguages.some(
-          (selectedItem) => selectedItem.name === item.name,
+      searchedItems
+        .map((item) =>
+          selectedLanguages.some(
+            (selectedItem) => selectedItem.name === item.name,
+          )
+            ? null
+            : item,
         )
-          ? null
-          : item,
-      ),
-    [selectedLanguages, languages],
-  );
-
-  const removedDuplicateSearchLanguages = useMemo(
-    () =>
-      searchedItems.map((item) =>
-        selectedLanguages.some(
-          (selectedItem) => selectedItem.name === item.name,
-        )
-          ? null
-          : item,
-      ),
+        .filter((language) => language !== null),
     [selectedLanguages, searchedItems],
   );
 
@@ -52,7 +42,7 @@ export default function LanguageDropdown({
         language.name.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
-  }, [inputText]);
+  }, [inputText, languages]);
 
   return (
     <>
@@ -65,27 +55,16 @@ export default function LanguageDropdown({
             placeholder="Enter your language"
           />
           <ul>
-            {inputText
-              ? removedDuplicateSearchLanguages.map(
-                  (language) =>
-                    language && (
-                      <LanguageDropdownItem
-                        key={language.name}
-                        language={language}
-                        onClickLanguage={onClickLanguage}
-                      />
-                    ),
-                )
-              : removedDuplicateLanguages.map(
-                  (language) =>
-                    language && (
-                      <LanguageDropdownItem
-                        key={language.name}
-                        language={language}
-                        onClickLanguage={onClickLanguage}
-                      />
-                    ),
-                )}
+            {removedDuplicateLanguages.map(
+              (language) =>
+                language && (
+                  <LanguageDropdownItem
+                    key={language.name}
+                    language={language}
+                    onClickLanguage={onClickLanguage}
+                  />
+                ),
+            )}
           </ul>
         </Container>
       )}
