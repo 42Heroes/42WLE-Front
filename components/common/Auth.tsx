@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { userData, userState } from '../../library/user_atom';
+import { userData, userState } from '../../recoil/atoms';
 
 interface Props {
   children: React.ReactNode;
