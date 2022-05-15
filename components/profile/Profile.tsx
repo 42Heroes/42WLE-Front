@@ -24,7 +24,7 @@ export default function Profile({ user, className }: Props) {
   const router = useRouter();
   // TODO: isModal 로 변경 or preview 페이지나 myProfile 페이지 예외처리 필요
   const me = useRecoilValue(userState);
-  const isUserModal = router.asPath === '/register/preview';
+  const isUserModal = router.asPath !== '/register/preview';
 
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
 

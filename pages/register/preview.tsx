@@ -14,7 +14,7 @@ export default function Preview() {
   // TODO: 가회원가입되어 있는 정보와 registerUser 정보 조합하여 아래 Profile 컴포넌트 렌더링 필요 (데이터 요청 후 해당 데이터로 settRegisterUser)
 
   const handleStartButtonClick = () => {
-    // TODO: 버튼 누를시 useQuery mutation 필요 (회원가입 마무리)
+    // TODO: 버튼 누를시 useQuery mutation 필요 (회원가입 마무리) && 응답 핸들링 필요 (이미 회원가입이 된 유저나 데이터 검증)
   };
 
   useEffect(() => {
