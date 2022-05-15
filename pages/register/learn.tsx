@@ -6,11 +6,7 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
-
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 export default function Learn() {
   const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);

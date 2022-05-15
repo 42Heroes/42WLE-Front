@@ -1,11 +1,8 @@
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import { getFlagImage } from '../../library/utils';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   onClickLanguage: (item: LanguageInfo) => void;
@@ -19,28 +16,29 @@ export default function LanguageDropdown({
   selectedLanguages,
 }: Props) {
   const [toggle, setToggle] = useState<boolean>(false);
-  const [inputText, setInputText] = useState<string>('');
+  const [inputText, setInputText] = useState('');
   const [searchedItems, setSearchedItems] = useState<LanguageInfo[]>([]);
 
   const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
     setSearchedItems(
       languages.filter((item: LanguageInfo) =>
-        item.language.toLowerCase().includes(e.target.value.toLowerCase()),
+        item.name.toLowerCase().includes(e.target.value.toLowerCase()),
       ),
     );
   };
 
   const htmlPrint = (item: LanguageInfo) => {
+    const { name } = item;
     return (
       <LanguageList
-        key={item.language}
+        key={name}
         onClick={() => {
           onClickLanguage(item);
         }}
       >
-        <Image alt={item.language} src={item.flag} width={18} height={11} />
-        <LanguageName>{item.language}</LanguageName>
+        <Image alt={name} src={getFlagImage(name)} width={18} height={11} />
+        <LanguageName>{name}</LanguageName>
       </LanguageList>
     );
   };
@@ -60,14 +58,14 @@ export default function LanguageDropdown({
             {inputText
               ? searchedItems.map((item) =>
                   selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
+                    (selectedItem) => selectedItem.name === item.name,
                   )
                     ? null
                     : htmlPrint(item),
                 )
               : languages.map((item) =>
                   selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
+                    (selectedItem) => selectedItem.name === item.name,
                   )
                     ? null
                     : htmlPrint(item),

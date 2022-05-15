@@ -4,13 +4,10 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
-import languagesBase from '../../library/languages';
 import { ReactElement, useState } from 'react';
+import languagesBase from '../../library/languages';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
 export default function Native() {
   const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(

@@ -1,10 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import { getFlagImage } from '../../library/utils';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   onClickDelete: (item: LanguageInfo) => void;
@@ -16,10 +13,10 @@ export default function LanguageSelected({
 }: Props) {
   return (
     <ul>
-      {selectedLanguages?.map((item: LanguageInfo) => (
-        <SelectedList key={item.language} onClick={() => onClickDelete(item)}>
-          <Image alt={item.language} src={item.flag} width={18} height={11} />
-          <LanguageName>{item.language.toUpperCase()}</LanguageName>
+      {selectedLanguages.map(({ name }: LanguageInfo) => (
+        <SelectedList key={name} onClick={() => onClickDelete({ name })}>
+          <Image alt={name} src={getFlagImage(name)} width={18} height={11} />
+          <LanguageName>{name.toUpperCase()}</LanguageName>
         </SelectedList>
       ))}
     </ul>

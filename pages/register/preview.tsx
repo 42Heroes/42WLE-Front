@@ -16,29 +16,23 @@ export default function Preview() {
     n_language: [
       {
         language: 'arabic',
-        flag: '/languages/arabic.svg',
       },
       {
         language: 'chinese',
-        flag: '/languages/chinese.svg',
       },
       {
         language: 'german',
-        flag: '/languages/german.svg',
       },
     ],
     l_language: [
       {
         language: 'korean',
-        flag: '/languages/korean.svg',
       },
       {
         language: 'english',
-        flag: '/languages/english.svg',
       },
       {
         language: 'finnish',
-        flag: '/languages/finnish.svg',
       },
     ],
     introduction:
