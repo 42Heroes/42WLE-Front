@@ -6,6 +6,7 @@ import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useRouter } from 'next/router';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function ExtraInfo() {
   const router = useRouter();
@@ -17,12 +18,13 @@ export default function ExtraInfo() {
     return true;
   };
 
+  const [registerUser, setRegisterUser] = useRegister();
   const [inputTag, onChangeInputTag, setInputTag] = useInput(
     '',
     inputTagValidator,
   );
-  const [github, onChangeGithub, setGithub] = useInput('');
   const [hashTags, setHashTags] = useState(['']);
+  const [githubId, onChangeGithubId, setGithubId] = useInput('');
 
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputTag) {
@@ -39,8 +41,11 @@ export default function ExtraInfo() {
   };
 
   const handleNextButtonClick = () => {
-    localStorage.setItem('sign_up-hashTag', JSON.stringify(hashTags));
-    localStorage.setItem('sign_up-github', github);
+    setRegisterUser({
+      ...registerUser,
+      github_id: githubId,
+      hashtags: hashTags,
+    });
     router.push('/register/preview');
   };
 
@@ -49,15 +54,9 @@ export default function ExtraInfo() {
   };
 
   useEffect(() => {
-    const persistGithub = localStorage.getItem('sign_up-github');
-    const persistHashTags = localStorage.getItem('sign_up-hashTag');
-    if (persistGithub) {
-      setGithub(persistGithub);
-    }
-    if (persistHashTags) {
-      setHashTags(JSON.parse(persistHashTags));
-    }
-  }, []);
+    setGithubId(registerUser.github_id);
+    setHashTags(registerUser.hashtags);
+  }, [registerUser]);
 
   return (
     <Container>
@@ -89,7 +88,7 @@ export default function ExtraInfo() {
         <InputLabel>Github</InputLabel>
         <GithubContainer>
           <FixedAddress>https://github.com/</FixedAddress>
-          <Input type="text" value={github} onChange={onChangeGithub} />
+          <Input type="text" value={githubId} onChange={onChangeGithubId} />
         </GithubContainer>
       </InputContainer>
       <ButtonContainer>
@@ -97,6 +96,7 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
+          disabled={!hashTags.length && !githubId.length}
           onClick={handleNextButtonClick}
         >
           NEXT
@@ -105,6 +105,7 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
+          disabled={hashTags.length > 0 || githubId.length > 0}
           onClick={handleSkipButtonClick}
         >
           SKIP

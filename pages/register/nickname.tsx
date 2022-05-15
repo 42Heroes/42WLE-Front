@@ -5,6 +5,7 @@ import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import useInput from '../../hooks/useInput';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Nickname() {
   const router = useRouter();
@@ -17,35 +18,24 @@ export default function Nickname() {
     return true;
   }, []);
 
+  const [registerUser, setRegisterUser] = useRegister();
+
   const [nickname, onChangeNickname, setNickname] = useInput(
     '',
     nicknameValidator,
   );
 
   const handleNextButtonClick = () => {
-    if (nickname.length === 0 || nickname.length > 20) {
+    if (nickname.trim().length === 0 || nickname.trim().length > 20) {
       return;
     }
-    localStorage.setItem('sign_up-nickname', nickname);
+    setRegisterUser({ ...registerUser, nickname });
     router.push('/register/photo');
   };
 
   useEffect(() => {
-    const persistSelectedNativeLanguages = JSON.parse(
-      localStorage.getItem('sign_up-native-languages') ?? 'null',
-    );
-    const persistNickname = localStorage.getItem('sign_up-nickname');
-    if (
-      persistSelectedNativeLanguages &&
-      persistSelectedNativeLanguages.length
-    ) {
-      if (persistNickname) {
-        setNickname(persistNickname);
-      }
-    } else {
-      router.replace('/register/native');
-    }
-  }, []);
+    setNickname(registerUser.nickname);
+  }, [registerUser]);
 
   return (
     <Container>
@@ -58,7 +48,7 @@ export default function Nickname() {
         type="button"
         size="medium"
         color="blue"
-        disabled={!nickname.length}
+        disabled={!nickname.trim().length}
         onClick={handleNextButtonClick}
       >
         NEXT

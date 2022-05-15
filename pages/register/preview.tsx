@@ -1,80 +1,25 @@
-import axios from 'axios';
 import { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import Profile from '../../components/profile/Profile';
-
-const dummyUserData = {
-  nickname: 'seojunhwan',
-  intra_id: 'junseo',
-  image_url: '/languages/korean.svg',
-  hashtags: [],
-  country: 'seoul',
-  github_id: '',
-  n_language: [
-    {
-      name: 'arabic',
-    },
-    {
-      name: 'chinese',
-    },
-    {
-      name: 'german',
-    },
-  ],
-  l_language: [
-    {
-      name: 'korean',
-    },
-    {
-      name: 'english',
-    },
-    {
-      name: 'finnish',
-    },
-  ],
-  introduction:
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-};
+import { useRegister } from '../../hooks/useRegister';
+import { User } from '../../interfaces/user.interface';
 
 export default function Preview() {
-  const [userData, setUserData] = useState(dummyUserData);
+  const [registerUser] = useRegister();
+  const [isMount, setIsMount] = useState(false);
+
+  // TODO: 가회원가입되어 있는 정보와 registerUser 정보 조합하여 아래 Profile 컴포넌트 렌더링 필요 (데이터 요청 후 해당 데이터로 settRegisterUser)
+
+  const handleStartButtonClick = () => {
+    // TODO: 버튼 누를시 useQuery mutation 필요 (회원가입 마무리)
+  };
 
   useEffect(() => {
-    const nickname = localStorage.getItem('sign_up-nickname');
-    const nativeLanguages = JSON.parse(
-      localStorage.getItem('sign_up-native-languages') ?? 'null',
-    );
-    const learnLanguages =
-      JSON.parse(localStorage.getItem('sign_up-learn-languages') ?? 'null') ??
-      [];
-    const photo = localStorage.getItem('sign_up-photo') ?? '';
-    const introduction = localStorage.getItem('sign_up-introduction');
-    const hashtags =
-      JSON.parse(localStorage.getItem('sign_up-hashTag') ?? 'null') ?? [];
-    const github_id = localStorage.getItem('sign_up-github') || '';
-    if (!nickname || !introduction || !photo) {
-      return;
-    } else {
-      // TODO: language 불러오기, 데이터 유무 및 검증하기
-      setUserData({
-        ...userData,
-        nickname,
-        github_id,
-        hashtags,
-        introduction,
-        image_url: photo,
-        l_language: nativeLanguages,
-        n_language: learnLanguages,
-      });
-    }
+    setIsMount(true);
   }, []);
-
-  const handleStartButtonClick = async () => {
-    const res = await axios.get('/user/123');
-  };
 
   return (
     <Container>
@@ -82,7 +27,7 @@ export default function Preview() {
         Great! <br />
         Now you are ready to explore 42WLE
       </Title>
-      <Profile userData={userData} />
+      {isMount && <Profile user={registerUser as User} />}
       <StyledButton
         type="button"
         size="medium"

@@ -1,42 +1,34 @@
 import styled from 'styled-components';
 import Title from '../../components/common/Title';
 import Button from '../../components/common/Button';
-import { ReactElement, useState, useEffect } from 'react';
+import { ReactElement, useState } from 'react';
 import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
 import { useRouter } from 'next/router';
 import { LanguageInfo } from '../../interfaces/user.interface';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Learn() {
   const router = useRouter();
-
   const [languages] = useState(languagesBase);
-  const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
-    [],
-  );
   const [isDropdownOpened, setIsDropdownOpened] = useState(false);
+  const [registerUser, setRegisterUser] = useRegister();
+
+  const { l_language: selectedLanguages } = registerUser;
 
   const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
-    const addSelectedLanguages = [...selectedLanguages, clickedLanguage];
-    setSelectedLanguages(addSelectedLanguages);
-    localStorage.setItem(
-      'sign_up-learn-languages',
-      JSON.stringify(addSelectedLanguages),
-    );
+    const newSelectedLanguages = [...selectedLanguages, clickedLanguage];
+    setRegisterUser({ ...registerUser, l_language: newSelectedLanguages });
     setIsDropdownOpened(false);
   };
 
   const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
     const filteredLanguages = selectedLanguages.filter(
-      (item) => item !== clickedLanguage,
+      (language) => language !== clickedLanguage,
     );
-    setSelectedLanguages(filteredLanguages);
-    localStorage.setItem(
-      'sign_up-learn-languages',
-      JSON.stringify(filteredLanguages),
-    );
+    setRegisterUser({ ...registerUser, l_language: filteredLanguages });
   };
 
   const handleNextButtonClick = () => {
@@ -45,15 +37,6 @@ export default function Learn() {
     }
     router.push('/register/native');
   };
-
-  useEffect(() => {
-    const persistSelectedLearnLanguages = JSON.parse(
-      localStorage.getItem('sign_up-learn-languages') ?? 'null',
-    );
-    if (persistSelectedLearnLanguages && persistSelectedLearnLanguages.length) {
-      setSelectedLanguages(persistSelectedLearnLanguages);
-    }
-  }, []);
 
   return (
     <Container>

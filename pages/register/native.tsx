@@ -8,91 +8,70 @@ import { ReactElement, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import languagesBase from '../../library/languages';
 import { LanguageInfo } from '../../interfaces/user.interface';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Native() {
   const router = useRouter();
-
-  const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
-  const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
-    [],
-  );
+  const [languages, setLanguages] = useState(languagesBase);
   const [isDropdownOpened, setIsDropdownOpened] = useState(false);
+  const [registerUser, setRegisterUser] = useRegister();
+
+  const { n_language: selectedNativeLanguages } = registerUser;
+  const { l_language: selectedLearnLanguages } = registerUser;
 
   const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
-    const newSelectedLanguages = [...selectedLanguages, clickedLanguage];
-    setSelectedLanguages(newSelectedLanguages);
-    localStorage.setItem(
-      'sign_up-native-languages',
-      JSON.stringify(newSelectedLanguages),
-    );
+    const newSelectedLanguages = [...selectedNativeLanguages, clickedLanguage];
+    setRegisterUser({ ...registerUser, n_language: newSelectedLanguages });
     setIsDropdownOpened(false);
   };
 
   const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
-    const filteredLanguages = selectedLanguages.filter(
+    const filteredLanguages = selectedNativeLanguages.filter(
       (language) => language !== clickedLanguage,
     );
-    setSelectedLanguages(filteredLanguages);
-    localStorage.setItem(
-      'sign_up-native-languages',
-      JSON.stringify(filteredLanguages),
-    );
+    setRegisterUser({ ...registerUser, n_language: filteredLanguages });
   };
 
   const handleClickNextButton = () => {
-    if (!selectedLanguages.length) {
+    if (!selectedNativeLanguages.length) {
       return;
     }
-    localStorage.setItem(
-      'sign_up-native-languages',
-      JSON.stringify(selectedLanguages),
-    );
     router.push('/register/nickname');
   };
 
   useEffect(() => {
-    const persistSelectedLearnLanguages: LanguageInfo[] = JSON.parse(
-      localStorage.getItem('sign_up-learn-languages') ?? 'null',
-    );
-    const persistSelectedNativeLanguages: LanguageInfo[] = JSON.parse(
-      localStorage.getItem('sign_up-native-languages') ?? 'null',
-    );
-    if (persistSelectedLearnLanguages && persistSelectedLearnLanguages.length) {
-      const filteredLanguages = languages
+    const filteredLanguages = languages
+      .map((item) =>
+        selectedLearnLanguages.some(
+          (selectedLanguage) => selectedLanguage.name === item.name,
+        )
+          ? null
+          : item,
+      )
+      .filter((language) => language !== null);
+    setLanguages(filteredLanguages as LanguageInfo[]);
+    if (selectedNativeLanguages.length) {
+      const filteredSelectedNativeLanguages = selectedNativeLanguages
         .map((item) =>
-          persistSelectedLearnLanguages.some(
+          selectedLearnLanguages.some(
             (selectedLanguage) => selectedLanguage.name === item.name,
           )
             ? null
             : item,
         )
-        .filter((element) => element !== null);
-      setLanguages(filteredLanguages as LanguageInfo[]);
-      if (
-        persistSelectedNativeLanguages &&
-        persistSelectedNativeLanguages.length
-      ) {
-        const filteredSelectedNativeLanguages = persistSelectedNativeLanguages
-          .map((item) =>
-            persistSelectedLearnLanguages.some(
-              (selectedLanguage) => selectedLanguage.name === item.name,
-            )
-              ? null
-              : item,
-          )
-          .filter((item) => item !== null);
-        setSelectedLanguages(filteredSelectedNativeLanguages as LanguageInfo[]);
-      }
-    } else {
-      router.replace('/register/learn');
+        .filter((language) => language !== null);
+      setRegisterUser({
+        ...registerUser,
+        n_language: filteredSelectedNativeLanguages as LanguageInfo[],
+      });
     }
-  }, []);
+  }, [selectedLearnLanguages]);
 
   return (
     <Container>
       <Title>Which languages can you speak fluently?</Title>
       <LanguageContainer>
-        {selectedLanguages.length < 3 && (
+        {selectedNativeLanguages.length < 3 && (
           <StyledAddButton
             type="button"
             color="blue"
@@ -106,12 +85,12 @@ export default function Native() {
         <LanguageDropdown
           onClickLanguage={handleLanguageClick}
           languages={languages}
-          selectedLanguages={selectedLanguages}
+          selectedLanguages={selectedNativeLanguages}
           isOpened={isDropdownOpened}
         />
         <LanguageSelected
           onClickLanguage={handleSelectedLanguageClick}
-          selectedLanguages={selectedLanguages}
+          selectedLanguages={selectedNativeLanguages}
         />
       </LanguageContainer>
       <StyledNextButton
@@ -119,7 +98,7 @@ export default function Native() {
         size="medium"
         color="blue"
         onClick={handleClickNextButton}
-        disabled={!selectedLanguages.length}
+        disabled={!selectedNativeLanguages.length}
       >
         NEXT
       </StyledNextButton>

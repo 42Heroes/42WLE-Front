@@ -4,11 +4,13 @@ import styled from 'styled-components';
 import LoginLayout from '../../components/layout/LoginLayout';
 import Button from '../../components/common/Button';
 import { useRouter } from 'next/router';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Introduction() {
   const router = useRouter();
 
   const maximumLength = 500;
+  const [registerUser, setRegisterUser] = useRegister();
   const [introduction, setIntroduction] = useState('');
 
   const onChangeInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -24,21 +26,13 @@ export default function Introduction() {
     if (introduction.length < 10 || introduction.length > maximumLength) {
       return;
     }
-    localStorage.setItem('sign_up-introduction', introduction);
+    setRegisterUser({ ...registerUser, introduction });
     router.push('/register/extra-info');
   };
 
   useEffect(() => {
-    const persistPhoto = localStorage.getItem('sign_up-photo');
-    const persistIntroduction = localStorage.getItem('sign_up-introduction');
-    if (persistPhoto) {
-      if (persistIntroduction) {
-        setIntroduction(persistIntroduction);
-      }
-    } else {
-      router.replace('/register/photo');
-    }
-  }, []);
+    setIntroduction(registerUser.introduction);
+  }, [registerUser]);
 
   return (
     <Container>
