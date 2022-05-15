@@ -1,36 +1,20 @@
 import Image from 'next/image';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import styled from 'styled-components';
 import useDragDrop from '../../hooks/useDragDrop';
-import { encodeBase64ImageFile } from '../../library/ImageConverter';
 import CameraIcon from '../../public/assets/icons/camera.svg';
 import UserIcon from '../../public/assets/icons/user.svg';
 
 interface Props {
   image: string | null;
-  setImage: React.Dispatch<React.SetStateAction<string>>;
+  onChangeImage: (
+    e: React.ChangeEvent<HTMLInputElement> | any,
+  ) => Promise<void>;
 }
 
-export default function DragDrop({ image, setImage }: Props) {
+export default function DragDrop({ image, onChangeImage }: Props) {
   const dragRef = useRef<HTMLLabelElement | null>(null);
   const dragContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const onChangeImage = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement> | any) => {
-      let selectedImage;
-      if (e.type === 'change') {
-        selectedImage = e.target.files[0];
-      } else if (e.type === 'drop') {
-        selectedImage = e.dataTransfer.files[0];
-      }
-      if (selectedImage && selectedImage.size <= 2000000) {
-        const data = await encodeBase64ImageFile(selectedImage as File);
-        localStorage.setItem('sign_up-photo', data);
-        setImage(data);
-      }
-    },
-    [],
-  );
 
   const isDragging = useDragDrop(onChangeImage, dragRef);
 
