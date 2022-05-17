@@ -1,47 +1,54 @@
-import { UserProps } from '../../interfaces/user_interfaces';
+import { User } from '../../interfaces/user.interface';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { getFlagImage } from '../../library/utils';
 
 interface Props {
-  userCardData: UserProps;
+  userCardData: User;
 }
 
 export default function UserCard({ userCardData }: Props) {
   return (
     <Container>
       <Userimg>
-        <Image src="/" width={11} height={11} />
+        <Image
+          src={getFlagImage('korean')}
+          // layout="cover"
+          objectFit="cover"
+          className="userimg"
+          width={117}
+          height={117}
+          alt={UserCard.name}
+        />
       </Userimg>
       <Userinfo>
         <Nickname>{userCardData.nickname}</Nickname>
         <Languages>
           <LearnNative>
             <ContentsText>Learning</ContentsText>
-            <ContentsImg>
-              {userCardData.l_language.map((item) => (
+            {userCardData.l_language?.map((item) => (
+              <ContentsImg key={item.name}>
                 <Image
                   width={23}
                   height={14}
-                  alt={item.language}
-                  key={item.flag}
-                  src={item.flag}
+                  alt={item.name}
+                  src={getFlagImage(item.name)}
                 />
-              ))}
-            </ContentsImg>
+              </ContentsImg>
+            ))}
           </LearnNative>
           <LearnNative>
             <ContentsText>Native in</ContentsText>
-            <ContentsImg>
-              {userCardData.n_language.map((item) => (
+            {userCardData.n_language?.map((item) => (
+              <ContentsImg key={item.name}>
                 <Image
                   width={23}
                   height={14}
-                  alt={item.language}
-                  key={item.flag}
-                  src={item.flag}
+                  alt={item.name}
+                  src={getFlagImage(item.name)}
                 />
-              ))}
-            </ContentsImg>
+              </ContentsImg>
+            ))}
           </LearnNative>
         </Languages>
       </Userinfo>
@@ -53,24 +60,40 @@ const Container = styled.div`
   width: 39rem;
   height: 17rem;
   border: 0.1rem solid;
-  border-radius: 0.5rem;
-  padding: 2rem 2.5rem;
+  border-radius: 3rem;
+  padding: 2rem 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const Userimg = styled.div``;
+const Userimg = styled.div`
+  display: flex;
+  width: 11.7rem;
+  height: 11.7rem;
+  /* background-color: ${({ theme }) => theme.fontColor.titleColor}; */
+  .userimg {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+`;
 
 const Userinfo = styled.div`
+  height: 100%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   color: ${({ theme }) => theme.fontColor.titleColor};
+  padding: 1rem 0;
+  /* padding-left: 5rem; */
 `;
 
 const Nickname = styled.div`
-  font-size: ${({ theme }) => theme.font.subTitleBold};
+  font-size: ${({ theme }) => theme.font.subTitleRegular};
+  font-weight: 600;
+  height: 50%;
 `;
 
 const Languages = styled.div`
@@ -78,23 +101,33 @@ const Languages = styled.div`
   flex-direction: column;
   align-items: space-between;
   justify-content: center;
+  height: 50%;
 `;
 
 const LearnNative = styled.div`
   display: flex;
   justify-content: flex-start;
+  height: 100%;
+  width: 100%;
 `;
 const ContentsText = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
   margin-right: 2rem;
 `;
 
 const ContentsImg = styled.div`
   display: flex;
-  margin-left: 1rem;
-  :nth-child() {
-    width: 4.3rem;
-    height: 2.4rem;
-    background-color: ${({ theme }) => theme.grayColor};
-    border-radius: 3rem;
+  align-items: center;
+  background-color: #242526;
+  width: 4.3rem;
+  height: 2.4rem;
+  border-radius: 5rem;
+  margin: 0rem 0.2rem;
+  :nth-child(n) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
