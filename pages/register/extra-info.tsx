@@ -5,8 +5,12 @@ import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import ClearIcon from '@mui/icons-material/Clear';
+import { useRouter } from 'next/router';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function ExtraInfo() {
+  const router = useRouter();
+
   const inputTagValidator = (value: string) => {
     if (value.length > 20) {
       return false;
@@ -14,45 +18,45 @@ export default function ExtraInfo() {
     return true;
   };
 
+  const [registerUser, setRegisterUser] = useRegister();
   const [inputTag, onChangeInputTag, setInputTag] = useInput(
     '',
     inputTagValidator,
   );
-  const [github, onChangeGithub, setGithub] = useInput('');
-  const [hashTags, setHashTags] = useState<string[]>([]);
+  const [hashTags, setHashTags] = useState(['']);
+  const [githubId, onChangeGithubId, setGithubId] = useInput('');
 
-  const addHashTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputTag) {
-      setHashTags((prevTags) => {
-        return [...prevTags, inputTag];
-      });
+      setHashTags([...hashTags, inputTag.trim()]);
       setInputTag('');
     }
   };
 
-  const deleteTag = (i: number) => {
-    setHashTags((prevTags) => {
-      return prevTags.filter((tag, index) => {
-        return index !== i;
-      });
-    });
+  const handleHashtagClick = (targetIndex: number) => {
+    const filteredHashTags = hashTags.filter(
+      (_, index) => index !== targetIndex,
+    );
+    setHashTags(filteredHashTags);
   };
 
-  const handleClickButton = () => {
-    localStorage.setItem('HashTags', JSON.stringify(hashTags));
-    localStorage.setItem('Github', github);
+  const handleNextButtonClick = () => {
+    setRegisterUser({
+      ...registerUser,
+      github_id: githubId,
+      hashtags: hashTags,
+    });
+    router.push('/register/preview');
+  };
+
+  const handleSkipButtonClick = () => {
+    router.push('/register/preview');
   };
 
   useEffect(() => {
-    const persistGithub = localStorage.getItem('Github');
-    const persistHashTags = localStorage.getItem('HashTags');
-    if (persistGithub) {
-      setGithub(persistGithub);
-    }
-    if (persistHashTags) {
-      setHashTags(JSON.parse(persistHashTags));
-    }
-  }, []);
+    setGithubId(registerUser.github_id);
+    setHashTags(registerUser.hashtags);
+  }, [registerUser]);
 
   return (
     <Container>
@@ -67,15 +71,15 @@ export default function ExtraInfo() {
           placeholder="ex) React"
           value={inputTag}
           onChange={onChangeInputTag}
-          onKeyDown={addHashTag}
+          onKeyDown={handleKeydown}
         />
         <HashTagContainer>
           {hashTags.map((tag, i) => (
-            <HashTag key={i} onClick={() => deleteTag(i)}>
+            <HashTag key={tag + i} onClick={() => handleHashtagClick(i)}>
               #{tag}
-              <IconContainer>
+              <IconWrapper>
                 <ClearIcon />
-              </IconContainer>
+              </IconWrapper>
             </HashTag>
           ))}
         </HashTagContainer>
@@ -84,7 +88,7 @@ export default function ExtraInfo() {
         <InputLabel>Github</InputLabel>
         <GithubContainer>
           <FixedAddress>https://github.com/</FixedAddress>
-          <Input type="text" value={github} onChange={onChangeGithub} />
+          <Input type="text" value={githubId} onChange={onChangeGithubId} />
         </GithubContainer>
       </InputContainer>
       <ButtonContainer>
@@ -92,11 +96,18 @@ export default function ExtraInfo() {
           type="button"
           size="medium"
           fullWidth
-          onClick={handleClickButton}
+          disabled={!hashTags.length && !githubId.length}
+          onClick={handleNextButtonClick}
         >
           NEXT
         </NextButton>
-        <SkipButton type="button" size="medium" fullWidth>
+        <SkipButton
+          type="button"
+          size="medium"
+          fullWidth
+          disabled={hashTags.length > 0 || githubId.length > 0}
+          onClick={handleSkipButtonClick}
+        >
           SKIP
         </SkipButton>
       </ButtonContainer>
@@ -177,7 +188,7 @@ const HashTagContainer = styled.div`
   display: flex;
 `;
 
-const IconContainer = styled.div`
+const IconWrapper = styled.div`
   margin-left: 0.5rem;
   display: flex;
   align-items: center;

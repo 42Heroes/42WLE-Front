@@ -1,36 +1,41 @@
-import { ReactElement, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
 import LoginLayout from '../../components/layout/LoginLayout';
 import useInput from '../../hooks/useInput';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Nickname() {
+  const router = useRouter();
+
   const maximumLength = 20;
-  const nicknameValidator = (value: string) => {
+  const nicknameValidator = useCallback((value: string) => {
     if (value.length > maximumLength) {
       return false;
     }
     return true;
-  };
+  }, []);
+
+  const [registerUser, setRegisterUser] = useRegister();
+
   const [nickname, onChangeNickname, setNickname] = useInput(
     '',
     nicknameValidator,
   );
 
-  const handleClickButton = () => {
-    if (nickname.length === 0 || nickname.length > 20) {
+  const handleNextButtonClick = () => {
+    if (nickname.trim().length === 0 || nickname.trim().length > 20) {
       return;
     }
-    localStorage.setItem('Nickname', nickname);
+    setRegisterUser({ ...registerUser, nickname });
+    router.push('/register/photo');
   };
 
   useEffect(() => {
-    const persistNickname = localStorage.getItem('Nickname');
-    if (persistNickname) {
-      setNickname(persistNickname);
-    }
-  }, []);
+    setNickname(registerUser.nickname);
+  }, [registerUser]);
 
   return (
     <Container>
@@ -43,8 +48,8 @@ export default function Nickname() {
         type="button"
         size="medium"
         color="blue"
-        disabled={!nickname.length}
-        onClick={handleClickButton}
+        disabled={!nickname.trim().length}
+        onClick={handleNextButtonClick}
       >
         NEXT
       </StyledButton>
@@ -75,7 +80,7 @@ const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 6rem;
-  margin-bottom: 20rem;
+  margin-bottom: 15rem;
   align-items: flex-end;
   span {
     font-size: 1.6rem;
@@ -95,6 +100,7 @@ const Input = styled.input`
   transition: border-color 0.2s ease-in-out;
   padding-bottom: 1rem;
   ${({ theme }) => theme.font.bodyRegular};
+  font-size: 4rem;
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.fontColor.titleColor};

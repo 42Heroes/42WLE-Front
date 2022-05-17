@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { useRecoilValue } from 'recoil';
 import CommonLayout from '../components/layout/CommonLayout';
-import { userState } from '../library/user_atom';
+import { userState } from '../recoil/atoms';
 
 export default function Find() {
   const userData = useRecoilValue(userState);
-  console.log('', userData);
+
   return <p style={{ color: 'white' }}>This is find page.</p>;
 }
 
