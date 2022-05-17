@@ -13,7 +13,6 @@ export default function UserCard({ userCardData }: Props) {
       <Userimg>
         <Image
           src={getFlagImage('korean')}
-          // layout="cover"
           objectFit="cover"
           className="userimg"
           width={117}
@@ -71,7 +70,6 @@ const Userimg = styled.div`
   display: flex;
   width: 11.7rem;
   height: 11.7rem;
-  /* background-color: ${({ theme }) => theme.fontColor.titleColor}; */
   .userimg {
     border-radius: 50%;
     width: 100%;
@@ -87,7 +85,6 @@ const Userinfo = styled.div`
   justify-content: space-between;
   color: ${({ theme }) => theme.fontColor.titleColor};
   padding: 1rem 0;
-  /* padding-left: 5rem; */
 `;
 
 const Nickname = styled.div`
