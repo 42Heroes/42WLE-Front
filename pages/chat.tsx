@@ -8,8 +8,8 @@ import ChatRoom from '../components/chat/ChatRoom';
 import ChatContent from '../components/chat/ChatContent';
 import { dummyData } from '../library/chatData';
 import { useRecoilValue } from 'recoil';
-import { userState } from '../library/user_atom';
 import Image from 'next/image';
+import { userState } from '../recoil/atoms';
 
 export default function Chat() {
   const user = useRecoilValue(userState);

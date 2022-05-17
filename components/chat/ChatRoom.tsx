@@ -1,14 +1,15 @@
 import Image from 'next/image';
 import styled from 'styled-components';
+import { Chat } from '../../interfaces/chat.interface';
 
 interface Props {
-  chat: Record<string, unknown>;
+  chat: Chat;
   user: string;
   isActive: boolean;
 }
 
 export default function ChatRoom({ chat, user, isActive }: Props) {
-  const chatRoomName = chat.users.filter((a: any) => a.nickname !== user)[0];
+  const chatRoomName = chat.users.filter((a) => a.nickname !== user)[0];
   const lastMessage = chat.messages[chat.messages.length - 1].content;
 
   return (
@@ -33,7 +34,7 @@ export default function ChatRoom({ chat, user, isActive }: Props) {
   );
 }
 
-const Container = styled.li`
+const Container = styled.li<{ isActive: boolean }>`
   width: 100%;
   height: 10rem;
   display: flex;

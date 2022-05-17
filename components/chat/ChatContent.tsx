@@ -1,17 +1,18 @@
 import Image from 'next/image';
 import styled from 'styled-components';
+import { Chat } from '../../interfaces/chat.interface';
 
 interface Props {
-  chat: Record<string, unknown>;
+  chat: Chat;
   user: string;
 }
 
 export default function ChatContent({ user, chat }: Props) {
-  const chatRoomName = chat[0].users.filter((a: any) => a.nickname !== user)[0];
+  const chatRoomName = chat.users.filter((a) => a.nickname !== user)[0];
 
   return (
     <Container>
-      {chat[0].messages.map((message, i) => {
+      {chat.messages.map((message, i) => {
         if (message.user === user)
           return (
             <UserMessage key={i}>
