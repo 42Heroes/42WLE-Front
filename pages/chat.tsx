@@ -6,24 +6,27 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ChatRoom from '../components/chat/ChatRoom';
 import ChatContent from '../components/chat/ChatContent';
-import { dummyData } from '../library/chatData';
 import { useRecoilValue } from 'recoil';
 import Image from 'next/image';
-import { userState } from '../recoil/atoms';
+import { chatState, userState } from '../recoil/atoms';
 
 export default function Chat() {
   const user = useRecoilValue(userState);
-  const [activeChatRoom, setActiveChatRoom] = useState('123');
-  const activePartner = dummyData
-    .filter((a) => a._id === activeChatRoom)[0]
-    .users.filter((a) => a.nickname !== user.nickname)[0];
-  console.log(dummyData);
+  const chat = useRecoilValue(chatState);
+  const [activeChatRoomId, setActiveChatRoomId] = useState('');
+  const activePartner =
+    user &&
+    chat
+      .filter((a) => a._id === activeChatRoomId)[0]
+      ?.users.filter((a) => a.nickname !== user.nickname)[0];
+
   const [isMount, setIsMount] = useState(false);
   useEffect(() => {
     setIsMount(true);
   }, []);
   return (
-    isMount && (
+    isMount &&
+    user && (
       <Container>
         <LeftContainer>
           <SearchContainer>
@@ -31,34 +34,42 @@ export default function Chat() {
             <SearchIcon sx={{ fontSize: 25 }} />
           </SearchContainer>
           <ChatRoomList>
-            {dummyData.map((chat) => (
-              <div key={chat._id} onClick={() => setActiveChatRoom(chat._id)}>
+            {chat.map((chat) => (
+              <div key={chat._id} onClick={() => setActiveChatRoomId(chat._id)}>
                 <ChatRoom
                   chat={chat}
                   user={user.nickname}
-                  isActive={activeChatRoom === chat._id}
+                  isActive={activeChatRoomId === chat._id}
                 />
               </div>
             ))}
           </ChatRoomList>
         </LeftContainer>
         <RightContainer>
-          <NameContainer>
-            <Image
-              className="profile-image"
-              alt="pic"
-              src={activePartner.image}
-              width={50}
-              height={50}
-              objectFit="cover"
-            />
-            <h1>{activePartner.nickname}</h1>
-          </NameContainer>
+          {activePartner && (
+            <NameContainer>
+              <Image
+                className="profile-image"
+                alt="pic"
+                src={activePartner.image}
+                width={50}
+                height={50}
+                objectFit="cover"
+              />
+              <h1>{activePartner.nickname}</h1>
+            </NameContainer>
+          )}
           <MessageContainer>
-            <ChatContent
-              user={user.nickname}
-              chat={dummyData.filter((chat) => chat._id === activeChatRoom)}
-            />
+            {activeChatRoomId && (
+              <ChatContent
+                user={user.nickname}
+                chat={
+                  chat.filter(
+                    (chatroom) => chatroom._id === activeChatRoomId,
+                  )[0]
+                }
+              />
+            )}
           </MessageContainer>
           <MessageInputContainer>
             <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />

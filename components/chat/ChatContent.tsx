@@ -8,7 +8,8 @@ interface Props {
 }
 
 export default function ChatContent({ user, chat }: Props) {
-  const chatRoomName = chat.users.filter((a) => a.nickname !== user)[0];
+  const chatPartner = chat.users.filter((a) => a.nickname !== user)[0];
+  // console.log(chat[0].users.filter((a) => a.nickname !== user)[0]);
 
   return (
     <Container>
@@ -22,12 +23,12 @@ export default function ChatContent({ user, chat }: Props) {
         else
           return (
             <PartnerMessageContainer>
-              {chatRoomName.image && (
+              {chatPartner.image && (
                 <PartnerMessageImageWrapper>
                   <Image
                     className="profile-image"
                     alt="pic"
-                    src={chatRoomName.image}
+                    src={chatPartner.image}
                     width={60}
                     height={60}
                     objectFit="cover"
