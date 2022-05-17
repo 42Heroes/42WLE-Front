@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -17,50 +17,57 @@ export default function Chat() {
   const activePartner = dummyData
     .filter((a) => a._id === activeChatRoom)[0]
     .users.filter((a) => a.nickname !== user.nickname)[0];
-
+  console.log(dummyData);
+  const [isMount, setIsMount] = useState(false);
+  useEffect(() => {
+    setIsMount(true);
+  }, []);
   return (
-    <Container>
-      <LeftContainer>
-        <SearchContainer>
-          <input placeholder="Search" />
-          <SearchIcon sx={{ fontSize: 25 }} />
-        </SearchContainer>
-        <ChatRoomList>
-          {dummyData.map((chat) => (
-            <div key={chat._id} onClick={() => setActiveChatRoom(chat._id)}>
-              <ChatRoom
-                chat={chat}
-                user={user.nickname}
-                isActive={activeChatRoom === chat._id}
-              />
-            </div>
-          ))}
-        </ChatRoomList>
-      </LeftContainer>
-      <RightContainer>
-        <NameContainer>
-          <Image
-            alt="pic"
-            src={activePartner.image}
-            width={50}
-            height={50}
-            objectFit="cover"
-          />
-          <h1>{activePartner.nickname}</h1>
-        </NameContainer>
-        <MessageContainer>
-          <ChatContent
-            user={user.nickname}
-            chat={dummyData.filter((chat) => chat._id === activeChatRoom)}
-          />
-        </MessageContainer>
-        <MessageInputContainer>
-          <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
-          <input placeholder="Your messages..." />
-          <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
-        </MessageInputContainer>
-      </RightContainer>
-    </Container>
+    isMount && (
+      <Container>
+        <LeftContainer>
+          <SearchContainer>
+            <input placeholder="Search" />
+            <SearchIcon sx={{ fontSize: 25 }} />
+          </SearchContainer>
+          <ChatRoomList>
+            {dummyData.map((chat) => (
+              <div key={chat._id} onClick={() => setActiveChatRoom(chat._id)}>
+                <ChatRoom
+                  chat={chat}
+                  user={user.nickname}
+                  isActive={activeChatRoom === chat._id}
+                />
+              </div>
+            ))}
+          </ChatRoomList>
+        </LeftContainer>
+        <RightContainer>
+          <NameContainer>
+            <Image
+              className="profile-image"
+              alt="pic"
+              src={activePartner.image}
+              width={50}
+              height={50}
+              objectFit="cover"
+            />
+            <h1>{activePartner.nickname}</h1>
+          </NameContainer>
+          <MessageContainer>
+            <ChatContent
+              user={user.nickname}
+              chat={dummyData.filter((chat) => chat._id === activeChatRoom)}
+            />
+          </MessageContainer>
+          <MessageInputContainer>
+            <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
+            <input placeholder="Your messages..." />
+            <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
+          </MessageInputContainer>
+        </RightContainer>
+      </Container>
+    )
   );
 }
 
@@ -120,6 +127,9 @@ const NameContainer = styled.div`
   h1 {
     margin-left: 2rem;
     font-size: 2rem;
+  }
+  .profile-image {
+    border-radius: 50%;
   }
 `;
 

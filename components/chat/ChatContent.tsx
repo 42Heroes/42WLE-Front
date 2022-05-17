@@ -11,30 +11,32 @@ export default function ChatContent({ user, chat }: Props) {
 
   return (
     <Container>
-      {chat[0].messages &&
-        chat[0].messages.map((message, i) => {
-          if (message.user === user)
-            return (
-              <UserMessage key={i}>
-                <p>{message.content}</p>
-              </UserMessage>
-            );
-          else
-            return (
-              <PartnerMessageContainer>
-                {chatRoomName.image && (
+      {chat[0].messages.map((message, i) => {
+        if (message.user === user)
+          return (
+            <UserMessage key={i}>
+              <p>{message.content}</p>
+            </UserMessage>
+          );
+        else
+          return (
+            <PartnerMessageContainer>
+              {chatRoomName.image && (
+                <PartnerMessageImageWrapper>
                   <Image
+                    className="profile-image"
                     alt="pic"
                     src={chatRoomName.image}
                     width={60}
                     height={60}
                     objectFit="cover"
                   />
-                )}
-                <PartnerMessage key={i}>{message.content}</PartnerMessage>
-              </PartnerMessageContainer>
-            );
-        })}
+                </PartnerMessageImageWrapper>
+              )}
+              <PartnerMessage key={i}>{message.content}</PartnerMessage>
+            </PartnerMessageContainer>
+          );
+      })}
     </Container>
   );
 }
@@ -62,7 +64,16 @@ const UserMessage = styled.div`
 
 const PartnerMessageContainer = styled.div`
   display: flex;
+  align-items: center;
   margin: 2rem;
+`;
+
+const PartnerMessageImageWrapper = styled.div`
+  width: 6rem;
+  height: 6rem;
+  .profile-image {
+    border-radius: 50%;
+  }
 `;
 
 const PartnerMessage = styled.div`

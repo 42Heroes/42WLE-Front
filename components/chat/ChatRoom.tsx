@@ -16,6 +16,7 @@ export default function ChatRoom({ chat, user, isActive }: Props) {
       <ImageContainer>
         {chatRoomName.image && (
           <Image
+            className="profile-image"
             alt="pic"
             src={chatRoomName.image}
             width={60}
@@ -44,7 +45,9 @@ const Container = styled.li`
 const ImageContainer = styled.div`
   width: 6rem;
   height: 6rem;
-  border-radius: 50%;
+  .profile-image {
+    border-radius: 50%;
+  }
 `;
 
 const MessageContainer = styled.div`
