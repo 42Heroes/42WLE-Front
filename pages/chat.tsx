@@ -45,22 +45,23 @@ export default function Chat() {
             ))}
           </ChatRoomList>
         </LeftContainer>
-        <RightContainer>
-          {activePartner && (
-            <NameContainer>
-              <Image
-                className="profile-image"
-                alt="pic"
-                src={activePartner.image}
-                width={50}
-                height={50}
-                objectFit="cover"
-              />
-              <h1>{activePartner.nickname}</h1>
-            </NameContainer>
-          )}
-          <MessageContainer>
-            {activeChatRoomId && (
+        {activeChatRoomId && (
+          <RightContainer>
+            {activePartner && (
+              <NameContainer>
+                <Image
+                  className="profile-image"
+                  alt="pic"
+                  src={activePartner.image}
+                  width={50}
+                  height={50}
+                  objectFit="cover"
+                />
+                <h1>{activePartner.nickname}</h1>
+              </NameContainer>
+            )}
+
+            <MessageContainer>
               <ChatContent
                 user={user.nickname}
                 chat={
@@ -69,14 +70,14 @@ export default function Chat() {
                   )[0]
                 }
               />
-            )}
-          </MessageContainer>
-          <MessageInputContainer>
-            <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
-            <input placeholder="Your messages..." />
-            <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
-          </MessageInputContainer>
-        </RightContainer>
+            </MessageContainer>
+            <MessageInputContainer>
+              <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
+              <input placeholder="Your messages..." />
+              <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
+            </MessageInputContainer>
+          </RightContainer>
+        )}
       </Container>
     )
   );
