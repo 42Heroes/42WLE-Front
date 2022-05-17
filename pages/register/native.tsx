@@ -4,42 +4,104 @@ import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
 import Button from '../../components/common/Button';
 import LoginLayout from '../../components/layout/LoginLayout';
+import { ReactElement, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import languagesBase from '../../library/languages';
-import { ReactElement, useState } from 'react';
+import { LanguageInfo } from '../../interfaces/user.interface';
+import { useRegister } from '../../hooks/useRegister';
 
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
 export default function Native() {
-  const [languages, setLanguages] = useState(languagesBase as LanguageInfo[]);
-  const [selectedLanguages, setSelectedLanguages] = useState<LanguageInfo[]>(
-    [],
-  );
-  const handleSelectedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages([...selectedLanguages, clickedLanguage]);
+  const router = useRouter();
+  const [languages, setLanguages] = useState(languagesBase);
+  const [isDropdownOpened, setIsDropdownOpened] = useState(false);
+  const [registerUser, setRegisterUser] = useRegister();
+
+  const { n_language: selectedNativeLanguages } = registerUser;
+  const { l_language: selectedLearnLanguages } = registerUser;
+
+  const handleLanguageClick = (clickedLanguage: LanguageInfo) => {
+    const newSelectedLanguages = [...selectedNativeLanguages, clickedLanguage];
+    setRegisterUser({ ...registerUser, n_language: newSelectedLanguages });
+    setIsDropdownOpened(false);
   };
 
-  const handleDeletedLanguage = (clickedLanguage: LanguageInfo) => {
-    setSelectedLanguages(
-      selectedLanguages.filter((item) => item !== clickedLanguage),
+  const handleSelectedLanguageClick = (clickedLanguage: LanguageInfo) => {
+    const filteredLanguages = selectedNativeLanguages.filter(
+      (language) => language !== clickedLanguage,
     );
+    setRegisterUser({ ...registerUser, n_language: filteredLanguages });
   };
+
+  const handleClickNextButton = () => {
+    if (!selectedNativeLanguages.length) {
+      return;
+    }
+    router.push('/register/nickname');
+  };
+
+  useEffect(() => {
+    const filteredLanguages = languages
+      .map((item) =>
+        selectedLearnLanguages.some(
+          (selectedLanguage) => selectedLanguage.name === item.name,
+        )
+          ? null
+          : item,
+      )
+      .filter((language) => language !== null);
+    setLanguages(filteredLanguages as LanguageInfo[]);
+    if (selectedNativeLanguages.length) {
+      const filteredSelectedNativeLanguages = selectedNativeLanguages
+        .map((item) =>
+          selectedLearnLanguages.some(
+            (selectedLanguage) => selectedLanguage.name === item.name,
+          )
+            ? null
+            : item,
+        )
+        .filter((language) => language !== null);
+      setRegisterUser({
+        ...registerUser,
+        n_language: filteredSelectedNativeLanguages as LanguageInfo[],
+      });
+    }
+  }, [selectedLearnLanguages]);
+
   return (
     <Container>
       <Title>Which languages can you speak fluently?</Title>
-      <LanguageDropdown
-        onClickLanguage={handleSelectedLanguage}
-        languages={languages}
-        selectedLanguages={selectedLanguages}
-      />
-      <LanguageSelected
-        onClickDelete={handleDeletedLanguage}
-        selectedLanguages={selectedLanguages}
-      />
-      <StyledButton type="button" size="medium" color="blue">
+      <LanguageContainer>
+        {selectedNativeLanguages.length < 3 && (
+          <StyledAddButton
+            type="button"
+            color="blue"
+            size="medium"
+            fullWidth
+            onClick={() => setIsDropdownOpened(!isDropdownOpened)}
+          >
+            ADD LANGUAGE
+          </StyledAddButton>
+        )}
+        <LanguageDropdown
+          onClickLanguage={handleLanguageClick}
+          languages={languages}
+          selectedLanguages={selectedNativeLanguages}
+          isOpened={isDropdownOpened}
+        />
+        <LanguageSelected
+          onClickLanguage={handleSelectedLanguageClick}
+          selectedLanguages={selectedNativeLanguages}
+        />
+      </LanguageContainer>
+      <StyledNextButton
+        type="button"
+        size="medium"
+        color="blue"
+        onClick={handleClickNextButton}
+        disabled={!selectedNativeLanguages.length}
+      >
         NEXT
-      </StyledButton>
+      </StyledNextButton>
     </Container>
   );
 }
@@ -56,8 +118,26 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const StyledButton = styled(Button)`
+const StyledNextButton = styled(Button)`
   background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
-  padding: 0 10rem 0 10rem;
+  padding: 0 10rem;
+`;
+
+const LanguageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+
+const StyledAddButton = styled(Button)`
+  height: 5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: ${({ theme }) => theme.grayColor};
+  border: 0.1rem solid ${({ theme }) => theme.grayColor};
+  background-color: inherit;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  width: 34rem;
 `;

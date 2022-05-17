@@ -1,106 +1,82 @@
-import { ChangeEvent, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import useInput from '../../hooks/useInput';
+import LanguageDropdownItem from './LanguageDropdownList';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
   onClickLanguage: (item: LanguageInfo) => void;
   languages: LanguageInfo[];
   selectedLanguages: LanguageInfo[];
+  isOpened: boolean;
+  className?: string;
 }
 
 export default function LanguageDropdown({
   onClickLanguage,
   languages,
   selectedLanguages,
+  isOpened,
+  className,
 }: Props) {
-  const [toggle, setToggle] = useState<boolean>(false);
-  const [inputText, setInputText] = useState<string>('');
+  const [inputText, onChangeInputText] = useInput('');
   const [searchedItems, setSearchedItems] = useState<LanguageInfo[]>([]);
 
-  const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
+  const removedDuplicateLanguages = useMemo(
+    () =>
+      searchedItems
+        .map((item) =>
+          selectedLanguages.some(
+            (selectedItem) => selectedItem.name === item.name,
+          )
+            ? null
+            : item,
+        )
+        .filter((language) => language !== null),
+    [selectedLanguages, searchedItems],
+  );
+
+  useEffect(() => {
     setSearchedItems(
-      languages.filter((item: LanguageInfo) =>
-        item.language.toLowerCase().includes(e.target.value.toLowerCase()),
+      languages.filter((language) =>
+        language.name.toLowerCase().includes(inputText.toLowerCase()),
       ),
     );
-  };
-
-  const htmlPrint = (item: LanguageInfo) => {
-    return (
-      <LanguageList
-        key={item.language}
-        onClick={() => {
-          onClickLanguage(item);
-        }}
-      >
-        <Image alt={item.language} src={item.flag} width={18} height={11} />
-        <LanguageName>{item.language}</LanguageName>
-      </LanguageList>
-    );
-  };
+  }, [inputText, languages]);
 
   return (
-    <TopContainer>
-      <AddBox onClick={() => setToggle(!toggle)}>ADD LANGUAGE</AddBox>
-      {toggle && (
-        <Container>
+    <>
+      {isOpened && (
+        <Container className={className}>
           <Input
             value={inputText}
-            onChange={handleInputText}
+            onChange={onChangeInputText}
             type="text"
             placeholder="Enter your language"
           />
           <ul>
-            {inputText
-              ? searchedItems.map((item) =>
-                  selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
-                  )
-                    ? null
-                    : htmlPrint(item),
-                )
-              : languages.map((item) =>
-                  selectedLanguages.some(
-                    (selectedItem) => selectedItem.language === item.language,
-                  )
-                    ? null
-                    : htmlPrint(item),
-                )}
+            {removedDuplicateLanguages.map(
+              (language) =>
+                language && (
+                  <LanguageDropdownItem
+                    key={language.name}
+                    language={language}
+                    onClickLanguage={onClickLanguage}
+                  />
+                ),
+            )}
           </ul>
         </Container>
       )}
-    </TopContainer>
+    </>
   );
 }
 
-const TopContainer = styled.div`
-  cursor: pointer;
-  position: relative;
-  width: 34rem;
-`;
-
-const AddBox = styled.div`
-  border: 0.1rem solid;
-  border-color: ${({ theme }) => theme.grayColor};
-  height: 5rem;
-  /* width: 34rem; */
-  color: ${({ theme }) => theme.grayColor};
-  font-size: ${({ theme }) => theme.font.subTitleBold};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 5rem;
-`;
-
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  left: 100%;
+  left: 105%;
   top: 0;
   width: 17rem;
   height: 14rem;
@@ -108,8 +84,6 @@ const Container = styled.div`
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   border-top-left-radius: 0;
-  display: flex;
-  flex-direction: column;
   ul {
     overflow-y: scroll;
   }
@@ -127,25 +101,5 @@ const Input = styled.input`
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   &:focus {
     outline: none;
-  }
-`;
-
-const LanguageName = styled.div`
-  margin-left: 0.7rem;
-  text-transform: uppercase;
-`;
-
-const LanguageList = styled.li`
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  color: ${({ theme }) => theme.fontColor.commentColor};
-
-  span {
-    color: ${({ theme }) => theme.fontColor.titleColor};
-  }
-  &:hover {
-    color: ${({ theme }) => theme.fontColor.titleColor};
-    background-color: ${({ theme }) => theme.fontColor.commentColor};
   }
 `;

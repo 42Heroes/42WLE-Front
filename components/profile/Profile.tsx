@@ -4,40 +4,45 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import media from '../../styles/media';
 import Button from '../common/Button';
-import FTLogo from '../common/FTLogo';
+import FTLogo from '../../public/assets/icons/42Logo.svg';
 import Language from '../common/Language';
-
-interface LanguageInfo {
-  language: string;
-  flag: string;
-}
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import { User } from '../../interfaces/user.interface';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../../recoil/atoms';
 
 interface Props {
-  userData: {
-    nickname: string;
-    intra_id: string;
-    image_url: string;
-    hashtags: string[];
-    country: string;
-    github_id: string;
-    n_language: LanguageInfo[];
-    l_language: LanguageInfo[];
-    introduction: string;
-  };
+  user: User;
   className?: string;
 }
 
-export default function Profile({ userData, className }: Props) {
+export default function Profile({ user, className }: Props) {
   const router = useRouter();
-  const isUserModal = router.asPath === '/register/preview';
   // TODO: isModal 로 변경 or preview 페이지나 myProfile 페이지 예외처리 필요
+  const me = useRecoilValue(userState);
+  const isUserModal = router.asPath !== '/register/preview';
+
+  const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
+
+  const handleLikeButtonClick = () => {
+    // TODO: mutation
+  };
+
+  const handleMessageButtonClick = () => {
+    // TODO: mutation
+  };
+
   return (
     <Container className={className}>
       <UserInfo>
         <UserImageWrapper>
           <Image
             className="profile-image"
-            src={userData.image_url}
+            src={user.image_url}
             alt="Profile Image"
             objectFit="cover"
             width={250}
@@ -45,55 +50,66 @@ export default function Profile({ userData, className }: Props) {
           />
         </UserImageWrapper>
         <UserInfoContainer>
-          <h2>{userData.nickname}</h2>
+          <h2>{user.nickname}</h2>
           <LanguageContainer>
             <div>
               <h3>Native in</h3>
               <LanguageList>
-                {userData.n_language.map((language) => (
-                  <Language key={language.language} language={language} />
+                {user.n_language.map((language) => (
+                  <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>
             <div>
               <h3>Learning</h3>
               <LanguageList>
-                {userData.l_language.map((language) => (
-                  <Language key={language.language} language={language} />
+                {user.l_language.map((language) => (
+                  <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>
           </LanguageContainer>
-          <HashTags>
-            <h3>Hashtags</h3>
-            <div>
-              {userData.hashtags.map((hashTag) => (
-                <HashTag key={hashTag}>#{hashTag}</HashTag>
-              ))}
-            </div>
-          </HashTags>
+          {user.hashtags.length ? (
+            <HashTags>
+              <h3>Hashtags</h3>
+              <div>
+                {user.hashtags.map((hashTag) => (
+                  <HashTag key={hashTag}>#{hashTag}</HashTag>
+                ))}
+              </div>
+            </HashTags>
+          ) : null}
         </UserInfoContainer>
       </UserInfo>
       <SocialInfoContainer>
         <SocialInfo>
-          <FTLogo width="23" />
-          {userData.intra_id}
+          <FTLogo />
+          {user.intra_id}
         </SocialInfo>
-        <SocialInfo>{userData.country}</SocialInfo>
         <SocialInfo>
-          <Link href={`https://github.com/${userData.github_id}`}>
-            <a target="_blank">https://github.com/{userData.github_id}</a>
+          <LocationOnIcon sx={{ fontSize: 25 }} />
+          {user.country}
+        </SocialInfo>
+        <SocialInfo>
+          <GitHubIcon sx={{ fontSize: 25 }} />
+          <Link href={`https://github.com/${user.github_id}`}>
+            <a target="_blank">https://github.com/{user.github_id}</a>
           </Link>
         </SocialInfo>
       </SocialInfoContainer>
-      <Introduction>{userData.introduction}</Introduction>
+      <Introduction>{user.introduction}</Introduction>
       {isUserModal && (
         <ButtonContainer>
           <MessageButton type="button" size="medium" color="gray6" outline>
+            <EmailRoundedIcon sx={{ fontSize: 25 }} />
             Message
           </MessageButton>
           <LikeButton type="button" size="medium" color="gray6" outline>
-            gkxm
+            {isLikedUser ? (
+              <FavoriteRoundedIcon sx={{ fontSize: 22 }} />
+            ) : (
+              <FavoriteBorderRoundedIcon sx={{ fontSize: 22 }} />
+            )}
           </LikeButton>
         </ButtonContainer>
       )}
@@ -121,7 +137,7 @@ const UserInfo = styled.div`
   ${media.small} {
     justify-content: space-between;
     flex-direction: row;
-    gap: 0rem;
+    gap: 6rem;
   }
 `;
 
@@ -140,6 +156,7 @@ const UserInfoContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  min-width: 26rem;
   color: ${({ theme }) => theme.grayColor};
   ${media.small} {
     align-items: flex-start;
@@ -158,6 +175,10 @@ const UserInfoContainer = styled.div`
   h2,
   h3 {
     color: ${({ theme }) => theme.fontColor.titleColor};
+    text-align: center;
+    ${media.small} {
+      text-align: left;
+    }
   }
 `;
 
@@ -192,13 +213,17 @@ const SocialInfoContainer = styled.ul`
 
 const SocialInfo = styled.li`
   display: flex;
+  align-items: center;
   gap: 1rem;
+  svg {
+    width: 2.3rem;
+    fill: white;
+  }
 `;
 
 const HashTags = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   h3 {
     margin-bottom: 0.8rem;
   }
@@ -229,9 +254,15 @@ const MessageButton = styled(Button)`
   width: 100%;
   border-radius: 1rem;
   justify-content: center;
+  svg {
+    margin-right: 1rem;
+  }
 `;
 
 const LikeButton = styled(Button)`
   color: ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
+  svg {
+    fill: #ff9999;
+  }
 `;

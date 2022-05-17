@@ -1,25 +1,35 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-
-interface LanguageInfo {
-  flag: string;
-  language: string;
-}
+import ClearIcon from '@mui/icons-material/Clear';
+import { getFlagImage } from '../../library/utils';
+import { LanguageInfo } from '../../interfaces/user.interface';
 
 interface Props {
-  onClickDelete: (item: LanguageInfo) => void;
+  onClickLanguage: (item: LanguageInfo) => void;
   selectedLanguages: LanguageInfo[];
 }
+
 export default function LanguageSelected({
-  onClickDelete,
+  onClickLanguage,
   selectedLanguages,
 }: Props) {
   return (
     <ul>
-      {selectedLanguages?.map((item: LanguageInfo) => (
-        <SelectedList key={item.language} onClick={() => onClickDelete(item)}>
-          <Image alt={item.language} src={item.flag} width={18} height={11} />
-          <LanguageName>{item.language.toUpperCase()}</LanguageName>
+      {selectedLanguages.map((language) => (
+        <SelectedList
+          key={language.name}
+          onClick={() => onClickLanguage(language)}
+        >
+          <Contents>
+            <Image
+              alt={language.name}
+              src={getFlagImage(language.name)}
+              width={23}
+              height={14}
+            />
+            <LanguageName>{language.name.toUpperCase()}</LanguageName>
+          </Contents>
+          <ClearIcon fontSize="large" />
         </SelectedList>
       ))}
     </ul>
@@ -29,17 +39,26 @@ export default function LanguageSelected({
 const SelectedList = styled.li`
   display: flex;
   align-items: center;
-  padding: 0.5rem;
-  border: 0.1rem solid;
-  border-color: ${({ theme }) => theme.grayColor};
+  justify-content: space-between;
+  padding: 1.5rem;
+  border: 0.1rem solid ${({ theme }) => theme.grayColor};
+  border-radius: 0.5rem;
   height: 5rem;
   width: 34rem;
-  margin: 3rem 0rem;
+  margin-bottom: 2rem;
+  font-family: JetBrainsMono, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: ${({ theme }) => theme.grayColor};
   cursor: pointer;
 `;
+
+const Contents = styled.div`
+  display: flex;
+`;
 const LanguageName = styled.div`
-  margin-left: 0.7rem;
+  margin-left: 1rem;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.grayColor};
   font-size: ${({ theme }) => theme.font.subTitleBold};
+  font-size: 2.5rem;
+  font-weight: bold;
 `;

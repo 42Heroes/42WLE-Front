@@ -1,11 +1,14 @@
-import UserCard from '../components/common/UserCard';
-import dummyData from '../library/dummydata';
-import { UserProps } from '../interfaces/user_interfaces';
+import { ReactElement } from 'react';
+import { useRecoilValue } from 'recoil';
+import CommonLayout from '../components/layout/CommonLayout';
+import { userState } from '../recoil/atoms';
 
-export default function find() {
-  return (
-    <div>
-      <UserCard userCardData={dummyData} />
-    </div>
-  );
+export default function Find() {
+  const userData = useRecoilValue(userState);
+
+  return <p style={{ color: 'white' }}>This is find page.</p>;
 }
+
+Find.getLayout = function getLayout(page: ReactElement) {
+  return <CommonLayout headerText="Find">{page}</CommonLayout>;
+};

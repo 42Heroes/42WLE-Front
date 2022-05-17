@@ -1,32 +1,44 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import Title from '../../components/common/Title';
 import styled from 'styled-components';
 import LoginLayout from '../../components/layout/LoginLayout';
 import Button from '../../components/common/Button';
+import { useRouter } from 'next/router';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function Introduction() {
+  const router = useRouter();
+
   const maximumLength = 500;
-  const handleInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  const [registerUser, setRegisterUser] = useRegister();
+  const [introduction, setIntroduction] = useState('');
+
+  const onChangeInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const {
       currentTarget: { value },
     } = e;
-    if (value.length <= maximumLength) setIntroduction(value);
+    if (value.length <= maximumLength) {
+      setIntroduction(value);
+    }
   };
 
-  const [introduction, setIntroduction] = useState('');
-
-  const handleClickButton = () => {
+  const handleButtonClick = () => {
     if (introduction.length < 10 || introduction.length > maximumLength) {
       return;
     }
-    localStorage.setItem('Introduction', introduction);
+    setRegisterUser({ ...registerUser, introduction });
+    router.push('/register/extra-info');
   };
+
+  useEffect(() => {
+    setIntroduction(registerUser.introduction);
+  }, [registerUser]);
 
   return (
     <Container>
       <Title>Tell us about yourself!</Title>
       <InputContainer>
-        <Input value={introduction} onChange={handleInputChange} />
+        <Input value={introduction} onChange={onChangeInput} />
         <span>{`${introduction.length} / ${maximumLength}`}</span>
       </InputContainer>
       <StyledButton
@@ -34,7 +46,7 @@ export default function Introduction() {
         size="medium"
         color="blue"
         disabled={!introduction.length || introduction.length < 10}
-        onClick={handleClickButton}
+        onClick={handleButtonClick}
       >
         NEXT
       </StyledButton>

@@ -1,71 +1,52 @@
 import Image from 'next/image';
-import { useCallback, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import styled from 'styled-components';
 import useDragDrop from '../../hooks/useDragDrop';
+import CameraIcon from '../../public/assets/icons/camera.svg';
+import UserIcon from '../../public/assets/icons/user.svg';
 
 interface Props {
   image: string | null;
-  setImage: React.Dispatch<React.SetStateAction<string | null>>;
+  onChangeImage: (
+    e: React.ChangeEvent<HTMLInputElement> | any,
+  ) => Promise<void>;
 }
 
-export default function DragDrop({ image, setImage }: Props) {
+export default function DragDrop({ image, onChangeImage }: Props) {
   const dragRef = useRef<HTMLLabelElement | null>(null);
   const dragContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const onChangeImage = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement> | any) => {
-      let selectedImage;
-      if (e.type === 'change') {
-        selectedImage = e.target.files[0];
-      } else if (e.type === 'drop') {
-        selectedImage = e.dataTransfer.files[0];
-      }
-      if (selectedImage && selectedImage.size <= 2000000) {
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedImage);
-        reader.onload = () => {
-          const { result } = reader;
-          if (typeof result === 'string') {
-            localStorage.setItem('sign-up-profile', result);
-            setImage(result);
-          }
-        };
-      }
-    },
-    [],
-  );
-
   const isDragging = useDragDrop(onChangeImage, dragRef);
-
-  useEffect(() => {
-    const persistImage = localStorage.getItem('sign-up-profile');
-    if (persistImage) {
-      setImage(persistImage);
-    }
-  }, []);
 
   return (
     <Container ref={dragContainerRef}>
       <PreviewWrapper>
-        <Image
-          className="profile-image"
-          alt="profile image preview"
-          // TODO: default Image 설정해주기
-          src={image ?? '/languages/korean.svg'}
-          width={280}
-          height={280}
-        />
-        <DragDropArea
-          htmlFor="profile-image_upload"
-          ref={dragRef}
-          isDragging={isDragging}
-        >
-          {isDragging
-            ? '사진을 올려주세용'
-            : '사진을 드래그 드롭하여 추가해주세요'}
-        </DragDropArea>
+        <ImageWrapper isEmpty={!image}>
+          {image ? (
+            <Image
+              className="profile-image"
+              alt="profile image preview"
+              src={image}
+              width={280}
+              height={280}
+            />
+          ) : (
+            <UserIcon />
+          )}
+          <DragDropArea
+            htmlFor="profile-image_upload"
+            ref={dragRef}
+            isDragging={isDragging}
+          >
+            {image
+              ? isDragging && 'Drag your file here'
+              : isDragging
+              ? 'Drop your file here'
+              : 'Drag your file here'}
+          </DragDropArea>
+        </ImageWrapper>
         <CameraWrapper as="label" htmlFor="profile-image_upload">
-          <Image alt="camera" src="/camera.svg" width={50} height={50} />
+          <CameraIcon />
         </CameraWrapper>
       </PreviewWrapper>
       <InputContainer>
@@ -73,7 +54,6 @@ export default function DragDrop({ image, setImage }: Props) {
           id="profile-image_upload"
           type="file"
           accept="image/png, image/jpeg, image/jpg"
-          multiple={false}
           onChange={onChangeImage}
         />
       </InputContainer>
@@ -98,6 +78,17 @@ const InputContainer = styled.div`
   }
 `;
 
+const ImageWrapper = styled.div<{ isEmpty: boolean }>`
+  border: 8px solid;
+  border-radius: 1rem;
+  border-color: ${({ theme, isEmpty }) =>
+    isEmpty ? theme.fontColor.contentColor : theme.bgColor};
+  svg {
+    width: 28rem;
+    fill: ${({ theme }) => theme.fontColor.contentColor};
+  }
+`;
+
 const PreviewWrapper = styled.div`
   display: block;
   position: relative;
@@ -116,6 +107,9 @@ const CameraWrapper = styled.div`
   border-radius: 1rem;
   background-color: ${({ theme }) => theme.grayColor};
   border: 2px solid ${({ theme }) => theme.fontColor.contentColor};
+  svg {
+    width: 5rem;
+  }
 `;
 
 const DragDropArea = styled.label<{ isDragging: boolean }>`
@@ -127,6 +121,7 @@ const DragDropArea = styled.label<{ isDragging: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 2rem;
   transition: background-color 0.2s ease-in-out;
   color: ${({ theme }) => theme.fontColor.titleColor};
   background-color: ${({ isDragging }) =>
