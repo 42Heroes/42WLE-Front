@@ -67,7 +67,6 @@ const fullWidthStyle = css<Props>`
       justify-content: center;
       & + & {
         margin-left: 0;
-        margin-top: 1rem;
       }
     `}
 `;
