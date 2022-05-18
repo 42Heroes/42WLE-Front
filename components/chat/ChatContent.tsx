@@ -9,7 +9,6 @@ interface Props {
 
 export default function ChatContent({ user, chat }: Props) {
   const chatPartner = chat.users.filter((a) => a.nickname !== user)[0];
-  // console.log(chat[0].users.filter((a) => a.nickname !== user)[0]);
 
   return (
     <Container>
