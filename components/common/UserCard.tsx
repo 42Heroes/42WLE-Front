@@ -2,12 +2,16 @@ import { User } from '../../interfaces/user.interface';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import { useState } from 'react';
 
 interface Props {
   userCardData: User;
 }
 
 export default function UserCard({ userCardData }: Props) {
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
   return (
     <Container>
       <Userimg>
@@ -19,6 +23,9 @@ export default function UserCard({ userCardData }: Props) {
           height={117}
           alt={UserCard.name}
         />
+        <LikeButton isLiked={isLiked} onClick={() => setIsLiked(!isLiked)}>
+          <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+        </LikeButton>
       </Userimg>
       <Userinfo>
         <Nickname>{userCardData.nickname}</Nickname>
@@ -67,6 +74,7 @@ const Container = styled.div`
 `;
 
 const Userimg = styled.div`
+  position: relative;
   display: flex;
   width: 11.7rem;
   height: 11.7rem;
@@ -75,6 +83,15 @@ const Userimg = styled.div`
     width: 100%;
     height: 100%;
   }
+`;
+
+const LikeButton = styled.div<Props>`
+  color: ${({ isLiked, theme }) =>
+    isLiked ? theme.likeIcon : theme.grayColor};
+  position: absolute;
+  left: 75%;
+  top: 80%;
+  cursor: pointer;
 `;
 
 const Userinfo = styled.div`
