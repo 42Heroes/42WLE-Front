@@ -5,6 +5,8 @@ import { userState } from '../recoil/atoms';
 import UserCard from '../components/common/UserCard';
 import { User } from '../interfaces/user.interface';
 import styled from 'styled-components';
+import { useQuery } from 'react-query';
+import axios from 'axios';
 
 export default function Find() {
   const userData: User = {
@@ -70,15 +72,19 @@ export default function Find() {
   // const handleClickLike = () => {
   //   setIsLiked(!isLiked);
   // };
+  const fetchMydataAPI = () => {
+    return axios.get('http://req2back');
+  };
+  const { data } = useQuery<User>('myData', fetchMydataAPI);
 
   return (
     <Container>
-      <UserCard userCardData={userData} />
-      <UserCard userCardData={userData} />
-      <UserCard userCardData={userData} />
-      <UserCard userCardData={userData} />
-      <UserCard userCardData={userData} />
-      <UserCard userCardData={userData} />
+      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={data} />
     </Container>
   );
 }

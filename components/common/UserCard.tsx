@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import { useState } from 'react';
 
 interface Props {
   userCardData: User;
+  myData: User;
 }
 
-export default function UserCard({ userCardData }: Props) {
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+export default function UserCard({ userCardData, myData }: Props) {
+  // const [isLiked, setIsLiked] = useState<boolean>(false);
 
   return (
     <Container>
@@ -23,7 +23,14 @@ export default function UserCard({ userCardData }: Props) {
           height={117}
           alt={UserCard.name}
         />
-        <LikeButton isLiked={isLiked} onClick={() => setIsLiked(!isLiked)}>
+        <LikeButton
+          liked={myData.liked_users.some(
+            (user) => user.nickname === userCardData.nickname,
+          )}
+          onClick={() => {
+            myData.liked_users.push(userCardData);
+          }}
+        >
           <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
         </LikeButton>
       </Userimg>
@@ -85,9 +92,8 @@ const Userimg = styled.div`
   }
 `;
 
-const LikeButton = styled.div<Props>`
-  color: ${({ isLiked, theme }) =>
-    isLiked ? theme.likeIcon : theme.grayColor};
+const LikeButton = styled.div<{ liked: boolean }>`
+  color: ${({ theme, liked }) => (liked ? theme.likeIcon : theme.grayColor)};
   position: absolute;
   left: 75%;
   top: 80%;
