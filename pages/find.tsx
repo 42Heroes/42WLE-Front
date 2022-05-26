@@ -6,10 +6,10 @@ import UserCard from '../components/common/UserCard';
 import { User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import { getUsers } from '../hooks/api/fetchUsers';
 
 export default function Find() {
-  const userData: User = {
+  const me: User = {
     _id: 124352,
     nickname: 'junseo',
     intra_id: 'junseo',
@@ -67,24 +67,17 @@ export default function Find() {
     l_language: [{ name: 'english' }, { name: 'japanese' }],
     join_data: new Date('2015-04-20T15:37:23'),
   };
-  // const [isLiked, setIsLiked] = useState(false);
 
-  // const handleClickLike = () => {
-  //   setIsLiked(!isLiked);
-  // };
-  const fetchMydataAPI = () => {
-    return axios.get('http://req2back');
-  };
-  const { data } = useQuery<User>('myData', fetchMydataAPI);
+  const { data } = useQuery<User[]>('users', getUsers, {
+    keepPreviousData: true,
+  });
+  console.log(data);
 
   return (
     <Container>
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
+      {data?.map((user, index: number) => (
+        <UserCard key={index} userCardData={user} myData={me} />
+      ))}
     </Container>
   );
 }

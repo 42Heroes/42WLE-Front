@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 
 interface Props {
   userCardData: User;
@@ -10,28 +11,30 @@ interface Props {
 }
 
 export default function UserCard({ userCardData, myData }: Props) {
-  // const [isLiked, setIsLiked] = useState<boolean>(false);
-
   return (
     <Container>
       <Userimg>
         <Image
-          src={getFlagImage('korean')}
+          src={userCardData.image_url}
           objectFit="cover"
           className="userimg"
           width={117}
           height={117}
-          alt={UserCard.name}
+          alt={`${userCardData.nickname}'s image cannot be loaded`}
         />
         <LikeButton
-          liked={myData.liked_users.some(
-            (user) => user.nickname === userCardData.nickname,
-          )}
           onClick={() => {
             myData.liked_users.push(userCardData);
           }}
         >
-          <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+          {myData.liked_users.some(
+            (user) =>
+              userCardData.nickname && user.nickname === userCardData.nickname,
+          ) ? (
+            <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+          ) : (
+            <FavoriteBorderRoundedIcon sx={{ fontSize: 28 }} />
+          )}
         </LikeButton>
       </Userimg>
       <Userinfo>
@@ -92,8 +95,8 @@ const Userimg = styled.div`
   }
 `;
 
-const LikeButton = styled.div<{ liked: boolean }>`
-  color: ${({ theme, liked }) => (liked ? theme.likeIcon : theme.grayColor)};
+const LikeButton = styled.div`
+  color: ${({ theme }) => theme.likeIcon};
   position: absolute;
   left: 75%;
   top: 80%;
