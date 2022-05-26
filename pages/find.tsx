@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import CommonLayout from '../components/layout/CommonLayout';
 import { userState } from '../recoil/atoms';
@@ -7,6 +7,10 @@ import { User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { getUsers } from '../hooks/api/fetchUsers';
+import Profile from '../components/profile/Profile';
+import ModalPortal from '../components/common/Portal';
+import { ProfileModal } from '../components/common/Modal';
+import Portal from '../components/common/Portal';
 
 export default function Find() {
   const me: User = {
@@ -71,13 +75,24 @@ export default function Find() {
   const { data } = useQuery<User[]>('users', getUsers, {
     keepPreviousData: true,
   });
-  console.log(data);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalUser, setModalUser] = useState({});
 
   return (
     <Container>
-      {data?.map((user, index: number) => (
-        <UserCard key={index} userCardData={user} myData={me} />
+      {data?.map((user) => (
+        <div
+          key={user._id}
+          onClick={() => {
+            setModalUser(user);
+            setIsModalOpen(true);
+          }}
+        >
+          <UserCard userCardData={user} myData={me} />
+        </div>
       ))}
+      <Portal>{isModalOpen && <ProfileModal user={modalUser} />}</Portal>
     </Container>
   );
 }
