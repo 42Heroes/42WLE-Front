@@ -92,7 +92,13 @@ export default function Find() {
           <UserCard userCardData={user} myData={me} />
         </div>
       ))}
-      <Portal>{isModalOpen && <ProfileModal user={modalUser} />}</Portal>
+      {isModalOpen && (
+        <div onClick={() => setIsModalOpen(false)}>
+          <Portal>
+            <ProfileModal user={modalUser} />
+          </Portal>
+        </div>
+      )}
     </Container>
   );
 }

@@ -4,13 +4,12 @@ import Profile from '../profile/Profile';
 import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
 
-export const ProfileModal = (user: User) => {
+export const ProfileModal = ({ user }: User) => {
   return (
     <ModalPortal>
       <Background>
         <Content>
-          <p>this is modal</p>
-          {/* <Profile user={user} /> */}
+          <Profile user={user} />
         </Content>
       </Background>
     </ModalPortal>
@@ -18,8 +17,8 @@ export const ProfileModal = (user: User) => {
 };
 
 const Background = styled.div`
-  height: 60%;
-  width: 40%;
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,8 +29,8 @@ const Background = styled.div`
 `;
 
 const Content = styled.div`
-  height: 100%;
-  width: 100%;
+  height: 60%;
+  width: 40%;
   /* margin-top: 70px; */
   position: relative;
   overflow: scroll;
