@@ -11,6 +11,7 @@ import Profile from '../components/profile/Profile';
 import ModalPortal from '../components/common/Portal';
 import { ProfileModal } from '../components/common/Modal';
 import Portal from '../components/common/Portal';
+import media from '../styles/media';
 
 export default function Find() {
   const me: User = {
@@ -108,10 +109,18 @@ export default function Find() {
 const Container = styled.div`
   margin: 5rem 3rem;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   row-gap: 3rem;
   column-gap: 2rem;
   place-items: center;
+
+  grid-template-columns: repeat(1, 1fr);
+
+  ${media.medium} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  ${media.large} {
+    grid-template-columns: repeat(auto-fill, minmax(39rem, auto));
+  }
 `;
 
 Find.getLayout = function getLayout(page: ReactElement) {
