@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import CommonLayout from '../components/layout/CommonLayout';
 import { userState } from '../recoil/atoms';
@@ -79,6 +79,13 @@ export default function Find() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUser, setModalUser] = useState({});
 
+  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <Container>
       {data?.map((user) => (
@@ -93,11 +100,7 @@ export default function Find() {
         </div>
       ))}
       {isModalOpen && (
-        <div onClick={() => setIsModalOpen(false)}>
-          <Portal>
-            <ProfileModal user={modalUser} />
-          </Portal>
-        </div>
+        <ProfileModal user={modalUser} toggleModal={toggleModal} />
       )}
     </Container>
   );
@@ -108,7 +111,9 @@ const Container = styled.div`
   grid-template-columns: repeat(3, 1fr);
   row-gap: 3rem;
   column-gap: 2rem;
+  place-items: center;
 `;
+
 Find.getLayout = function getLayout(page: ReactElement) {
   return <CommonLayout headerText="Find">{page}</CommonLayout>;
 };

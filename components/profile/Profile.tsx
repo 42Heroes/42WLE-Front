@@ -37,94 +37,84 @@ export default function Profile({ user, className }: Props) {
     // TODO: mutation
   };
 
-  const [isMount, setIsMount] = useState(false);
-  useEffect(() => {
-    setIsMount(true);
-  }, []);
-
   return (
-    isMount &&
-    user.image_url && (
-      <Container className={className}>
-        <UserInfo>
-          <UserImageWrapper>
-            <Image
-              className="profile-image"
-              src={user.image_url}
-              alt="Profile Image"
-              objectFit="cover"
-              width={250}
-              height={250}
-            />
-          </UserImageWrapper>
-          <UserInfoContainer>
-            <h2>{user.nickname}</h2>
-            <LanguageContainer>
+    <Container className={className}>
+      <UserInfo>
+        <UserImageWrapper>
+          <Image
+            className="profile-image"
+            src={user.image_url}
+            alt="Profile Image"
+            objectFit="cover"
+            width={250}
+            height={250}
+          />
+        </UserImageWrapper>
+        <UserInfoContainer>
+          <h2>{user.nickname}</h2>
+          <LanguageContainer>
+            <div>
+              <h3>Native in</h3>
+              <LanguageList>
+                {user.n_language?.map((language) => (
+                  <Language key={language.name} language={language} />
+                ))}
+              </LanguageList>
+            </div>
+            <div>
+              <h3>Learning</h3>
+              <LanguageList>
+                {user.l_language?.map((language) => (
+                  <Language key={language.name} language={language} />
+                ))}
+              </LanguageList>
+            </div>
+          </LanguageContainer>
+          {user.hashtags && user.hashtags.length ? (
+            <HashTags>
+              <h3>Hashtags</h3>
               <div>
-                <h3>Native in</h3>
-                <LanguageList>
-                  {user.n_language &&
-                    user.n_language.map((language) => (
-                      <Language key={language.name} language={language} />
-                    ))}
-                </LanguageList>
+                {user.hashtags.map((hashTag) => (
+                  <HashTag key={hashTag}>#{hashTag}</HashTag>
+                ))}
               </div>
-              <div>
-                <h3>Learning</h3>
-                <LanguageList>
-                  {user.l_language &&
-                    user.l_language.map((language) => (
-                      <Language key={language.name} language={language} />
-                    ))}
-                </LanguageList>
-              </div>
-            </LanguageContainer>
-            {user.hashtags && user.hashtags.length ? (
-              <HashTags>
-                <h3>Hashtags</h3>
-                <div>
-                  {user.hashtags.map((hashTag) => (
-                    <HashTag key={hashTag}>#{hashTag}</HashTag>
-                  ))}
-                </div>
-              </HashTags>
-            ) : null}
-          </UserInfoContainer>
-        </UserInfo>
-        <SocialInfoContainer>
-          <SocialInfo>
-            <FTLogo />
-            {user.intra_id}
-          </SocialInfo>
-          <SocialInfo>
-            <LocationOnIcon sx={{ fontSize: 25 }} />
-            {user.country}
-          </SocialInfo>
-          <SocialInfo>
-            <GitHubIcon sx={{ fontSize: 25 }} />
-            <Link href={`https://github.com/${user.github_id}`}>
-              <a target="_blank">https://github.com/{user.github_id}</a>
-            </Link>
-          </SocialInfo>
-        </SocialInfoContainer>
-        <Introduction>{user.introduction}</Introduction>
-        {isUserModal && (
-          <ButtonContainer>
-            <MessageButton type="button" size="medium" color="gray6" outline>
-              <EmailRoundedIcon sx={{ fontSize: 25 }} />
-              Message
-            </MessageButton>
-            <LikeButton type="button" size="medium" color="gray6" outline>
-              {isLikedUser ? (
-                <FavoriteRoundedIcon sx={{ fontSize: 22 }} />
-              ) : (
-                <FavoriteBorderRoundedIcon sx={{ fontSize: 22 }} />
-              )}
-            </LikeButton>
-          </ButtonContainer>
-        )}
-      </Container>
-    )
+            </HashTags>
+          ) : null}
+        </UserInfoContainer>
+      </UserInfo>
+      <SocialInfoContainer>
+        <SocialInfo>
+          <FTLogo />
+          {user.intra_id}
+        </SocialInfo>
+        <SocialInfo>
+          <LocationOnIcon sx={{ fontSize: 25 }} />
+          {user.country}
+        </SocialInfo>
+        <SocialInfo>
+          <GitHubIcon sx={{ fontSize: 25 }} />
+          <Link href={`https://github.com/${user.github_id}`}>
+            <a target="_blank">https://github.com/{user.github_id}</a>
+          </Link>
+        </SocialInfo>
+      </SocialInfoContainer>
+      <Introduction>{user.introduction}</Introduction>
+      {isUserModal && (
+        <ButtonContainer>
+          <MessageButton type="button" size="medium" color="gray6" outline>
+            <EmailRoundedIcon sx={{ fontSize: 25 }} />
+            Message
+          </MessageButton>
+          <LikeButton type="button" size="medium" color="gray6" outline>
+            {isLikedUser ? (
+              <FavoriteRoundedIcon sx={{ fontSize: 22 }} />
+            ) : (
+              <FavoriteBorderRoundedIcon sx={{ fontSize: 22 }} />
+            )}
+          </LikeButton>
+        </ButtonContainer>
+      )}
+    </Container>
   );
 }
 
@@ -136,6 +126,7 @@ const Container = styled.div`
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
   color: ${({ theme }) => theme.fontColor.contentColor};
+  background-color: ${({ theme }) => theme.bgColor};
 `;
 
 const UserInfo = styled.div`

@@ -4,13 +4,18 @@ import Profile from '../profile/Profile';
 import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
 
-export const ProfileModal = ({ user }: User) => {
+interface Props {
+  user: User;
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+}
+
+export const ProfileModal = ({ user, toggleModal }: Props) => {
   return (
     <ModalPortal>
-      <Background>
-        <Content>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
           <Profile user={user} />
-        </Content>
+        </div>
       </Background>
     </ModalPortal>
   );
@@ -25,17 +30,5 @@ const Background = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  text-align: center;
-`;
-
-const Content = styled.div`
-  height: 60%;
-  width: 40%;
-  /* margin-top: 70px; */
-  position: relative;
-  overflow: scroll;
-  background: #141414;
-  p {
-    color: white;
-  }
+  background-color: rgba(0, 0, 0, 0.5);
 `;
