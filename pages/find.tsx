@@ -12,6 +12,9 @@ import ModalPortal from '../components/common/Portal';
 import { ProfileModal } from '../components/common/Modal';
 import Portal from '../components/common/Portal';
 import media from '../styles/media';
+import LanguageDropdown from '../components/common/LanguageDropdown';
+import languagesBase from '../library/languages';
+import { useRegister } from '../hooks/useRegister';
 
 export default function Find() {
   const me: User = {
@@ -87,26 +90,99 @@ export default function Find() {
     setIsModalOpen(!isModalOpen);
   };
 
+  const [languages] = useState(languagesBase);
+  const handleNLanguageClick = (clickedLanguage) => {
+    setSelectedNLanguage(clickedLanguage);
+    setIsNDropdownOpened(false);
+  };
+
+  const handleLLanguageClick = (clickedLanguage) => {
+    setSelectedLLanguage(clickedLanguage);
+    setIsLDropdownOpened(false);
+  };
+
+  const [isNDropdownOpened, setIsNDropdownOpened] = useState(false);
+  const [isLDropdownOpened, setIsLDropdownOpened] = useState(false);
+  const [selectedNLanguage, setSelectedNLanguage] = useState({ name: 'All' });
+  const [selectedLLanguage, setSelectedLLanguage] = useState({ name: 'All' });
   return (
     <Container>
-      {data?.map((user) => (
-        <div
-          key={user._id}
-          onClick={() => {
-            setModalUser(user);
-            setIsModalOpen(true);
-          }}
-        >
-          <UserCard userCardData={user} myData={me} />
-        </div>
-      ))}
-      {isModalOpen && (
-        <ProfileModal user={modalUser} toggleModal={toggleModal} />
-      )}
+      <LanguageDropdownContainer>
+        <LanguageDropdownWrapper>
+          <p>Natvie in</p>
+          <LanguageSelectBox onClick={() => setIsNDropdownOpened(true)}>
+            <div className="selectedItem">
+              {selectedNLanguage.name.toUpperCase()}
+            </div>
+          </LanguageSelectBox>
+          <StyledLanguageDropdown
+            onClickLanguage={handleNLanguageClick}
+            languages={languages}
+            selectedLanguages={[selectedLLanguage]}
+            isOpened={isNDropdownOpened}
+          />
+        </LanguageDropdownWrapper>
+        <LanguageDropdownWrapper>
+          <p>Learning</p>
+          <LanguageSelectBox onClick={() => setIsLDropdownOpened(true)}>
+            <div className="selectedItem">
+              {selectedLLanguage.name.toUpperCase()}
+            </div>
+          </LanguageSelectBox>
+          <StyledLanguageDropdown
+            onClickLanguage={handleLLanguageClick}
+            languages={languages}
+            selectedLanguages={[selectedNLanguage]}
+            isOpened={isLDropdownOpened}
+          />
+        </LanguageDropdownWrapper>
+      </LanguageDropdownContainer>
+      <UserCardWrapper>
+        {data?.map((user) => (
+          <div
+            key={user._id}
+            onClick={() => {
+              setModalUser(user);
+              setIsModalOpen(true);
+            }}
+          >
+            <UserCard userCardData={user} myData={me} />
+          </div>
+        ))}
+        {isModalOpen && (
+          <ProfileModal user={modalUser} toggleModal={toggleModal} />
+        )}
+      </UserCardWrapper>
     </Container>
   );
 }
-const Container = styled.div`
+
+const Container = styled.div``;
+
+const LanguageDropdownContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
+
+const LanguageDropdownWrapper = styled.div`
+  color: white;
+  position: relative;
+`;
+
+const LanguageSelectBox = styled.div`
+  background-color: tomato;
+  color: white;
+  font-size: 2rem;
+  width: 20rem;
+  height: 4rem;
+`;
+
+const StyledLanguageDropdown = styled(LanguageDropdown)`
+  left: 0;
+  position: relative;
+`;
+
+const UserCardWrapper = styled.div`
   margin: 5rem 3rem;
   display: grid;
   row-gap: 3rem;
