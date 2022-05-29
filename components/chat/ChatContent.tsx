@@ -1,48 +1,37 @@
-import Image from 'next/image';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { Chat } from '../../interfaces/chat.interface';
+import { Message } from '../../interfaces/chat.interface';
+import { User } from '../../interfaces/user.interface';
+import { userState } from '../../recoil/atoms';
+import ProfileImage from '../common/ProfileImage';
 
 interface Props {
-  chat: Chat;
-  user: string;
+  messages: Message[];
+  activePartner: User;
 }
 
-export default function ChatContent({ user, chat }: Props) {
-  const chatPartner = chat.users.filter((a) => a.nickname !== user)[0];
+export default function ChatContent({ messages, activePartner }: Props) {
+  const me = useRecoilValue(userState);
 
   return (
     <Container>
-      {chat.messages.map((message, i) => {
-        if (message.user === user)
-          return (
-            <UserMessage key={i}>
-              <p>{message.content}</p>
-            </UserMessage>
-          );
-        else
-          return (
-            <PartnerMessageContainer>
-              {chatPartner.image && (
-                <PartnerMessageImageWrapper>
-                  <Image
-                    className="profile-image"
-                    alt="pic"
-                    src={chatPartner.image}
-                    width={60}
-                    height={60}
-                    objectFit="cover"
-                  />
-                </PartnerMessageImageWrapper>
-              )}
-              <PartnerMessage key={i}>{message.content}</PartnerMessage>
-            </PartnerMessageContainer>
-          );
-      })}
+      {messages.map((message) =>
+        message.user_id === me?._id ? (
+          <UserMessage key={message._id}>
+            <p>{message.content}</p>
+          </UserMessage>
+        ) : (
+          <PartnerMessageContainer key={message._id}>
+            <ProfileImage src={activePartner.image_url} size="small" />
+            <PartnerMessage>{message.content}</PartnerMessage>
+          </PartnerMessageContainer>
+        ),
+      )}
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.ul`
   display: flex;
   flex-direction: column;
 `;
@@ -69,19 +58,11 @@ const PartnerMessageContainer = styled.div`
   margin: 2rem;
 `;
 
-const PartnerMessageImageWrapper = styled.div`
-  width: 6rem;
-  height: 6rem;
-  .profile-image {
-    border-radius: 50%;
-  }
-`;
-
 const PartnerMessage = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
+  margin: 2rem;
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
   padding: 1rem;
-  margin: 2rem;
   border-radius: 30rem;
   border-top-left-radius: 0;
   width: max-content;
