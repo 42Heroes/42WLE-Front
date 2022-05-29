@@ -1,85 +1,28 @@
 import styled from 'styled-components';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import ChatRoom from '../components/chat/ChatRoom';
-import ChatContent from '../components/chat/ChatContent';
 import { useRecoilValue } from 'recoil';
-import Image from 'next/image';
-import { chatState, userState } from '../recoil/atoms';
+import { chatState } from '../recoil/atoms';
+import ChatRoomList from '../components/chat/ChatRoomList';
+import ActiveChat from '../components/chat/ActiveChat';
 
 export default function Chat() {
-  const user = useRecoilValue(userState);
-  const chat = useRecoilValue(chatState);
-  const [activeChatRoomId, setActiveChatRoomId] = useState('');
-  const activePartner =
-    user &&
-    chat
-      .filter((a) => a._id === activeChatRoomId)[0]
-      ?.users.filter((a) => a.nickname !== user.nickname)[0];
+  const chatRooms = useRecoilValue(chatState);
 
-  const [isMount, setIsMount] = useState(false);
-  useEffect(() => {
-    setIsMount(true);
-  }, []);
   return (
-    isMount &&
-    user && (
-      <Container>
-        <LeftContainer>
-          <SearchContainer>
-            <input placeholder="Search" />
-            <SearchIcon sx={{ fontSize: 25 }} />
-          </SearchContainer>
-          <ChatRoomList>
-            {chat.map((chat) => (
-              <div key={chat._id} onClick={() => setActiveChatRoomId(chat._id)}>
-                <ChatRoom
-                  chat={chat}
-                  user={user.nickname}
-                  isActive={activeChatRoomId === chat._id}
-                />
-              </div>
-            ))}
-          </ChatRoomList>
-        </LeftContainer>
-        {activeChatRoomId && (
-          <RightContainer>
-            {activePartner && (
-              <NameContainer>
-                <Image
-                  className="profile-image"
-                  alt="pic"
-                  src={activePartner.image}
-                  width={50}
-                  height={50}
-                  objectFit="cover"
-                />
-                <h1>{activePartner.nickname}</h1>
-              </NameContainer>
-            )}
-
-            <MessageContainer>
-              <ChatContent
-                user={user.nickname}
-                chat={
-                  chat.filter(
-                    (chatroom) => chatroom._id === activeChatRoomId,
-                  )[0]
-                }
-              />
-            </MessageContainer>
-            <MessageInputContainer>
-              <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
-              <input placeholder="Your messages..." />
-              <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
-            </MessageInputContainer>
-          </RightContainer>
-        )}
-      </Container>
-    )
+    <Container>
+      <LeftContainer>
+        <SearchContainer>
+          <input placeholder="Search" />
+          <SearchIcon sx={{ fontSize: 25 }} />
+        </SearchContainer>
+        <ChatRoomList chatRooms={chatRooms} />
+      </LeftContainer>
+      <RightContainer>
+        <ActiveChat />
+      </RightContainer>
+    </Container>
   );
 }
 
@@ -125,62 +68,6 @@ const SearchContainer = styled.div`
 
 const RightContainer = styled.div`
   width: 65%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const NameContainer = styled.div`
-  color: ${({ theme }) => theme.fontColor.titleColor};
-  height: 6rem;
-  border-bottom: 1px solid ${({ theme }) => theme.grayColor};
-  display: flex;
-  align-items: center;
-  padding: 2rem;
-  h1 {
-    margin-left: 2rem;
-    font-size: 2rem;
-  }
-  .profile-image {
-    border-radius: 50%;
-  }
-`;
-
-const MessageContainer = styled.div`
-  flex: 1;
-  border-bottom: 1px solid ${({ theme }) => theme.grayColor};
-`;
-
-const MessageInputContainer = styled.div`
-  height: 7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  height: 4.5rem;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  background-color: #242526;
-  input {
-    width: 100%;
-    background-color: inherit;
-    margin-left: 1rem;
-    color: ${({ theme }) => theme.fontColor.contentColor};
-    ::placeholder {
-      color: ${({ theme }) => theme.fontColor.contentColor};
-    }
-    &:focus {
-      outline: none;
-    }
-  }
-  svg {
-    &:last-child {
-      transform: rotateZ(-45deg);
-      margin-bottom: 0.5rem;
-    }
-  }
-`;
-
-const ChatRoomList = styled.ul`
   display: flex;
   flex-direction: column;
 `;
