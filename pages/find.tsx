@@ -110,8 +110,34 @@ export default function Find() {
   const [selectedNLanguage, setSelectedNLanguage] = useState({ name: 'All' });
   const [selectedLLanguage, setSelectedLLanguage] = useState({ name: 'All' });
 
-  console.log(data);
-  console.log(selectedNLanguage);
+  const filteredUsers =
+    // 필터링 없을 때
+    selectedNLanguage.name === 'All' && selectedLLanguage.name === 'All'
+      ? data
+      : // n_language에만 필터링
+      selectedNLanguage.name !== 'All' && selectedLLanguage.name === 'All'
+      ? data?.filter((user) =>
+          user.n_language.some(
+            (language) => language.name === selectedNLanguage.name,
+          ),
+        )
+      : // l_language에만 필터링
+      selectedNLanguage.name === 'All' && selectedLLanguage.name !== 'All'
+      ? data?.filter((user) =>
+          user.l_language.some(
+            (language) => language.name === selectedLLanguage.name,
+          ),
+        )
+      : // 양쪽 모두에 필터링
+        data?.filter(
+          (user) =>
+            user.l_language.some(
+              (language) => language.name === selectedLLanguage.name,
+            ) &&
+            user.n_language.some(
+              (language) => language.name === selectedNLanguage.name,
+            ),
+        );
 
   return (
     <Container>
@@ -152,38 +178,18 @@ export default function Find() {
 
       {/* 유저 카드 */}
       <UserCardWrapper>
-        {data?.map((user) => {
-          if (selectedNLanguage.name === 'All') {
-            return (
-              <div
-                key={user._id}
-                onClick={() => {
-                  setModalUser(user);
-                  setIsModalOpen(true);
-                }}
-              >
-                <UserCard userCardData={user} myData={me} />
-              </div>
-            );
-          } else {
-            if (
-              user.n_language.some(
-                (language) => language.name === selectedNLanguage.name,
-              )
-            ) {
-              return (
-                <div
-                  key={user._id}
-                  onClick={() => {
-                    setModalUser(user);
-                    setIsModalOpen(true);
-                  }}
-                >
-                  <UserCard userCardData={user} myData={me} />
-                </div>
-              );
-            }
-          }
+        {filteredUsers?.map((user) => {
+          return (
+            <div
+              key={user._id}
+              onClick={() => {
+                setModalUser(user);
+                setIsModalOpen(true);
+              }}
+            >
+              <UserCard userCardData={user} myData={me} />
+            </div>
+          );
         })}
         {isModalOpen && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
