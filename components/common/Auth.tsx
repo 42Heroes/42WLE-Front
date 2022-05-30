@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { User } from '../../interfaces/user.interface';
-import { Chat } from '../../interfaces/chat.interface';
+import { Chat, Message } from '../../interfaces/chat.interface';
 import { loginState, userState, chatState } from '../../recoil/atoms';
+import socket from '../../library/socket';
+import { SocketEvents } from '../../library/socket.events.enum';
 
 interface Props {
   children: React.ReactNode;
@@ -78,8 +80,16 @@ export default function Auth({ children }: Props) {
         createdAt: '2022-05-13 12:34:56',
         updatedAt: '2022-05-13 13:45:67',
         users: [
-          { nickname: 'junseo', image: '/man1.jpeg' },
-          { nickname: 'sjo', image: '/man1.jpeg' },
+          {
+            _id: 124352,
+            nickname: 'junseo',
+            image_url: '/man1.jpeg',
+          },
+          {
+            _id: 124332,
+            nickname: 'sjo',
+            image_url: '/man1.jpeg',
+          },
         ],
         messages: [
           {
@@ -101,8 +111,16 @@ export default function Auth({ children }: Props) {
         createdAt: '2022-05-13 12:34:56',
         updatedAt: '2022-05-14 13:45:67',
         users: [
-          { nickname: 'junseo', image: '/man2.jpeg' },
-          { nickname: 'jojoo', image: '/man2.jpeg' },
+          {
+            _id: 124353,
+            nickname: 'junseo',
+            image_url: '/man2.jpeg',
+          },
+          {
+            _id: 124355,
+            nickname: 'jojoo',
+            image_url: '/man2.jpeg',
+          },
         ],
         messages: [
           {
@@ -124,5 +142,44 @@ export default function Auth({ children }: Props) {
     setIsLoggedIn(true);
     setChatData(chatData);
   }, []);
+
+  useEffect(() => {
+    socket.on(SocketEvents.Error, (err) => {
+      console.log(err);
+    });
+
+    socket.on(SocketEvents.ReqCreateRoom, (res) => {
+      // const found = me?.chatRooms.find(
+      //   (chatRoom) => res.chatRooms.indexOf(chatRoom) >= 0,
+      // );
+      console.log(res);
+      // setChatData((prev)=>{
+
+      // })
+    });
+
+    socket
+      .off(SocketEvents.Message)
+      .on(SocketEvents.Message, (message: Message) => {
+        console.log('messageEvent');
+        setChatData((prev) => {
+          const filteredChatRoom = prev.filter(
+            (chatRoom) => chatRoom._id !== message.chatRoom_id,
+          );
+          const target = prev.find(
+            (chatRoom) => chatRoom._id === message.chatRoom_id,
+          );
+          if (target) {
+            const targetRoomMessages = [...target.messages, message];
+            return [
+              { ...target, messages: targetRoomMessages },
+              ...filteredChatRoom,
+            ];
+          }
+          return prev;
+        });
+      });
+  }, []);
+
   return <>{children}</>;
 }

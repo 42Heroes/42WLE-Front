@@ -15,7 +15,9 @@ export default function ChatRoom({ chat }: Props) {
   );
 
   const otherUser = chat.users.find((user) => user._id !== me?._id);
-  const lastMessage = chat.messages[chat.messages.length - 1].content;
+  const lastMessage = chat.messages.length
+    ? chat?.messages[chat.messages.length - 1].content
+    : '아무도 채팅을 안 했습니당';
   const isActiveRoom = chat._id === activeChatRoomId;
 
   const handleChatRoomClick = () => {

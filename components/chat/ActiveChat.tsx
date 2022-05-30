@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import ChatContent from './ChatContent';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -8,10 +8,63 @@ import {
   activeChatRoomState,
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
+import useInput from '../../hooks/useInput';
+import socket from '../../library/socket';
+import { SocketEvents } from '../../library/socket.events.enum';
+import { useEffect, useRef, useState } from 'react';
+import { chatState } from '../../recoil/atoms';
+import { Message } from '../../interfaces/chat.interface';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
+  const setChatData = useSetRecoilState(chatState);
+  const [isPending, setIsPending] = useState(false);
+  const [value, onChangeInputText, setInputText] = useInput();
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!value || isPending) {
+      return;
+    }
+    if (e.code === 'Enter') {
+      setIsPending(true);
+      const payload = {
+        chatRoom_id: activeChatRoom?._id,
+        type: 'text',
+        content: value,
+      };
+      socket.emit(SocketEvents.Message, payload, (message: Message) => {
+        setInputText('');
+        setIsPending(false);
+        setChatData((prev) => {
+          const filteredChatRoom = prev.filter(
+            (chatRoom) => chatRoom._id !== message.chatRoom_id,
+          );
+          const target = prev.find(
+            (chatRoom) => chatRoom._id === message.chatRoom_id,
+          );
+          if (target) {
+            const targetRoomMessages = [...target.messages, message];
+            return [
+              { ...target, messages: targetRoomMessages },
+              ...filteredChatRoom,
+            ];
+          }
+          return prev;
+        });
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }
+  }, [activeChatRoom?.messages]);
 
   if (!activeChatRoom || !activePartner) {
     return null;
@@ -23,7 +76,7 @@ export default function ActiveChat() {
         <ProfileImage src={activePartner.image_url} size="small" />
         <h1>{activePartner.nickname}</h1>
       </NameContainer>
-      <MessageContainer>
+      <MessageContainer ref={messageContainerRef}>
         <ChatContent
           messages={activeChatRoom.messages}
           activePartner={activePartner}
@@ -31,7 +84,12 @@ export default function ActiveChat() {
       </MessageContainer>
       <MessageInputContainer>
         <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
-        <input placeholder="Your messages..." />
+        <input
+          value={value}
+          onChange={onChangeInputText}
+          placeholder="Your messages..."
+          onKeyDown={handleInputKeyDown}
+        />
         <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
       </MessageInputContainer>
     </>
@@ -54,6 +112,7 @@ const NameContainer = styled.div`
 const MessageContainer = styled.div`
   flex: 1;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
+  overflow: auto;
 `;
 
 const MessageInputContainer = styled.div`
