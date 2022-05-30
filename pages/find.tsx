@@ -16,6 +16,10 @@ import LanguageDropdown from '../components/common/LanguageDropdown';
 import languagesBase from '../library/languages';
 import { useRegister } from '../hooks/useRegister';
 
+interface Language {
+  name: string;
+}
+
 export default function Find() {
   const me: User = {
     _id: 124352,
@@ -91,12 +95,12 @@ export default function Find() {
   };
 
   const [languages] = useState(languagesBase);
-  const handleNLanguageClick = (clickedLanguage) => {
+  const handleNLanguageClick = (clickedLanguage: Language) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
   };
 
-  const handleLLanguageClick = (clickedLanguage) => {
+  const handleLLanguageClick = (clickedLanguage: Language) => {
     setSelectedLLanguage(clickedLanguage);
     setIsLDropdownOpened(false);
   };
@@ -105,9 +109,15 @@ export default function Find() {
   const [isLDropdownOpened, setIsLDropdownOpened] = useState(false);
   const [selectedNLanguage, setSelectedNLanguage] = useState({ name: 'All' });
   const [selectedLLanguage, setSelectedLLanguage] = useState({ name: 'All' });
+
+  console.log(data);
+  console.log(selectedNLanguage);
+
   return (
     <Container>
+      {/* 언어 필터링 드롭다운 */}
       <LanguageDropdownContainer>
+        {/* 할 수 있는 언어 필터링 */}
         <LanguageDropdownWrapper>
           <p>Natvie in</p>
           <LanguageSelectBox onClick={() => setIsNDropdownOpened(true)}>
@@ -122,6 +132,8 @@ export default function Find() {
             isOpened={isNDropdownOpened}
           />
         </LanguageDropdownWrapper>
+
+        {/* 배우고 싶은 언어 필터링 */}
         <LanguageDropdownWrapper>
           <p>Learning</p>
           <LanguageSelectBox onClick={() => setIsLDropdownOpened(true)}>
@@ -137,18 +149,42 @@ export default function Find() {
           />
         </LanguageDropdownWrapper>
       </LanguageDropdownContainer>
+
+      {/* 유저 카드 */}
       <UserCardWrapper>
-        {data?.map((user) => (
-          <div
-            key={user._id}
-            onClick={() => {
-              setModalUser(user);
-              setIsModalOpen(true);
-            }}
-          >
-            <UserCard userCardData={user} myData={me} />
-          </div>
-        ))}
+        {data?.map((user) => {
+          if (selectedNLanguage.name === 'All') {
+            return (
+              <div
+                key={user._id}
+                onClick={() => {
+                  setModalUser(user);
+                  setIsModalOpen(true);
+                }}
+              >
+                <UserCard userCardData={user} myData={me} />
+              </div>
+            );
+          } else {
+            if (
+              user.n_language.some(
+                (language) => language.name === selectedNLanguage.name,
+              )
+            ) {
+              return (
+                <div
+                  key={user._id}
+                  onClick={() => {
+                    setModalUser(user);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  <UserCard userCardData={user} myData={me} />
+                </div>
+              );
+            }
+          }
+        })}
         {isModalOpen && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
