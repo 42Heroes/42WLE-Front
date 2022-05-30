@@ -1,20 +1,14 @@
 import React, { ReactElement, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import CommonLayout from '../components/layout/CommonLayout';
-import { userState } from '../recoil/atoms';
 import UserCard from '../components/common/UserCard';
 import { User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { getUsers } from '../hooks/api/fetchUsers';
-import Profile from '../components/profile/Profile';
-import ModalPortal from '../components/common/Portal';
 import { ProfileModal } from '../components/common/Modal';
-import Portal from '../components/common/Portal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
 import languagesBase from '../library/languages';
-import { useRegister } from '../hooks/useRegister';
 
 interface Language {
   name: string;
@@ -204,19 +198,29 @@ const Container = styled.div``;
 const LanguageDropdownContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
+  height: 15rem;
 `;
 
 const LanguageDropdownWrapper = styled.div`
   color: white;
   position: relative;
+  display: flex;
+  align-items: center;
+  font-size: 1.7rem;
+  margin-top: 2rem;
 `;
 
 const LanguageSelectBox = styled.div`
-  background-color: tomato;
+  background-color: #242526;
+  border-radius: 10rem;
+  padding: 2rem;
   color: white;
   font-size: 2rem;
   width: 20rem;
   height: 4rem;
+  margin-left: 2rem;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledLanguageDropdown = styled(LanguageDropdown)`
