@@ -281,10 +281,7 @@ const LanguageSelectBox = styled.div`
   }
 `;
 
-const StyledLanguageDropdown = styled(LanguageDropdown)`
-  /* left: 0; */
-  /* position: relative; */
-`;
+const StyledLanguageDropdown = styled(LanguageDropdown)``;
 
 const UserCardWrapper = styled.div`
   margin: 5rem 3rem;
