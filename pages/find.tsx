@@ -233,7 +233,15 @@ const Container = styled.div``;
 const LanguageDropdownContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
   height: 15rem;
+  flex-direction: column;
+  ${media.medium} {
+    flex-direction: row;
+  }
+  ${media.large} {
+    flex-direction: row;
+  }
 `;
 
 const LanguageDropdownWrapper = styled.div`
