@@ -29,7 +29,7 @@ interface Props {
 export default function Profile({ user, className }: Props) {
   const router = useRouter();
   const me = useRecoilValue(userState);
-  const setChat = useSetRecoilState(chatState);
+  const setChatData = useSetRecoilState(chatState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
   const isUserModal = user._id !== me?._id;
 
@@ -40,27 +40,26 @@ export default function Profile({ user, className }: Props) {
   };
 
   /*
-    1. 현재 내 유저 데이터와 상대방의 유저데이터 중 중복된 채팅방이 있는지 확인
-    2. 있다면 해당 activeChatRoomIdState 변경 후 router.push(/chat);
-    3. 없다면 targetId 설정 후 방 생성 요청
-    4. 생성된 방을 setChat 후 추가하여
+    1. ReqCreateRoom 요청 보내기 (target_id) <- 서버측에서 확인
+    2. 없다면 ChatData 에 추가, 있다면 패스
+    3. activeChatRoomId 상태를 방금 받은 roomId 로 변경
+    4. /chat 페이지로 라우트 이동
   */
   const handleMessageButtonClick = () => {
-    const found = me?.chatRooms.find(
-      (chatRoom) => user.chatRooms.indexOf(chatRoom) >= 0,
-    );
-    if (found) {
-      setActiveChatRoomId(found);
-    } else {
-      const payload = {
-        target_id: user._id,
-      };
-      socket.emit(SocketEvents.ReqCreateRoom, payload, (res) => {
-        if (res.status === 'ok') {
-          setChat((prev) => [...prev, res.chatRoom]);
-        }
-      });
-    }
+    const payload = {
+      target_id: user._id,
+    };
+    socket.emit(SocketEvents.ReqCreateRoom, payload, (res) => {
+      if (res.status === 'ok') {
+        setChatData((prev) => {
+          if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
+            return prev;
+          }
+          return [...prev, res.chatRoom];
+        });
+        setActiveChatRoomId(res.chatRoom._id);
+      }
+    });
     router.push('/chat');
   };
 
