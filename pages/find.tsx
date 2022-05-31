@@ -11,6 +11,7 @@ import LanguageDropdown from '../components/common/LanguageDropdown';
 import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface Language {
   name: string;
@@ -90,7 +91,7 @@ export default function Find() {
     setIsModalOpen(!isModalOpen);
   };
 
-  const [languages] = useState([{ name: 'All' }, ...languagesBase]);
+  const [languages] = useState(languagesBase);
   console.log(languages);
   const handleNLanguageClick = (clickedLanguage: Language) => {
     setSelectedNLanguage(clickedLanguage);
@@ -144,22 +145,25 @@ export default function Find() {
         <LanguageDropdownWrapper>
           <p>Natvie in</p>
           <LanguageSelectBox>
-            <div
+            <SelectedLanguageBox
               className="selectedItem"
               onClick={() => setSelectedNLanguage({ name: 'All' })}
             >
               {selectedNLanguage.name.toUpperCase()}
-            </div>
+              {selectedNLanguage.name === 'All' ? null : <ClearIcon />}
+            </SelectedLanguageBox>
           </LanguageSelectBox>
           {isNDropdownOpened ? (
             <IndeterminateCheckBoxRoundedIcon
               sx={{ fontSize: 25 }}
               onClick={() => setIsNDropdownOpened(false)}
+              className="plusMinusIcon"
             />
           ) : (
             <AddBoxRoundedIcon
               sx={{ fontSize: 25 }}
               onClick={() => setIsNDropdownOpened(true)}
+              className="plusMinusIcon"
             />
           )}
           <Temp>
@@ -176,22 +180,25 @@ export default function Find() {
         <LanguageDropdownWrapper>
           <p>Learning</p>
           <LanguageSelectBox>
-            <div
+            <SelectedLanguageBox
               className="selectedItem"
               onClick={() => setSelectedLLanguage({ name: 'All' })}
             >
               {selectedLLanguage.name.toUpperCase()}
-            </div>
+              {selectedLLanguage.name === 'All' ? null : <ClearIcon />}
+            </SelectedLanguageBox>
           </LanguageSelectBox>
           {isLDropdownOpened ? (
             <IndeterminateCheckBoxRoundedIcon
               sx={{ fontSize: 25 }}
               onClick={() => setIsLDropdownOpened(false)}
+              className="plusMinusIcon"
             />
           ) : (
             <AddBoxRoundedIcon
               sx={{ fontSize: 25 }}
               onClick={() => setIsLDropdownOpened(true)}
+              className="plusMinusIcon"
             />
           )}
           <Temp>
@@ -251,9 +258,8 @@ const LanguageDropdownWrapper = styled.div`
   align-items: center;
   font-size: 1.7rem;
   margin-top: 2rem;
-  svg {
+  .plusMinusIcon {
     fill: ${({ theme }) => theme.pointColor};
-    cursor: pointer;
   }
 `;
 
@@ -268,6 +274,7 @@ const LanguageSelectBox = styled.div`
   margin: 0 2rem;
   display: flex;
   align-items: center;
+  cursor: pointer;
   &:hover {
     background-color: ${({ theme }) => theme.grayColor};
     color: ${({ theme }) => theme.fontColor.commentColor};
@@ -298,11 +305,17 @@ const UserCardWrapper = styled.div`
 
 const Temp = styled.div`
   z-index: 99;
-  background-color: 000000;
-  /* position: relative; */
-  /* bottom: 0; */
+  background-color: #000000;
+  position: relative;
+  bottom: 0;
 `;
 
 Find.getLayout = function getLayout(page: ReactElement) {
   return <CommonLayout headerText="Find">{page}</CommonLayout>;
 };
+
+const SelectedLanguageBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
