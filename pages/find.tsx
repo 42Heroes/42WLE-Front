@@ -9,6 +9,8 @@ import { ProfileModal } from '../components/common/Modal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
 import languagesBase from '../library/languages';
+import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
+import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 
 interface Language {
   name: string;
@@ -88,7 +90,8 @@ export default function Find() {
     setIsModalOpen(!isModalOpen);
   };
 
-  const [languages] = useState(languagesBase);
+  const [languages] = useState([{ name: 'All' }, ...languagesBase]);
+  console.log(languages);
   const handleNLanguageClick = (clickedLanguage: Language) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
@@ -140,33 +143,65 @@ export default function Find() {
         {/* 할 수 있는 언어 필터링 */}
         <LanguageDropdownWrapper>
           <p>Natvie in</p>
-          <LanguageSelectBox onClick={() => setIsNDropdownOpened(true)}>
-            <div className="selectedItem">
+          <LanguageSelectBox>
+            <div
+              className="selectedItem"
+              onClick={() => setSelectedNLanguage({ name: 'All' })}
+            >
               {selectedNLanguage.name.toUpperCase()}
             </div>
           </LanguageSelectBox>
-          <StyledLanguageDropdown
-            onClickLanguage={handleNLanguageClick}
-            languages={languages}
-            selectedLanguages={[selectedLLanguage]}
-            isOpened={isNDropdownOpened}
-          />
+          {isNDropdownOpened ? (
+            <IndeterminateCheckBoxRoundedIcon
+              sx={{ fontSize: 25 }}
+              onClick={() => setIsNDropdownOpened(false)}
+            />
+          ) : (
+            <AddBoxRoundedIcon
+              sx={{ fontSize: 25 }}
+              onClick={() => setIsNDropdownOpened(true)}
+            />
+          )}
+          <Temp>
+            <StyledLanguageDropdown
+              onClickLanguage={handleNLanguageClick}
+              languages={languages}
+              selectedLanguages={[selectedLLanguage]}
+              isOpened={isNDropdownOpened}
+            />
+          </Temp>
         </LanguageDropdownWrapper>
 
         {/* 배우고 싶은 언어 필터링 */}
         <LanguageDropdownWrapper>
           <p>Learning</p>
-          <LanguageSelectBox onClick={() => setIsLDropdownOpened(true)}>
-            <div className="selectedItem">
+          <LanguageSelectBox>
+            <div
+              className="selectedItem"
+              onClick={() => setSelectedLLanguage({ name: 'All' })}
+            >
               {selectedLLanguage.name.toUpperCase()}
             </div>
           </LanguageSelectBox>
-          <StyledLanguageDropdown
-            onClickLanguage={handleLLanguageClick}
-            languages={languages}
-            selectedLanguages={[selectedNLanguage]}
-            isOpened={isLDropdownOpened}
-          />
+          {isLDropdownOpened ? (
+            <IndeterminateCheckBoxRoundedIcon
+              sx={{ fontSize: 25 }}
+              onClick={() => setIsLDropdownOpened(false)}
+            />
+          ) : (
+            <AddBoxRoundedIcon
+              sx={{ fontSize: 25 }}
+              onClick={() => setIsLDropdownOpened(true)}
+            />
+          )}
+          <Temp>
+            <StyledLanguageDropdown
+              onClickLanguage={handleLLanguageClick}
+              languages={languages}
+              selectedLanguages={[selectedNLanguage]}
+              isOpened={isLDropdownOpened}
+            />
+          </Temp>
         </LanguageDropdownWrapper>
       </LanguageDropdownContainer>
 
@@ -208,6 +243,10 @@ const LanguageDropdownWrapper = styled.div`
   align-items: center;
   font-size: 1.7rem;
   margin-top: 2rem;
+  svg {
+    fill: ${({ theme }) => theme.pointColor};
+    cursor: pointer;
+  }
 `;
 
 const LanguageSelectBox = styled.div`
@@ -216,16 +255,20 @@ const LanguageSelectBox = styled.div`
   padding: 2rem;
   color: white;
   font-size: 2rem;
-  width: 20rem;
+  width: 17rem;
   height: 4rem;
-  margin-left: 2rem;
+  margin: 0 2rem;
   display: flex;
   align-items: center;
+  &:hover {
+    background-color: ${({ theme }) => theme.grayColor};
+    color: ${({ theme }) => theme.fontColor.commentColor};
+  }
 `;
 
 const StyledLanguageDropdown = styled(LanguageDropdown)`
-  left: 0;
-  position: relative;
+  /* left: 0; */
+  /* position: relative; */
 `;
 
 const UserCardWrapper = styled.div`
@@ -243,6 +286,13 @@ const UserCardWrapper = styled.div`
   ${media.large} {
     grid-template-columns: repeat(auto-fill, minmax(39rem, auto));
   }
+`;
+
+const Temp = styled.div`
+  z-index: 99;
+  background-color: 000000;
+  /* position: relative; */
+  /* bottom: 0; */
 `;
 
 Find.getLayout = function getLayout(page: ReactElement) {
