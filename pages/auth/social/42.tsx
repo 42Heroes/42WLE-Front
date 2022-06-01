@@ -6,13 +6,14 @@ import { chatState, userState } from '../../../recoil/atoms';
 import { CircularProgress } from '@mui/material';
 import socket from '../../../library/socket';
 import { SocketEvents } from '../../../library/socket.events.enum';
+import { Chat } from '../../../interfaces/chat.interface';
 
 export default function FortyTwoAuth() {
+  const [isLoading, setIsLoading] = useState(false);
   const setUser = useSetRecoilState(userState);
   const setChatData = useSetRecoilState(chatState);
   const router = useRouter();
   const code = router.query.code;
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -20,19 +21,22 @@ export default function FortyTwoAuth() {
       const {
         data: { accessToken, user },
       } = await axios.get(
-        `http://10.19.233.133:8080/auth/social/42?code=${code}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/social/42?code=${code}`,
       );
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+      const payload = { token: `Bearer ${accessToken}` };
+      // socket 유저 인증
       socket.emit(
         SocketEvents.Authorization,
-        {
-          token: `Bearer ${accessToken}`,
-        },
+        payload,
         (res: { status: string; message: string }) => {
           if (res.status === 'ok') {
-            socket.emit(SocketEvents.ReqInitialData, (res: any) => {
+            socket.emit(SocketEvents.ReqInitialData, (res: Chat[]) => {
               setChatData(res);
             });
+          } else {
+            console.log('ReqInitialData 실패했습니다.');
           }
         },
       );

@@ -1,6 +1,6 @@
 import '../styles/fonts.css';
 import { NextPage } from 'next';
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
