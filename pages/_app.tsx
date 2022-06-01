@@ -9,6 +9,7 @@ import GlobalStyle from '../styles/global';
 import { QueryClient, QueryClientProvider, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Auth from '../components/common/Auth';
+import SocketProvider from '../components/common/SocketEventProvider';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -30,12 +31,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <Hydrate state={pageProps.dehydratedState}>
         <RecoilRoot>
           <Auth>
-            <ThemeProvider theme={darkTheme}>
-              <GlobalStyle />
-              {getLayout(<Component {...pageProps} />)}
-              <ReactQueryDevtools initialIsOpen={false} />
-            </ThemeProvider>
-          </Auth>        
+            <SocketProvider>
+              <ThemeProvider theme={darkTheme}>
+                <GlobalStyle />
+                {getLayout(<Component {...pageProps} />)}
+                <ReactQueryDevtools initialIsOpen={false} />
+              </ThemeProvider>
+            </SocketProvider>
+          </Auth>
         </RecoilRoot>
       </Hydrate>
     </QueryClientProvider>
