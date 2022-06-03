@@ -29,7 +29,7 @@ export const registerState = atom<RegisterUser>({
   effects: [persistAtom],
 });
 
-export const loginState = atom({
+export const loginState = atom<boolean>({
   key: 'loginState',
   default: false,
 });

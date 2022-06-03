@@ -14,6 +14,6 @@ export default async function Callback(
   const cookieName = 'Set-Cookie';
   res.setHeader(`${cookieName}`, `token=${token}; path=/find;`);
   res.redirect('/find');
-  res.json({ msg: 'good' });
+  //res.json({ msg: 'good' });
   /* set cookie and axios-header */
 }
