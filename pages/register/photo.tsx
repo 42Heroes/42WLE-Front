@@ -30,9 +30,11 @@ export default function ProfileImage() {
 
     const uploadUrl = await uploadFileToS3(file, '/profile-image');
 
-    const { data } = await axios.patch('/me/like/profile', {
+    const res = await axios.patch('/me/profile', {
       image_url: uploadUrl,
     });
+
+    console.log(res);
 
     router.push('/register/introduction');
   };
@@ -52,7 +54,6 @@ export default function ProfileImage() {
       } else {
         setIsExceededSize(true);
       }
-      console.log(selectedImage);
     },
     [registerUser],
   );
