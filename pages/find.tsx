@@ -73,19 +73,19 @@ export default function Find() {
   // const handleClickLike = () => {
   //   setIsLiked(!isLiked);
   // };
-  const fetchMydataAPI = () => {
-    return axios.get('http://req2back');
-  };
-  const { data } = useQuery<User>('myData', fetchMydataAPI);
+  // const fetchMydataAPI = () => {
+  //   return axios.get('http://req2back');
+  // };
+  // const { data } = useQuery<User>('myData', fetchMydataAPI);
 
   return (
     <Container>
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
-      <UserCard userCardData={userData} myData={data} />
+      <UserCard userCardData={userData} myData={null} />
+      <UserCard userCardData={userData} myData={null} />
+      <UserCard userCardData={userData} myData={null} />
+      <UserCard userCardData={userData} myData={null} />
+      <UserCard userCardData={userData} myData={null} />
+      <UserCard userCardData={userData} myData={null} />
     </Container>
   );
 }

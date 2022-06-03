@@ -6,12 +6,13 @@ import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 
 interface Props {
   userCardData: User;
-  myData: User;
+  myData: User | null;
 }
 
 export default function UserCard({ userCardData, myData }: Props) {
   // const [isLiked, setIsLiked] = useState<boolean>(false);
-
+  const isLikedUser =
+    myData?.liked_users.some((user) => user._id === userCardData._id) ?? false;
   return (
     <Container>
       <Userimg>
@@ -24,11 +25,9 @@ export default function UserCard({ userCardData, myData }: Props) {
           alt={UserCard.name}
         />
         <LikeButton
-          liked={myData.liked_users.some(
-            (user) => user.nickname === userCardData.nickname,
-          )}
+          liked={isLikedUser}
           onClick={() => {
-            myData.liked_users.push(userCardData);
+            myData?.liked_users.push(userCardData);
           }}
         >
           <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
