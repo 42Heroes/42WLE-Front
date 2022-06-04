@@ -19,7 +19,7 @@ export default function DragDrop({ image, onChangeImage }: Props) {
   const isDragging = useDragDrop(onChangeImage, dragRef);
 
   return (
-    <Container ref={dragContainerRef}>
+    <div ref={dragContainerRef}>
       <PreviewWrapper>
         <ImageWrapper isEmpty={!image}>
           {image ? (
@@ -57,14 +57,9 @@ export default function DragDrop({ image, onChangeImage }: Props) {
           onChange={onChangeImage}
         />
       </InputContainer>
-    </Container>
+    </div>
   );
 }
-
-const Container = styled.div`
-  margin-top: 11rem;
-  margin-bottom: 8rem;
-`;
 
 const InputContainer = styled.div`
   display: flex;
