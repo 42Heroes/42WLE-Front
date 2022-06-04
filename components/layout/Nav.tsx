@@ -34,9 +34,11 @@ export default function Nav() {
         </Link>
       </UpperNav>
       <LowerNav>
-        <IconContainer isActive={router.pathname.includes('/mypage')}>
-          <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
-        </IconContainer>
+        <Link href="/mypage" passHref>
+          <IconContainer isActive={router.pathname.includes('/mypage')}>
+            <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
+          </IconContainer>
+        </Link>
         <IconContainer isActive={false}>
           <ExitToAppOutlinedIcon sx={{ fontSize: 25 }} />
         </IconContainer>
@@ -52,6 +54,8 @@ const Container = styled.nav`
 `;
 
 const IconContainer = styled.div<Prop>`
+  display: flex;
+  justify-content: center;
   color: ${({ isActive, theme }) =>
     isActive ? theme.pointColor : theme.fontColor.contentColor};
   background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
