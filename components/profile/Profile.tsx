@@ -69,16 +69,14 @@ export default function Profile({ user, className }: Props) {
               </LanguageList>
             </div>
           </LanguageContainer>
-          {user.hashtags.length ? (
-            <HashTags>
-              <h3>Hashtags</h3>
-              <div>
-                {user.hashtags.map((hashTag) => (
-                  <HashTag key={hashTag}>#{hashTag}</HashTag>
-                ))}
-              </div>
-            </HashTags>
-          ) : null}
+          <HashTags>
+            <h3>Hashtags</h3>
+            <div>
+              {user?.hashtags.map((hashTag) => (
+                <HashTag key={hashTag}>#{hashTag}</HashTag>
+              ))}
+            </div>
+          </HashTags>
         </UserInfoContainer>
       </UserInfo>
       <SocialInfoContainer>
@@ -93,7 +91,7 @@ export default function Profile({ user, className }: Props) {
         <SocialInfo>
           <GitHubIcon sx={{ fontSize: 25 }} />
           <Link href={`https://github.com/${user.github_id}`}>
-            <a target="_blank">https://github.com/{user.github_id}</a>
+            <a target="_blank">https://github.com/{user?.github_id}</a>
           </Link>
         </SocialInfo>
       </SocialInfoContainer>
@@ -144,7 +142,7 @@ const UserInfo = styled.div`
 const UserImageWrapper = styled.div`
   width: 15rem;
   ${media.small} {
-    width: auto;
+    width: 20rem;
   }
   .profile-image {
     border-radius: 50rem;
