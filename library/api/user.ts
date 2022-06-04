@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User } from '../../interfaces/user.interface';
+import { UpdateUserInfo } from '../../interfaces/user.interface';
 
 export const getUsers = async () => {
   const { data } = await axios.get('/users');
@@ -19,8 +19,14 @@ export const getMe = async () => {
   return data;
 };
 
-export const updateMe = async (newInfo: User) => {
+export const updateMe = async (newInfo: UpdateUserInfo) => {
   const { data } = await axios.put('/users/me', newInfo);
+
+  return data;
+};
+
+export const updateImage = async (newImageUrl: string) => {
+  const { data } = await axios.patch('/users/me/profile', newImageUrl);
 
   return data;
 };
