@@ -4,6 +4,9 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  images: {
+    domains: ['cdn.intra.42.fr', process.env.NEXT_PUBLIC_S3_BUCKET_URL],
+  },
   experimental: { images: { layoutRaw: true } },
   webpack: (config) => {
     config.module.rules.push({
