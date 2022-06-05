@@ -6,7 +6,7 @@ import CameraIcon from '../../public/assets/icons/camera.svg';
 import UserIcon from '../../public/assets/icons/user.svg';
 
 interface Props {
-  image: string | null;
+  image: string | null | undefined;
   onChangeImage: (
     e: React.ChangeEvent<HTMLInputElement> | any,
   ) => Promise<void>;
