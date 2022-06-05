@@ -2,7 +2,7 @@
 
 const nextConfig = {
   images: {
-    domains: ["cdn.intra.42.fr", "localhost", "*"],
+    domains: ['cdn.intra.42.fr'],
   },
   reactStrictMode: true,
   compiler: {

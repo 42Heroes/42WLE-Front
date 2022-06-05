@@ -7,37 +7,39 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 
 interface Props {
   userCardData: User;
-  myData: User;
+  me?: User;
 }
 
-export default function UserCard({ userCardData, myData }: Props) {
+export default function UserCard({ userCardData, me }: Props) {
+  const handleLikeButtonClick = () => {
+    if (!me) {
+      return;
+    }
+    // TODO : API 연결
+  };
+
   return (
     <Container>
-      <Userimg>
+      <UserImageContainer>
         <Image
           src={userCardData.image_url}
           objectFit="cover"
-          className="userimg"
+          className="user_img"
           width={117}
           height={117}
           alt={`${userCardData.nickname}'s image cannot be loaded`}
         />
-        <LikeButton
-          onClick={() => {
-            myData.liked_users.push(userCardData);
-          }}
-        >
-          {myData.liked_users.some(
-            (user) =>
-              userCardData.nickname && user.nickname === userCardData.nickname,
+        <LikeButton onClick={handleLikeButtonClick}>
+          {me?.liked_users.some(
+            (user) => user.nickname === userCardData.nickname,
           ) ? (
             <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
           ) : (
             <FavoriteBorderRoundedIcon sx={{ fontSize: 28 }} />
           )}
         </LikeButton>
-      </Userimg>
-      <Userinfo>
+      </UserImageContainer>
+      <UserInfo>
         <Nickname>{userCardData.nickname}</Nickname>
         <Languages>
           <LearnNative>
@@ -67,7 +69,7 @@ export default function UserCard({ userCardData, myData }: Props) {
             ))}
           </LearnNative>
         </Languages>
-      </Userinfo>
+      </UserInfo>
     </Container>
   );
 }
@@ -84,12 +86,12 @@ const Container = styled.div`
   cursor: pointer;
 `;
 
-const Userimg = styled.div`
+const UserImageContainer = styled.div`
   position: relative;
   display: flex;
   width: 11.7rem;
   height: 11.7rem;
-  .userimg {
+  .user_img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
@@ -104,7 +106,7 @@ const LikeButton = styled.div`
   cursor: pointer;
 `;
 
-const Userinfo = styled.div`
+const UserInfo = styled.div`
   height: 100%;
   width: 50%;
   display: flex;

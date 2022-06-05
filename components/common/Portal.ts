@@ -1,35 +1,22 @@
-// import React from 'react';
-// import reactDom from 'react-dom';
-
 interface Props {
   children: React.ReactElement;
 }
 
-// const ModalPortal = ({ children }: Props) => {
-//   if(typeof window !== 'object') return;
-//   const el = document.getElementById('modal');
-//   if(el !== null) return reactDom.createPortal(children, el);
-// };
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-// export default ModalPortal;
+const Portal = ({ children }: Props) => {
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
 
-import { useEffect, useState } from "react"
-import { createPortal } from "react-dom"
+    return () => setMounted(false);
+  }, []);
 
-const Portal= ({ children }: Props) => {
-   const [mounted, setMounted] = useState(false)
+  return mounted
+    ? createPortal(children, document.querySelector('#modal') as Element)
+    : null;
+};
 
-   useEffect(() => {
-      setMounted(true)
-
-      return () => setMounted(false)
-   }, [])
-
-   return mounted
-      ? createPortal(children, 
-        document.querySelector("#modal"))
-      : null
-}
-
-export default Portal
+export default Portal;
