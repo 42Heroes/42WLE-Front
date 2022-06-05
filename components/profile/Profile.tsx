@@ -14,7 +14,6 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import { User } from '../../interfaces/user.interface';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../../recoil/atoms';
-import { useEffect, useState } from 'react';
 
 interface Props {
   user: User;
@@ -70,16 +69,6 @@ export default function Profile({ user, className }: Props) {
               </LanguageList>
             </div>
           </LanguageContainer>
-<<<<<<< HEAD
-          <HashTags>
-            <h3>Hashtags</h3>
-            <div>
-              {user?.hashtags.map((hashTag) => (
-                <HashTag key={hashTag}>#{hashTag}</HashTag>
-              ))}
-            </div>
-          </HashTags>
-=======
           {user.hashtags && user.hashtags.length ? (
             <HashTags>
               <h3>Hashtags</h3>
@@ -90,7 +79,6 @@ export default function Profile({ user, className }: Props) {
               </div>
             </HashTags>
           ) : null}
->>>>>>> develop
         </UserInfoContainer>
       </UserInfo>
       <SocialInfoContainer>
