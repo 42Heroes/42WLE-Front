@@ -14,6 +14,7 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import { User } from '../../interfaces/user.interface';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../../recoil/atoms';
+import { useEffect, useState } from 'react';
 
 interface Props {
   user: User;
@@ -55,7 +56,7 @@ export default function Profile({ user, className }: Props) {
             <div>
               <h3>Native in</h3>
               <LanguageList>
-                {user.n_language.map((language) => (
+                {user.n_language?.map((language) => (
                   <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
@@ -63,12 +64,13 @@ export default function Profile({ user, className }: Props) {
             <div>
               <h3>Learning</h3>
               <LanguageList>
-                {user.l_language.map((language) => (
+                {user.l_language?.map((language) => (
                   <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>
           </LanguageContainer>
+<<<<<<< HEAD
           <HashTags>
             <h3>Hashtags</h3>
             <div>
@@ -77,6 +79,18 @@ export default function Profile({ user, className }: Props) {
               ))}
             </div>
           </HashTags>
+=======
+          {user.hashtags && user.hashtags.length ? (
+            <HashTags>
+              <h3>Hashtags</h3>
+              <div>
+                {user.hashtags.map((hashTag) => (
+                  <HashTag key={hashTag}>#{hashTag}</HashTag>
+                ))}
+              </div>
+            </HashTags>
+          ) : null}
+>>>>>>> develop
         </UserInfoContainer>
       </UserInfo>
       <SocialInfoContainer>
@@ -123,6 +137,7 @@ const Container = styled.div`
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
   color: ${({ theme }) => theme.fontColor.contentColor};
+  background-color: ${({ theme }) => theme.bgColor};
 `;
 
 const UserInfo = styled.div`
