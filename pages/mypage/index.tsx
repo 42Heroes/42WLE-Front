@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import CommonLayout from '../../components/layout/CommonLayout';
 import Profile from '../../components/profile/Profile';
@@ -6,14 +6,28 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import media from '../../styles/media';
 import { useRouter } from 'next/router';
 import useMe from '../../hooks/useMe';
+import UserCard from '../../components/common/UserCard';
+import { User } from '../../interfaces/user.interface';
+import { ProfileModal } from '../../components/common/Modal';
 
 export default function MyPage() {
   const router = useRouter();
 
   const { data: me, isLoading, isError, isIdle } = useMe();
+  const [modalUser, setModalUser] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEditButtonClick = () => {
     router.push('/mypage/edit');
+  };
+
+  const handleUserCardClick = (targetUser: User) => {
+    setModalUser(targetUser);
+    toggleModal();
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   if (isLoading || isIdle) return 'loading...';
@@ -40,26 +54,20 @@ export default function MyPage() {
               <h2>Liked Users</h2>
             </SectionTitle>
             <LikedUsersContainer>
-              {me?.liked_users.map((likedUser) => (
-                <li key={likedUser._id}> {likedUser.nickname}</li>
-              ))}
+              {me.liked_users
+                .map((user) => (
+                  <div onClick={() => handleUserCardClick(user)} key={user._id}>
+                    <UserCard userCardData={user} me={me} />
+                  </div>
+                ))
+                .slice(0, 3)}
             </LikedUsersContainer>
           </LikedUsersSection>
         </div>
       </Container>
-
-      <Container>
-        <ProfileSection>
-          <SectionTitle>
-            <div>
-              <h2>My Profile</h2>
-              <BorderColorRoundedIcon />
-            </div>
-          </SectionTitle>
-          <Profile user={me} />
-        </ProfileSection>
-        <LikedUsersSection></LikedUsersSection>
-      </Container>
+      {isModalOpen && modalUser && (
+        <ProfileModal user={modalUser} toggleModal={toggleModal} />
+      )}
     </>
   );
 }
@@ -110,9 +118,8 @@ const LikedUsersSection = styled.section`
 
 const LikedUsersContainer = styled.ul`
   display: grid;
-  /* grid-template-rows: repeat(3, 18rem); */
-  /* gap: 2rem; */
-  /* min-width: 40rem; */
+  grid-gap: 3rem;
+  overflow-y: scroll;
   li {
     background-color: white;
   }

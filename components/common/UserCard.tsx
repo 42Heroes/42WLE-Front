@@ -30,9 +30,7 @@ export default function UserCard({ userCardData, me }: Props) {
           alt={`${userCardData.nickname}'s image cannot be loaded`}
         />
         <LikeButton onClick={handleLikeButtonClick}>
-          {me?.liked_users.some(
-            (user) => user.nickname === userCardData.nickname,
-          ) ? (
+          {me?.liked_users.some((user) => user._id === userCardData._id) ? (
             <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
           ) : (
             <FavoriteBorderRoundedIcon sx={{ fontSize: 28 }} />
