@@ -7,7 +7,7 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 
 interface Props {
   userCardData: User;
-  me?: User;
+  me: User | null;
 }
 
 export default function UserCard({ userCardData, me }: Props) {
