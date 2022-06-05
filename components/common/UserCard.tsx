@@ -3,31 +3,43 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import { useState } from 'react';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 
 interface Props {
   userCardData: User;
+  me?: User;
 }
 
-export default function UserCard({ userCardData }: Props) {
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+export default function UserCard({ userCardData, me }: Props) {
+  const handleLikeButtonClick = () => {
+    if (!me) {
+      return;
+    }
+    // TODO : API 연결
+  };
 
   return (
     <Container>
-      <Userimg>
+      <UserImageContainer>
         <Image
-          src={getFlagImage('korean')}
+          src={userCardData.image_url}
           objectFit="cover"
-          className="userimg"
+          className="user_img"
           width={117}
           height={117}
-          alt={UserCard.name}
+          alt={`${userCardData.nickname}'s image cannot be loaded`}
         />
-        <LikeButton isLiked={isLiked} onClick={() => setIsLiked(!isLiked)}>
-          <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+        <LikeButton onClick={handleLikeButtonClick}>
+          {me?.liked_users.some(
+            (user) => user.nickname === userCardData.nickname,
+          ) ? (
+            <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+          ) : (
+            <FavoriteBorderRoundedIcon sx={{ fontSize: 28 }} />
+          )}
         </LikeButton>
-      </Userimg>
-      <Userinfo>
+      </UserImageContainer>
+      <UserInfo>
         <Nickname>{userCardData.nickname}</Nickname>
         <Languages>
           <LearnNative>
@@ -57,7 +69,7 @@ export default function UserCard({ userCardData }: Props) {
             ))}
           </LearnNative>
         </Languages>
-      </Userinfo>
+      </UserInfo>
     </Container>
   );
 }
@@ -71,30 +83,30 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 `;
 
-const Userimg = styled.div`
+const UserImageContainer = styled.div`
   position: relative;
   display: flex;
   width: 11.7rem;
   height: 11.7rem;
-  .userimg {
+  .user_img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
   }
 `;
 
-const LikeButton = styled.div<Props>`
-  color: ${({ isLiked, theme }) =>
-    isLiked ? theme.likeIcon : theme.grayColor};
+const LikeButton = styled.div`
+  color: ${({ theme }) => theme.likeIcon};
   position: absolute;
   left: 75%;
   top: 80%;
   cursor: pointer;
 `;
 
-const Userinfo = styled.div`
+const UserInfo = styled.div`
   height: 100%;
   width: 50%;
   display: flex;

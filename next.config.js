@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
+  images: {
+    domains: ['cdn.intra.42.fr'],
+  },
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
