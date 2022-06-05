@@ -73,7 +73,7 @@ export default function MyPage() {
 }
 
 MyPage.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="Board">{page}</CommonLayout>;
+  return <CommonLayout headerText="My Page">{page}</CommonLayout>;
 };
 
 const Container = styled.div`
