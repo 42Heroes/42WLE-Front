@@ -25,6 +25,7 @@ export default function Find() {
   const meData = useQuery<User>('me', getMe, {
     onSuccess: () => setIsLoggedIn(true),
     onError: () => setIsLoggedIn(false),
+    enabled: isLoggedIn,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);

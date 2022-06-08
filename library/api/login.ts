@@ -10,8 +10,7 @@ export const onSilentRefresh = () => {
         resolve('success');
       })
       .catch((error) => {
-        console.log('실패함');
-        reject();
+        reject('can not get a accessToken');
       });
   });
 };
