@@ -13,7 +13,7 @@ export interface User {
   country: string;
   github_id: string;
   introduction: string;
-  chatRooms: number[];
+  chatRooms: string[];
   liked_users: User[];
   saved_posts: string[];
   posts: string[];

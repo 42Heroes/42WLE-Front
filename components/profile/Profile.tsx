@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import media from '../../styles/media';
 import Button from '../common/Button';
@@ -12,8 +11,15 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import { User } from '../../interfaces/user.interface';
-import { useRecoilValue } from 'recoil';
-import { userState } from '../../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  activeChatRoomIdState,
+  chatState,
+  userState,
+} from '../../recoil/atoms';
+import socket from '../../library/socket';
+import { SocketEvents } from '../../library/socket.events.enum';
+import { useRouter } from 'next/router';
 
 interface Props {
   user: User;
@@ -22,9 +28,10 @@ interface Props {
 
 export default function Profile({ user, className }: Props) {
   const router = useRouter();
-  // TODO: isModal 로 변경 or preview 페이지나 myProfile 페이지 예외처리 필요
   const me = useRecoilValue(userState);
-  const isUserModal = router.asPath !== '/register/preview';
+  const setChatData = useSetRecoilState(chatState);
+  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const isUserModal = user._id !== me?._id;
 
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
 
@@ -32,8 +39,28 @@ export default function Profile({ user, className }: Props) {
     // TODO: mutation
   };
 
+  /*
+    1. ReqCreateRoom 요청 보내기 (target_id) <- 서버측에서 확인
+    2. 없다면 ChatData 에 추가, 있다면 패스
+    3. activeChatRoomId 상태를 방금 받은 roomId 로 변경
+    4. /chat 페이지로 라우트 이동
+  */
   const handleMessageButtonClick = () => {
-    // TODO: mutation
+    const payload = {
+      target_id: user._id,
+    };
+    socket.emit(SocketEvents.ReqCreateRoom, payload, (res) => {
+      if (res.status === 'ok') {
+        setChatData((prev) => {
+          if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
+            return prev;
+          }
+          return [...prev, res.chatRoom];
+        });
+        setActiveChatRoomId(res.chatRoom._id);
+      }
+    });
+    router.push('/chat');
   };
 
   return (
@@ -100,7 +127,13 @@ export default function Profile({ user, className }: Props) {
       <Introduction>{user.introduction}</Introduction>
       {isUserModal && (
         <ButtonContainer>
-          <MessageButton type="button" size="medium" color="gray6" outline>
+          <MessageButton
+            type="button"
+            size="medium"
+            color="gray6"
+            outline
+            onClick={handleMessageButtonClick}
+          >
             <EmailRoundedIcon sx={{ fontSize: 25 }} />
             Message
           </MessageButton>

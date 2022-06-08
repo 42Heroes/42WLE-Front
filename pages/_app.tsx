@@ -9,7 +9,7 @@ import GlobalStyle from '../styles/global';
 import { QueryClient, QueryClientProvider, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Auth from '../components/common/Auth';
-import axios from 'axios';
+import SocketProvider from '../components/common/SocketEventProvider';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -18,7 +18,6 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
-
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks');
 }
@@ -34,11 +33,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <Hydrate state={pageProps.dehydratedState}>
         <RecoilRoot>
           <Auth>
-            <ThemeProvider theme={darkTheme}>
-              <GlobalStyle />
-              {getLayout(<Component {...pageProps} />)}
-              <ReactQueryDevtools initialIsOpen={false} />
-            </ThemeProvider>
+            <SocketProvider>
+              <ThemeProvider theme={darkTheme}>
+                <GlobalStyle />
+                {getLayout(<Component {...pageProps} />)}
+                <ReactQueryDevtools initialIsOpen={false} />
+              </ThemeProvider>
+            </SocketProvider>
           </Auth>
         </RecoilRoot>
       </Hydrate>
