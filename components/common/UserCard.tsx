@@ -31,11 +31,11 @@ export default function UserCard({ userCardData, myData }: Props) {
 
   return (
     <Container>
-      <Userimg>
+      <UserImageContainer>
         <Image
           src={userCardData.image_url}
           objectFit="cover"
-          className="userimg"
+          className="user_img"
           width={117}
           height={117}
           alt={userCardData.name}
@@ -43,8 +43,8 @@ export default function UserCard({ userCardData, myData }: Props) {
         <LikeButton liked={isLikedUser} onClick={handleLikeButtonClick}>
           <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
         </LikeButton>
-      </Userimg>
-      <Userinfo>
+      </UserImageContainer>
+      <UserInfo>
         <Nickname>{userCardData.nickname}</Nickname>
         <Languages>
           <LearnNative>
@@ -74,7 +74,7 @@ export default function UserCard({ userCardData, myData }: Props) {
             ))}
           </LearnNative>
         </Languages>
-      </Userinfo>
+      </UserInfo>
     </Container>
   );
 }
@@ -90,12 +90,12 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 
-const Userimg = styled.div`
+const UserImageContainer = styled.div`
   position: relative;
   display: flex;
   width: 11.7rem;
   height: 11.7rem;
-  .userimg {
+  .user_img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
@@ -110,7 +110,7 @@ const LikeButton = styled.div<{ liked: boolean }>`
   cursor: pointer;
 `;
 
-const Userinfo = styled.div`
+const UserInfo = styled.div`
   height: 100%;
   width: 50%;
   display: flex;

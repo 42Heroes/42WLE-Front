@@ -9,6 +9,7 @@ import GlobalStyle from '../styles/global';
 import { QueryClient, QueryClientProvider, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Auth from '../components/common/Auth';
+import axios from 'axios';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -21,6 +22,8 @@ type AppPropsWithLayout = AppProps & {
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks');
 }
+
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);

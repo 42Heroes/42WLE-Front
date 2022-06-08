@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 import React, { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import UserCard from '../components/common/UserCard';
-import { User } from '../interfaces/user.interface';
+import { LanguageInfo, User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { getUsers, getMe } from '../library/api/fetchUsers';
@@ -14,10 +14,6 @@ import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
 import { loginState } from '../recoil/atoms';
-
-interface Language {
-  name: string;
-}
 
 export default function Find() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
@@ -39,13 +35,13 @@ export default function Find() {
   };
 
   const [languages] = useState(languagesBase);
-  // console.log(languages);
-  const handleNLanguageClick = (clickedLanguage: Language) => {
+
+  const handleNLanguageClick = (clickedLanguage: LanguageInfo) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
   };
 
-  const handleLLanguageClick = (clickedLanguage: Language) => {
+  const handleLLanguageClick = (clickedLanguage: LanguageInfo) => {
     setSelectedLLanguage(clickedLanguage);
     setIsLDropdownOpened(false);
   };
@@ -86,9 +82,7 @@ export default function Find() {
 
   return (
     <Container>
-      {/* 언어 필터링 드롭다운 */}
       <LanguageDropdownContainer>
-        {/* 할 수 있는 언어 필터링 */}
         <LanguageDropdownWrapper>
           <p>Native in</p>
           <LanguageSelectBox>
@@ -113,14 +107,14 @@ export default function Find() {
               className="plusMinusIcon"
             />
           )}
-          <Temp>
+          <DropdownWrapper>
             <StyledLanguageDropdown
               onClickLanguage={handleNLanguageClick}
               languages={languages}
               selectedLanguages={[selectedLLanguage]}
               isOpened={isNDropdownOpened}
             />
-          </Temp>
+          </DropdownWrapper>
         </LanguageDropdownWrapper>
 
         {/* 배우고 싶은 언어 필터링 */}
@@ -148,32 +142,29 @@ export default function Find() {
               className="plusMinusIcon"
             />
           )}
-          <Temp>
+          <DropdownWrapper>
             <StyledLanguageDropdown
               onClickLanguage={handleLLanguageClick}
               languages={languages}
               selectedLanguages={[selectedNLanguage]}
               isOpened={isLDropdownOpened}
             />
-          </Temp>
+          </DropdownWrapper>
         </LanguageDropdownWrapper>
       </LanguageDropdownContainer>
-
-      {/* 유저 카드 */}
       <UserCardWrapper>
-        {filteredUsers?.map((user) => {
-          return (
-            <div
-              key={user._id}
-              onClick={() => {
-                setModalUser(user);
-                setIsModalOpen(true);
-              }}
-            >
-              <UserCard userCardData={user} myData={meData.data} />
-            </div>
-          );
-        })}
+        {filteredUsers?.map((user) => (
+          <div
+            key={user._id}
+            onClick={() => {
+              setModalUser(user);
+              setIsModalOpen(true);
+            }}
+          >
+            <UserCard userCardData={user} me={me} />
+          </div>
+        ))}
+
         {isModalOpen && modalUser && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
@@ -181,6 +172,10 @@ export default function Find() {
     </Container>
   );
 }
+    
+Find.getLayout = function getLayout(page: ReactElement) {
+  return <CommonLayout headerText="Find">{page}</CommonLayout>;
+};
 
 const Container = styled.div``;
 
@@ -191,9 +186,6 @@ const LanguageDropdownContainer = styled.div`
   height: 15rem;
   flex-direction: column;
   ${media.medium} {
-    flex-direction: row;
-  }
-  ${media.large} {
     flex-direction: row;
   }
 `;
@@ -236,9 +228,7 @@ const UserCardWrapper = styled.div`
   row-gap: 3rem;
   column-gap: 2rem;
   place-items: center;
-
   grid-template-columns: repeat(1, 1fr);
-
   ${media.medium} {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -247,16 +237,13 @@ const UserCardWrapper = styled.div`
   }
 `;
 
-const Temp = styled.div`
+const DropdownWrapper = styled.div`
   z-index: 99;
   background-color: #000000;
   position: relative;
   bottom: 0;
 `;
 
-Find.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="Find">{page}</CommonLayout>;
-};
 
 const SelectedLanguageBox = styled.div`
   display: flex;

@@ -14,7 +14,6 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import { User } from '../../interfaces/user.interface';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../../recoil/atoms';
-import { useEffect, useState } from 'react';
 
 interface Props {
   user: User;
@@ -94,7 +93,7 @@ export default function Profile({ user, className }: Props) {
         <SocialInfo>
           <GitHubIcon sx={{ fontSize: 25 }} />
           <Link href={`https://github.com/${user.github_id}`}>
-            <a target="_blank">https://github.com/{user.github_id}</a>
+            <a target="_blank">https://github.com/{user?.github_id}</a>
           </Link>
         </SocialInfo>
       </SocialInfoContainer>
@@ -146,7 +145,7 @@ const UserInfo = styled.div`
 const UserImageWrapper = styled.div`
   width: 15rem;
   ${media.small} {
-    width: auto;
+    width: 20rem;
   }
   .profile-image {
     border-radius: 50rem;
