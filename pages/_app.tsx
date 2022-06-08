@@ -22,6 +22,8 @@ if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks');
 }
 
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const [queryClient] = useState(() => new QueryClient());
@@ -44,4 +46,5 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     </QueryClientProvider>
   );
 }
+
 export default MyApp;

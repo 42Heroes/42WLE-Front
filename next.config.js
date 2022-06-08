@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
   images: {
-    domains: ['cdn.intra.42.fr'],
+    domains: ['cdn.intra.42.fr', process.env.NEXT_PUBLIC_S3_BUCKET_URL],
   },
   experimental: { images: { layoutRaw: true } },
   webpack: (config) => {

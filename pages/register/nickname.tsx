@@ -10,12 +10,8 @@ import { useRegister } from '../../hooks/useRegister';
 export default function Nickname() {
   const router = useRouter();
 
-  const maximumLength = 20;
   const nicknameValidator = useCallback((value: string) => {
-    if (value.length > maximumLength) {
-      return false;
-    }
-    return true;
+    return value.length <= 20;
   }, []);
 
   const [registerUser, setRegisterUser] = useRegister();
@@ -42,7 +38,7 @@ export default function Nickname() {
       <Title>Please enter your nickname</Title>
       <InputContainer>
         <Input type="text" value={nickname} onChange={onChangeNickname} />
-        <span>{`${nickname.length} / ${maximumLength}`}</span>
+        <span>{`${nickname.length} / 20`}</span>
       </InputContainer>
       <StyledButton
         type="button"

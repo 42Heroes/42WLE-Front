@@ -6,6 +6,10 @@ import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useQueryClient } from 'react-query';
+import { axiosInstance } from '../../library/api/axios-instance';
+import { loginState } from '../../recoil/atoms';
+import { useRecoilState } from 'recoil';
 
 interface Prop {
   isActive: boolean;
@@ -13,6 +17,18 @@ interface Prop {
 
 export default function Nav() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+
+  const handleLogoutButtonClick = async () => {
+    const { status } = await axiosInstance.post('/users/me/logout');
+    if (status === 200) {
+      axiosInstance.defaults.headers.common['Authorization'] = '';
+      queryClient.removeQueries('me');
+      router.replace('/find');
+      setIsLoggedIn(false);
+    }
+  };
 
   return (
     <Container>
@@ -34,12 +50,22 @@ export default function Nav() {
         </Link>
       </UpperNav>
       <LowerNav>
-        <IconContainer isActive={router.pathname.includes('/mypage')}>
-          <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
-        </IconContainer>
-        <IconContainer isActive={false}>
-          <ExitToAppOutlinedIcon sx={{ fontSize: 25 }} />
-        </IconContainer>
+        <Link href="/mypage" passHref>
+          <IconContainer isActive={router.pathname.includes('/mypage')}>
+            <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
+          </IconContainer>
+        </Link>
+        {isLoggedIn ? (
+          <IconContainer
+            isActive={false}
+            as="button"
+            onClick={handleLogoutButtonClick}
+          >
+            <ExitToAppOutlinedIcon sx={{ fontSize: 25 }} />
+          </IconContainer>
+        ) : (
+          'login'
+        )}
       </LowerNav>
     </Container>
   );
@@ -52,6 +78,8 @@ const Container = styled.nav`
 `;
 
 const IconContainer = styled.div<Prop>`
+  display: flex;
+  justify-content: center;
   color: ${({ isActive, theme }) =>
     isActive ? theme.pointColor : theme.fontColor.contentColor};
   background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
