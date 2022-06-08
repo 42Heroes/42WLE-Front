@@ -1,10 +1,11 @@
+import { useRecoilState } from 'recoil';
 import React, { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import UserCard from '../components/common/UserCard';
 import { LanguageInfo, User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
-import { getUsers } from '../library/api';
+import { getUsers, getMe } from '../library/api/fetchUsers';
 import { ProfileModal } from '../components/common/Modal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
@@ -12,13 +13,15 @@ import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useRecoilValue } from 'recoil';
-import { userState } from '../recoil/atoms';
+import { loginState } from '../recoil/atoms';
 
 export default function Find() {
-  const me = useRecoilValue(userState);
-  const { data } = useQuery<User[]>('users', getUsers, {
-    keepPreviousData: true,
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const usersData = useQuery<User[]>('users', getUsers);
+  const meData = useQuery<User>('me', getMe, {
+    onSuccess: () => setIsLoggedIn(true),
+    onError: () => setIsLoggedIn(false),
+    enabled: isLoggedIn,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,23 +54,23 @@ export default function Find() {
   const filteredUsers =
     // 필터링 없을 때
     selectedNLanguage.name === 'All' && selectedLLanguage.name === 'All'
-      ? data
+      ? usersData.data
       : // n_language에만 필터링
       selectedNLanguage.name !== 'All' && selectedLLanguage.name === 'All'
-      ? data?.filter((user) =>
+      ? usersData.data?.filter((user) =>
           user.n_language.some(
             (language) => language.name === selectedNLanguage.name,
           ),
         )
       : // l_language에만 필터링
       selectedNLanguage.name === 'All' && selectedLLanguage.name !== 'All'
-      ? data?.filter((user) =>
+      ? usersData.data?.filter((user) =>
           user.l_language.some(
             (language) => language.name === selectedLLanguage.name,
           ),
         )
       : // 양쪽 모두에 필터링
-        data?.filter(
+        usersData.data?.filter(
           (user) =>
             user.l_language.some(
               (language) => language.name === selectedLLanguage.name,
@@ -161,6 +164,7 @@ export default function Find() {
             <UserCard userCardData={user} me={me} />
           </div>
         ))}
+
         {isModalOpen && modalUser && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
@@ -168,6 +172,10 @@ export default function Find() {
     </Container>
   );
 }
+    
+Find.getLayout = function getLayout(page: ReactElement) {
+  return <CommonLayout headerText="Find">{page}</CommonLayout>;
+};
 
 const Container = styled.div``;
 
@@ -236,9 +244,6 @@ const DropdownWrapper = styled.div`
   bottom: 0;
 `;
 
-Find.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="Find">{page}</CommonLayout>;
-};
 
 const SelectedLanguageBox = styled.div`
   display: flex;

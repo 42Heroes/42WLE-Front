@@ -45,4 +45,5 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     </QueryClientProvider>
   );
 }
+
 export default MyApp;
