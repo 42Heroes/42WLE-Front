@@ -14,6 +14,7 @@ import { SocketEvents } from '../../library/socket.events.enum';
 import { useEffect, useRef, useState } from 'react';
 import { chatState } from '../../recoil/atoms';
 import { Message } from '../../interfaces/chat.interface';
+import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
@@ -69,12 +70,23 @@ export default function ActiveChat() {
   if (!activeChatRoom || !activePartner) {
     return null;
   }
+  const handleVideoBtn = () => {
+    adde;
+  };
 
   return (
     <>
       <NameContainer>
-        <ProfileImage src={activePartner.image_url} size="small" />
-        <h1>{activePartner.nickname}</h1>
+        <ProfileContainer>
+          <ProfileInfo>
+            <ProfileImage src={activePartner.image_url} size="small" />
+            <h1>{activePartner.nickname}</h1>
+          </ProfileInfo>
+          <VideocamOutlinedIcon
+            sx={{ fontSize: 30 }}
+            onClick={handleVideoBtn}
+          />
+        </ProfileContainer>
       </NameContainer>
       <MessageContainer ref={messageContainerRef}>
         <ChatContent
@@ -143,4 +155,19 @@ const MessageInputContainer = styled.div`
       margin-bottom: 0.5rem;
     }
   }
+`;
+
+const ProfileContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  svg {
+    cursor: pointer;
+  }
+`;
+
+const ProfileInfo = styled.div`
+  display: flex;
+  align-items: center;
 `;
