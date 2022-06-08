@@ -2,12 +2,18 @@ import axios from 'axios';
 import { axiosInstance } from './axios-instance';
 
 export const onSilentRefresh = () => {
-  axios
-    .get('http://localhost:8080/auth/refresh', { withCredentials: true })
-    .then(onLoginSuccess)
-    .catch((error) => {
-      console.log('실패함');
-    });
+  return new Promise((resolve, reject) => {
+    axios
+      .get('http://localhost:8080/auth/refresh', { withCredentials: true })
+      .then((response) => {
+        onLoginSuccess(response);
+        resolve('success');
+      })
+      .catch((error) => {
+        console.log('실패함');
+        reject();
+      });
+  });
 };
 
 const onLoginSuccess = (response: any) => {

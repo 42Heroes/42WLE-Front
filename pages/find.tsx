@@ -1,5 +1,4 @@
-import { ConstructionOutlined } from '@mui/icons-material';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import React, { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import UserCard from '../components/common/UserCard';
@@ -14,83 +13,22 @@ import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
-import axios from 'axios';
+import { loginState } from '../recoil/atoms';
 
 interface Language {
   name: string;
 }
 
 export default function Find() {
-  const me: User = {
-    _id: 124352,
-    nickname: 'junseo',
-    intra_id: 'junseo',
-    image_url: 'https://cdn.intra.42.fr/users/jojoo.jpg',
-    campus: '42seoul',
-    createdAt: new Date('2015-04-20T15:37:23'),
-    hashtags: ['react', 'food'],
-    country: 'korea',
-    github_id: 'Seojunhwan',
-    introduction: 'Interested in optimizaion',
-    chatRooms: [123, 456, 789],
-    liked_users: [
-      {
-        _id: 1323,
-        nickname: 'sjo',
-        intra_id: 'sjo',
-        image_url: 'goodday',
-        campus: '42seoul',
-        createdAt: new Date('2015-04-20T15:37:23'),
-        hashtags: ['react', 'food'],
-        country: 'korea',
-        github_id: 'Seojunhwan',
-        introduction: 'Interested in optimizaion',
-        chatRooms: [123, 456, 789],
-        liked_users: [],
-        saved_posts: [],
-        posts: [],
-        n_language: [{ name: 'korean' }],
-        l_language: [{ name: 'english' }, { name: 'japanese' }],
-        join_data: new Date('2015-04-20T15:37:23'),
-      },
-      {
-        _id: 352,
-        nickname: 'jojoo',
-        intra_id: 'jojoo',
-        image_url: 'goodday',
-        campus: '42seoul',
-        createdAt: new Date('2015-04-20T15:37:23'),
-        hashtags: ['react', 'food'],
-        country: 'korea',
-        github_id: 'joo',
-        introduction: 'Interested in optimizaion',
-        chatRooms: [123, 456, 789],
-        liked_users: [],
-        saved_posts: [],
-        posts: [],
-        n_language: [{ name: 'korean' }],
-        l_language: [{ name: 'english' }, { name: 'japanese' }],
-        join_data: new Date('2015-04-20T15:37:23'),
-      },
-    ],
-    saved_posts: [],
-    posts: [],
-    n_language: [{ name: 'korean' }],
-    l_language: [{ name: 'english' }, { name: 'japanese' }],
-    join_data: new Date('2015-04-20T15:37:23'),
-  };
-  console.log('This is in the Find page.');
-
-  const usersData = useQuery<User[]>('users', getUsers, {
-    keepPreviousData: true,
-  });
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const usersData = useQuery<User[]>('users', getUsers);
   const meData = useQuery<User>('me', getMe, {
-    keepPreviousData: true,
-    retry: 5,
+    onSuccess: () => setIsLoggedIn(true),
+    onError: () => setIsLoggedIn(false),
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalUser, setModalUser] = useState({});
+  const [modalUser, setModalUser] = useState<User | null>(null);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -151,7 +89,7 @@ export default function Find() {
       <LanguageDropdownContainer>
         {/* 할 수 있는 언어 필터링 */}
         <LanguageDropdownWrapper>
-          <p>Natvie in</p>
+          <p>Native in</p>
           <LanguageSelectBox>
             <SelectedLanguageBox
               className="selectedItem"
@@ -231,11 +169,11 @@ export default function Find() {
                 setIsModalOpen(true);
               }}
             >
-              <UserCard userCardData={user} myData={me} />
+              <UserCard userCardData={user} myData={meData.data} />
             </div>
           );
         })}
-        {isModalOpen && (
+        {isModalOpen && modalUser && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
       </UserCardWrapper>

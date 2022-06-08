@@ -3,7 +3,7 @@ export interface LanguageInfo {
 }
 
 export interface User {
-  _id: number;
+  _id: string;
   nickname: string;
   intra_id: string;
   image_url: string;

@@ -1,10 +1,10 @@
 import axios, { AxiosError } from 'axios';
 import { onSilentRefresh } from './login';
 
-// axios 인스턴스를 생성합니다.
+const MAX_RETRY_COUNT = 2;
+
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  timeout: 1000,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -29,9 +29,16 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       const config = error.config;
 
-      onSilentRefresh();
+      config.retryCount = config.retryCount ?? 0;
+      const shouldRetry = config.retryCount < MAX_RETRY_COUNT;
 
-      return axiosInstance.request(config);
+      if (shouldRetry) {
+        config.retryCount += 1;
+        const res = await onSilentRefresh();
+        console.log(res);
+
+        return axiosInstance.request(config);
+      }
     }
     return Promise.reject(error);
   },

@@ -3,16 +3,32 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import { useMutation, useQueryClient } from 'react-query';
+import { addLikeUser, deleteLikeUser } from '../../library/api/fetchUsers';
 
 interface Props {
   userCardData: User;
-  myData: User | null;
+  myData: User | null | undefined;
 }
 
 export default function UserCard({ userCardData, myData }: Props) {
-  // const [isLiked, setIsLiked] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const { mutate: mutateAddLikeUser } = useMutation(addLikeUser, {
+    onSuccess: () => queryClient.invalidateQueries('me'),
+  });
+  const { mutate: mutateDeleteLikeUser } = useMutation(deleteLikeUser, {
+    onSuccess: () => queryClient.invalidateQueries('me'),
+  });
   const isLikedUser =
     myData?.liked_users.some((user) => user._id === userCardData._id) ?? false;
+
+  const handleLikeButtonClick = () => {
+    if (isLikedUser) {
+      return mutateDeleteLikeUser(userCardData._id);
+    }
+    mutateAddLikeUser(userCardData._id);
+  };
+
   return (
     <Container>
       <Userimg>
@@ -22,14 +38,9 @@ export default function UserCard({ userCardData, myData }: Props) {
           className="userimg"
           width={117}
           height={117}
-          alt={UserCard.name}
+          alt={userCardData.name}
         />
-        <LikeButton
-          liked={isLikedUser}
-          onClick={() => {
-            myData?.liked_users.push(userCardData);
-          }}
-        >
+        <LikeButton liked={isLikedUser} onClick={handleLikeButtonClick}>
           <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
         </LikeButton>
       </Userimg>
