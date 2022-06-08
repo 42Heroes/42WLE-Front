@@ -10,6 +10,7 @@ import { useQueryClient } from 'react-query';
 import { axiosInstance } from '../../library/api/axios-instance';
 import { loginState } from '../../recoil/atoms';
 import { useRecoilState } from 'recoil';
+import { logoutUser } from '../../library/api';
 
 interface Prop {
   isActive: boolean;
@@ -21,10 +22,10 @@ export default function Nav() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
 
   const handleLogoutButtonClick = async () => {
-    const { status } = await axiosInstance.post('/users/me/logout');
+    const status = await logoutUser();
     if (status === 200) {
       axiosInstance.defaults.headers.common['Authorization'] = '';
-      queryClient.removeQueries('me');
+      queryClient.removeQueries(['user', 'me']);
       router.replace('/find');
       setIsLoggedIn(false);
     }
