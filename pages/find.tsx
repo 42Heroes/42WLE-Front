@@ -4,7 +4,7 @@ import UserCard from '../components/common/UserCard';
 import { LanguageInfo, User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
-import { getUsers } from '../hooks/api/fetchUsers';
+import { getUsers } from '../library/api';
 import { ProfileModal } from '../components/common/Modal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
@@ -22,7 +22,7 @@ export default function Find() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalUser, setModalUser] = useState({});
+  const [modalUser, setModalUser] = useState<User | null>(null);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -161,7 +161,7 @@ export default function Find() {
             <UserCard userCardData={user} me={me} />
           </div>
         ))}
-        {isModalOpen && (
+        {isModalOpen && modalUser && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
       </UserCardWrapper>

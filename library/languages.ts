@@ -45,7 +45,7 @@ const languages = [
     name: 'russian',
   },
   {
-    name: 'spainish',
+    name: 'spanish',
   },
   {
     name: 'swedish',
