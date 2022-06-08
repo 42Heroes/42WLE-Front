@@ -33,3 +33,12 @@ export interface RegisterUser {
   intra_id: string;
   country: string;
 }
+
+export interface UpdateUserInfo {
+  n_language: LanguageInfo[];
+  l_language: LanguageInfo[];
+  nickname: string;
+  introduction: string;
+  hashtags: string[];
+  github_id: string;
+}

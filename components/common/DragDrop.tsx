@@ -6,7 +6,7 @@ import CameraIcon from '../../public/assets/icons/camera.svg';
 import UserIcon from '../../public/assets/icons/user.svg';
 
 interface Props {
-  image: string | null;
+  image: string | null | undefined;
   onChangeImage: (
     e: React.ChangeEvent<HTMLInputElement> | any,
   ) => Promise<void>;
@@ -19,7 +19,7 @@ export default function DragDrop({ image, onChangeImage }: Props) {
   const isDragging = useDragDrop(onChangeImage, dragRef);
 
   return (
-    <Container ref={dragContainerRef}>
+    <div ref={dragContainerRef}>
       <PreviewWrapper>
         <ImageWrapper isEmpty={!image}>
           {image ? (
@@ -57,14 +57,9 @@ export default function DragDrop({ image, onChangeImage }: Props) {
           onChange={onChangeImage}
         />
       </InputContainer>
-    </Container>
+    </div>
   );
 }
-
-const Container = styled.div`
-  margin-top: 11rem;
-  margin-bottom: 8rem;
-`;
 
 const InputContainer = styled.div`
   display: flex;

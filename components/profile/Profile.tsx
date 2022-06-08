@@ -82,7 +82,7 @@ export default function Profile({ user, className }: Props) {
             <div>
               <h3>Native in</h3>
               <LanguageList>
-                {user.n_language.map((language) => (
+                {user.n_language?.map((language) => (
                   <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
@@ -90,13 +90,13 @@ export default function Profile({ user, className }: Props) {
             <div>
               <h3>Learning</h3>
               <LanguageList>
-                {user.l_language.map((language) => (
+                {user.l_language?.map((language) => (
                   <Language key={language.name} language={language} />
                 ))}
               </LanguageList>
             </div>
           </LanguageContainer>
-          {user.hashtags.length ? (
+          {user.hashtags && user.hashtags.length ? (
             <HashTags>
               <h3>Hashtags</h3>
               <div>
@@ -120,7 +120,7 @@ export default function Profile({ user, className }: Props) {
         <SocialInfo>
           <GitHubIcon sx={{ fontSize: 25 }} />
           <Link href={`https://github.com/${user.github_id}`}>
-            <a target="_blank">https://github.com/{user.github_id}</a>
+            <a target="_blank">https://github.com/{user?.github_id}</a>
           </Link>
         </SocialInfo>
       </SocialInfoContainer>
@@ -158,6 +158,7 @@ const Container = styled.div`
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
   color: ${({ theme }) => theme.fontColor.contentColor};
+  background-color: ${({ theme }) => theme.bgColor};
 `;
 
 const UserInfo = styled.div`
@@ -177,7 +178,7 @@ const UserInfo = styled.div`
 const UserImageWrapper = styled.div`
   width: 15rem;
   ${media.small} {
-    width: auto;
+    width: 20rem;
   }
   .profile-image {
     border-radius: 50rem;

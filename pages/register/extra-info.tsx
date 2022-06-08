@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
 import Button from '../../components/common/Button';
@@ -11,12 +11,9 @@ import { useRegister } from '../../hooks/useRegister';
 export default function ExtraInfo() {
   const router = useRouter();
 
-  const inputTagValidator = (value: string) => {
-    if (value.length > 20) {
-      return false;
-    }
-    return true;
-  };
+  const inputTagValidator = useCallback((value: string) => {
+    return value.length <= 20;
+  }, []);
 
   const [registerUser, setRegisterUser] = useRegister();
   const [inputTag, onChangeInputTag, setInputTag] = useInput(

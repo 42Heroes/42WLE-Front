@@ -79,11 +79,12 @@ const Container = styled.div`
   left: 105%;
   top: 0;
   width: 17rem;
-  height: 14rem;
-  background-color: ${({ theme }) => theme.grayColor + '20'};
+  height: 20rem;
+  background-color: #1e1e1e;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   border-top-left-radius: 0;
+  z-index: 99;
   ul {
     overflow-y: scroll;
   }
