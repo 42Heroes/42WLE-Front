@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { User } from '../../interfaces/user.interface';
+import { onSilentRefresh } from '../../library/api/login';
 import { loginState, userState } from '../../recoil/atoms';
 
 interface Props {
@@ -8,12 +9,13 @@ interface Props {
 }
 
 export default function Auth({ children }: Props) {
-  const setUserData = useSetRecoilState(userState);
+  // const setUserData = useSetRecoilState(userState);
   const setIsLoggedIn = useSetRecoilState(loginState);
 
   useEffect(() => {
-    setUserData(userData);
+    onSilentRefresh();
     setIsLoggedIn(true);
   }, []);
+
   return <>{children}</>;
 }

@@ -1,20 +1,19 @@
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { axiosInstance } from '../../library/api/axios-instance';
 
 export default function Social() {
   const router = useRouter();
-  console.log('auth/social!!!!!!!!!!!!');
+
   const { code } = router.query;
 
   useEffect(() => {
     const fetchToken = async () => {
-      const { data } = await axios.get(
+      const { data } = await axiosInstance.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/social/42?code=${code}`,
-        { withCredentials: true },
       );
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data}`;
-      console.log(data);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${data}`;
+
       router.replace('/find');
     };
     if (code) {
