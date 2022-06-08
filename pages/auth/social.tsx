@@ -8,15 +8,20 @@ export default function Social() {
   const { code } = router.query;
 
   useEffect(() => {
+    const fetchToken = async () => {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/social/42?code=${code}`,
+        { withCredentials: true },
+      );
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data}`;
+      console.log(data);
+      router.replace('/find');
+    };
     if (code) {
-      (async () => {
-        await axios(`http://localhost:3001/api/callback?code=${code}`);
-        router.replace('/find');
-        document.cookie = 'tester=myToken';
-      })();
+      fetchToken();
     }
   }, [code]);
-  // useEffect에서 비동기를 하려면
 
   return 'hi';
 }
+//왜 useEffect를 썼었지? client에서 이뤄지는 일이여서

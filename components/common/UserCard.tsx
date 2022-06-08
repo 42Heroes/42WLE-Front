@@ -17,7 +17,7 @@ export default function UserCard({ userCardData, myData }: Props) {
     <Container>
       <Userimg>
         <Image
-          src={getFlagImage('korean')}
+          src={userCardData.image_url}
           objectFit="cover"
           className="userimg"
           width={117}

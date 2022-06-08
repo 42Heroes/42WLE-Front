@@ -6,7 +6,7 @@ import UserCard from '../components/common/UserCard';
 import { User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
-import { getUsers } from '../hooks/api/fetchUsers';
+import { getUsers, getMe } from '../library/api/fetchUsers';
 import { ProfileModal } from '../components/common/Modal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
@@ -14,6 +14,7 @@ import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
+import axios from 'axios';
 
 interface Language {
   name: string;
@@ -78,9 +79,14 @@ export default function Find() {
     l_language: [{ name: 'english' }, { name: 'japanese' }],
     join_data: new Date('2015-04-20T15:37:23'),
   };
+  console.log('This is in the Find page.');
 
-  const { data } = useQuery<User[]>('users', getUsers, {
+  const usersData = useQuery<User[]>('users', getUsers, {
     keepPreviousData: true,
+  });
+  const meData = useQuery<User>('me', getMe, {
+    keepPreviousData: true,
+    retry: 5,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,7 +100,7 @@ export default function Find() {
   };
 
   const [languages] = useState(languagesBase);
-  console.log(languages);
+  // console.log(languages);
   const handleNLanguageClick = (clickedLanguage: Language) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
@@ -113,23 +119,23 @@ export default function Find() {
   const filteredUsers =
     // 필터링 없을 때
     selectedNLanguage.name === 'All' && selectedLLanguage.name === 'All'
-      ? data
+      ? usersData.data
       : // n_language에만 필터링
       selectedNLanguage.name !== 'All' && selectedLLanguage.name === 'All'
-      ? data?.filter((user) =>
+      ? usersData.data?.filter((user) =>
           user.n_language.some(
             (language) => language.name === selectedNLanguage.name,
           ),
         )
       : // l_language에만 필터링
       selectedNLanguage.name === 'All' && selectedLLanguage.name !== 'All'
-      ? data?.filter((user) =>
+      ? usersData.data?.filter((user) =>
           user.l_language.some(
             (language) => language.name === selectedLLanguage.name,
           ),
         )
       : // 양쪽 모두에 필터링
-        data?.filter(
+        usersData.data?.filter(
           (user) =>
             user.l_language.some(
               (language) => language.name === selectedLLanguage.name,
