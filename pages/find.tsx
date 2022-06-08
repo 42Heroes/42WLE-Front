@@ -1,11 +1,9 @@
-import { useRecoilState } from 'recoil';
 import React, { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import UserCard from '../components/common/UserCard';
 import { LanguageInfo, User } from '../interfaces/user.interface';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
-import { getUsers, getMe } from '../library/api/fetchUsers';
 import { ProfileModal } from '../components/common/Modal';
 import media from '../styles/media';
 import LanguageDropdown from '../components/common/LanguageDropdown';
@@ -13,16 +11,12 @@ import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
-import { loginState } from '../recoil/atoms';
+import useMe from '../hooks/useMe';
+import { getUsers } from '../library/api';
 
 export default function Find() {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
   const usersData = useQuery<User[]>('users', getUsers);
-  const meData = useQuery<User>('me', getMe, {
-    onSuccess: () => setIsLoggedIn(true),
-    onError: () => setIsLoggedIn(false),
-    enabled: isLoggedIn,
-  });
+  const meData = useMe();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUser, setModalUser] = useState<User | null>(null);
@@ -161,10 +155,9 @@ export default function Find() {
               setIsModalOpen(true);
             }}
           >
-            <UserCard userCardData={user} me={me} />
+            <UserCard userCardData={user} me={meData.data} />
           </div>
         ))}
-
         {isModalOpen && modalUser && (
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
@@ -172,7 +165,7 @@ export default function Find() {
     </Container>
   );
 }
-    
+
 Find.getLayout = function getLayout(page: ReactElement) {
   return <CommonLayout headerText="Find">{page}</CommonLayout>;
 };
@@ -243,7 +236,6 @@ const DropdownWrapper = styled.div`
   position: relative;
   bottom: 0;
 `;
-
 
 const SelectedLanguageBox = styled.div`
   display: flex;

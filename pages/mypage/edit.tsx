@@ -11,8 +11,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Button from '../../components/common/Button';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
-import { updateMe, updateImage } from '../../library/api';
-import { uploadFileToS3 } from '../../library/api/uploadFile';
+import { updateMe, updateImage, uploadFileToS3 } from '../../library/api';
+
 import Language from '../../components/language/Language';
 import LanguageDropdown from '../../components/common/LanguageDropdown';
 import { LanguageInfo } from '../../interfaces/user.interface';

@@ -7,7 +7,7 @@ export const onSilentRefresh = () => {
       .get('http://localhost:8080/auth/refresh', { withCredentials: true })
       .then((response) => {
         onLoginSuccess(response);
-        resolve('success');
+        resolve(response.data);
       })
       .catch((error) => {
         reject('can not get a accessToken');
@@ -17,7 +17,6 @@ export const onSilentRefresh = () => {
 
 const onLoginSuccess = (response: any) => {
   const accessToken = response.data;
-  console.log('useEffect AT', accessToken);
 
   axiosInstance.defaults.headers.common[
     'Authorization'

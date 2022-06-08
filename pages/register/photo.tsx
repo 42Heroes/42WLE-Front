@@ -12,7 +12,7 @@ import {
   dataURLtoFile,
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
-import { uploadFileToS3 } from '../../library/api/uploadFile';
+import { uploadFileToS3 } from '../../library/api';
 
 export default function ProfileImage() {
   const router = useRouter();
