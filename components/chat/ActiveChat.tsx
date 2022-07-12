@@ -76,11 +76,12 @@ export default function ActiveChat() {
         <ProfileImage src={activePartner.image_url} size="small" />
         <h1>{activePartner.nickname}</h1>
       </NameContainer>
-      <MessageContainer ref={messageContainerRef}>
+      <MessageContainer>
         <ChatContent
           messages={activeChatRoom.messages}
           activePartner={activePartner}
         />
+        <div ref={messageContainerRef}> </div>
       </MessageContainer>
       <MessageInputContainer>
         <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
