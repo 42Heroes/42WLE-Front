@@ -22,6 +22,7 @@ export default function ActiveChat() {
   const [isPending, setIsPending] = useState(false);
   const [value, onChangeInputText, setInputText] = useInput();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const SendBtnColor = value.length ? '#8083FF' : '#727272';
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!value || isPending) {
@@ -91,7 +92,7 @@ export default function ActiveChat() {
           placeholder="Your messages..."
           onKeyDown={handleInputKeyDown}
         />
-        <SendRoundedIcon sx={{ color: '#8083FF', fontSize: 23 }} />
+        <SendRoundedIcon sx={{ color: SendBtnColor, fontSize: 23 }} />
       </MessageInputContainer>
     </>
   );
