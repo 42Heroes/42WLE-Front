@@ -46,6 +46,7 @@ const Container = styled.li<{ isActive: boolean }>`
   align-items: center;
   padding: 2rem;
   background-color: ${(prop) => prop.isActive && '#242526'};
+  border-radius: ${(prop) => prop.isActive && '2rem 0 2rem 0'};
   cursor: pointer;
 `;
 
