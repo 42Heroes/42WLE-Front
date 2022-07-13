@@ -48,8 +48,7 @@ const UserMessage = styled.div`
     border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
     width: max-content;
     padding: 1rem;
-    /* text-align: right; */
-    border-radius: 30rem;
+    border-radius: 2rem;
     border-top-right-radius: 0;
     max-width: 80%;
     word-wrap: break-word;
@@ -68,7 +67,7 @@ const PartnerMessage = styled.div`
   margin-right: 1rem;
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
   padding: 1rem;
-  border-radius: 30rem;
+  border-radius: 2rem;
   border-top-left-radius: 0;
   width: max-content;
   word-wrap: break-word;
