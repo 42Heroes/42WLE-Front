@@ -30,7 +30,9 @@ export default function ChatRoom({ chat }: Props) {
 
   return (
     <Container isActive={isActiveRoom} onClick={handleChatRoomClick}>
-      <ProfileImage src={otherUser?.image_url ?? ''} size="medium" />
+      <ImageContainer>
+        <ProfileImage src={otherUser?.image_url ?? ''} size="medium" />
+      </ImageContainer>
       <MessageContainer>
         <h1>{otherUser?.nickname}</h1>
         <p>{lastMessage}</p>
@@ -50,10 +52,14 @@ const Container = styled.li<{ isActive: boolean }>`
   cursor: pointer;
 `;
 
+const ImageContainer = styled.div`
+  min-width: 5rem;
+`;
+
 const MessageContainer = styled.div`
   padding: 0.5rem 1.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
-  width: 100%;
+  width: 90%;
   height: 100%;
 
   h1 {
@@ -69,5 +75,6 @@ const MessageContainer = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    word-wrap: break-word;
   }
 `;
