@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import ChatContent from './ChatContent';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import SearchIcon from '@mui/icons-material/Search';
+import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded';
 import {
   activeChatPartnerState,
   activeChatRoomState,
@@ -71,11 +73,30 @@ export default function ActiveChat() {
     return null;
   }
 
+  const handleSearchBtnClick = () => {
+    return;
+  };
+  const handleVideoBtnClick = () => {
+    return;
+  };
+
   return (
     <>
       <NameContainer>
-        <ProfileImage src={activePartner.image_url} size="small" />
-        <h1>{activePartner.nickname}</h1>
+        <PartnerNameBox>
+          <ProfileImage src={activePartner.image_url} size="small" />
+          <h1>{activePartner.nickname}</h1>
+        </PartnerNameBox>
+        <BtnBox>
+          <VideocamRoundedIcon
+            sx={{ fontSize: 25 }}
+            onClick={() => handleVideoBtnClick}
+          />
+          <SearchIcon
+            sx={{ fontSize: 25 }}
+            onClick={() => handleSearchBtnClick}
+          />
+        </BtnBox>
       </NameContainer>
       <MessageContainer>
         <ChatContent
@@ -104,10 +125,26 @@ const NameContainer = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 2rem;
   h1 {
     margin-left: 2rem;
     font-size: 2rem;
+  }
+`;
+
+const PartnerNameBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const BtnBox = styled.div`
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.grayColor};
+  svg {
+    margin: 1rem;
   }
 `;
 
