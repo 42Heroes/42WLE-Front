@@ -8,31 +8,40 @@ import { ReactElement } from 'react';
 export default function Home() {
   return (
     <Container>
-      <LeftSide>
-        <TextContainer>
-          <h1>
-            Master your language <br /> with
-            <FTLogo />
-          </h1>
-          <p>
-            Communicate with 42 cadets worldwide. <br />
-            Develop your language skills <br />
-            and be a global software developer.
-          </p>
-        </TextContainer>
-        <StyledButton type="button" size="large" color="blue">
-          START LEARNING
-        </StyledButton>
-      </LeftSide>
-      <ImageWrapper>
-        <Image
-          alt="World Map"
-          src="/assets/worldMap.svg"
-          width={3000}
-          height={2000}
-          objectFit="cover"
-        />
-      </ImageWrapper>
+      <TopContainer>
+        <a href="https://api.intra.42.fr/oauth/authorize?client_id=71352ab465a87dd80775022d80e3e9af2f5a221de5a4eade94aaca475ea595e1&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsocial&response_type=code">
+          <LogInOutButton type="button" size="medium">
+            Login
+          </LogInOutButton>
+        </a>
+      </TopContainer>
+      <ContentContainer>
+        <LeftSide>
+          <TextContainer>
+            <h1>
+              Master your language <br /> with
+              <FTLogo />
+            </h1>
+            <p>
+              Communicate with 42 cadets worldwide. <br />
+              Develop your language skills <br />
+              and be a global software developer.
+            </p>
+          </TextContainer>
+          <StyledButton type="button" size="large" color="blue">
+            START LEARNING
+          </StyledButton>
+        </LeftSide>
+        <ImageWrapper>
+          <Image
+            alt="World Map"
+            src="/assets/worldMap.svg"
+            width={3000}
+            height={2000}
+            objectFit="cover"
+          />
+        </ImageWrapper>
+      </ContentContainer>
     </Container>
   );
 }
@@ -42,11 +51,26 @@ Home.getLayout = function getLayout(page: ReactElement) {
 };
 
 const Container = styled.div`
-  display: flex;
   width: 100vw;
   height: 100vh;
+`;
+
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 3rem 3rem 0 0;
+`;
+
+const ContentContainer = styled.div`
+  width: 100%;
+  height: 90%;
+  display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+
+const LogInOutButton = styled(Button)`
+  color: ${({ theme }) => theme.fontColor.contentColor};
 `;
 
 const LeftSide = styled.div`
