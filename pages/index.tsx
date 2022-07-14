@@ -4,16 +4,26 @@ import Image from 'next/image';
 import media from '../styles/media';
 import FTLogo from '../public/assets/icons/42Logo.svg';
 import { ReactElement } from 'react';
+import { loginState } from '../recoil/atoms';
+import { logoutUser } from '../library/api';
 
 export default function Home() {
+  const isLoggedIn = loginState ? true : false;
+
   return (
     <Container>
       <TopContainer>
-        <a href="https://api.intra.42.fr/oauth/authorize?client_id=71352ab465a87dd80775022d80e3e9af2f5a221de5a4eade94aaca475ea595e1&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsocial&response_type=code">
-          <LogInOutButton type="button" size="medium">
-            Login
-          </LogInOutButton>
-        </a>
+        {isLoggedIn ? (
+          <LogOutButton type="button" size="medium" onClick={() => logoutUser}>
+            Logout
+          </LogOutButton>
+        ) : (
+          <a href="https://api.intra.42.fr/oauth/authorize?client_id=71352ab465a87dd80775022d80e3e9af2f5a221de5a4eade94aaca475ea595e1&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsocial&response_type=code">
+            <LogInButton type="button" size="medium">
+              Login
+            </LogInButton>
+          </a>
+        )}
       </TopContainer>
       <ContentContainer>
         <LeftSide>
@@ -69,7 +79,11 @@ const ContentContainer = styled.div`
   justify-content: space-between;
 `;
 
-const LogInOutButton = styled(Button)`
+const LogInButton = styled(Button)`
+  color: ${({ theme }) => theme.fontColor.contentColor};
+`;
+
+const LogOutButton = styled(Button)`
   color: ${({ theme }) => theme.fontColor.contentColor};
 `;
 
