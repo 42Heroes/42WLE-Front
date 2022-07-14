@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from '../components/common/Button';
 import Image from 'next/image';
+import Link from 'next/link';
 import media from '../styles/media';
 import FTLogo from '../public/assets/icons/42Logo.svg';
 import { ReactElement } from 'react';
@@ -9,6 +10,7 @@ import { logoutUser } from '../library/api';
 
 export default function Home() {
   const isLoggedIn = loginState ? true : false;
+  const startPage = isLoggedIn ? '/find' : 'learn';
 
   return (
     <Container>
@@ -38,9 +40,11 @@ export default function Home() {
               and be a global software developer.
             </p>
           </TextContainer>
-          <StyledButton type="button" size="large" color="blue">
-            START LEARNING
-          </StyledButton>
+          <Link href={startPage} passHref>
+            <StyledButton type="button" size="large" color="blue">
+              START LEARNING
+            </StyledButton>
+          </Link>
         </LeftSide>
         <ImageWrapper>
           <Image
