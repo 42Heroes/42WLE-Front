@@ -21,8 +21,8 @@ export default function CommonLayout({ children, headerText }: Props) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 6rem 1fr;
-  grid-template-rows: 6rem 1fr;
+  grid-template-columns: 8rem 1fr;
+  grid-template-rows: 8rem 1fr;
   height: 100vh;
   width: 100vw;
 `;
