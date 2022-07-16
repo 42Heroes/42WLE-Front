@@ -11,4 +11,6 @@ export enum SocketEvents {
   IceCandidate = 'IceCandidate',
   RequestCall = 'RequestCall',
   AcceptCall = 'AcceptCall',
+  RejectCall = 'RejectCall',
+  ExitUser = 'ExitUser',
 }
