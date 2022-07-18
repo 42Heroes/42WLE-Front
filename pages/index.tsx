@@ -20,7 +20,7 @@ export default function Home() {
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
     logoutUser();
-    queryClient.removeQueries('user');
+    queryClient.removeQueries('me');
   };
 
   return (
