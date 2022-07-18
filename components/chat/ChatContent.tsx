@@ -18,14 +18,14 @@ export default function ChatContent({ messages, activePartner }: Props) {
       {messages.map((message) =>
         message.user_id === me?._id ? (
           <UserMessage key={message._id}>
-            <TimeConatiner>{message.createdAt}</TimeConatiner>
+            <TimeConatiner>{message.createdAt.slice(11, 16)}</TimeConatiner>
             <p>{message.content}</p>
           </UserMessage>
         ) : (
           <PartnerMessageContainer key={message._id}>
             <ProfileImage src={activePartner.image_url} size="small" />
             <PartnerMessage>{message.content}</PartnerMessage>
-            <TimeConatiner>{message.createdAt}</TimeConatiner>
+            <TimeConatiner>{message.createdAt.slice(11, 16)}</TimeConatiner>
           </PartnerMessageContainer>
         ),
       )}
