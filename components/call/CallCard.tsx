@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 
@@ -6,35 +6,38 @@ interface Props {
   callInfo: {
     roomNo: string;
   };
-  handleAcceptCall: (roomNo: string) => void;
-  handleRejectCall: (roomNo: string) => void;
+  onAcceptClick: (roomNo: string) => void;
+  onRejectClick: (roomNo: string) => void;
 }
 
 export default function CallCard({
   callInfo,
-  handleAcceptCall,
-  handleRejectCall,
+  onAcceptClick,
+  onRejectClick,
 }: Props) {
   return (
     <Container>
       <CallCardTitle>{callInfo.roomNo}</CallCardTitle>
       <ButtonContainer>
-        <Button
-          color="#2ecc71"
-          onClick={() => handleAcceptCall(callInfo.roomNo)}
-        >
+        <Button color="#2ecc71" onClick={() => onAcceptClick(callInfo.roomNo)}>
           <CallIcon />
         </Button>
-        <Button
-          color="#e74c3c"
-          onClick={() => handleRejectCall(callInfo.roomNo)}
-        >
+        <Button color="#e74c3c" onClick={() => onRejectClick(callInfo.roomNo)}>
           <CallEndIcon />
         </Button>
       </ButtonContainer>
     </Container>
   );
 }
+
+const fadeIn = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
 
 const Button = styled.button<{ color?: string }>`
   display: flex;
@@ -64,6 +67,7 @@ const Container = styled.div`
   border: 1px solid white;
   width: 30rem;
   padding: 2rem;
+  animation: ${fadeIn} 0.5s ease-in-out;
 `;
 
 const CallCardTitle = styled.h3`

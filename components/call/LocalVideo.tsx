@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import VideoNav from './VideoNav';
 
@@ -36,6 +36,12 @@ export default function LocalVideo({
     });
     setLocalCallStatus({ ...localCallStatus, camera: !localCallStatus.camera });
   };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [videoRef, stream]);
 
   return (
     <Container>

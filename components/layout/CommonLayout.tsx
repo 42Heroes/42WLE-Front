@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CallList from '../call/CallList';
 import Header from './Header';
 import Nav from './Nav';
 
@@ -15,6 +16,7 @@ export default function CommonLayout({ children, headerText }: Props) {
       <Header headerText={headerText} />
       <Nav />
       <Main>{children}</Main>
+      <CallList />
     </Container>
   );
 }
