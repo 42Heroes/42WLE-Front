@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import socket from '../library/socket';
 import { SocketEvents } from '../library/socket.events.enum';
-import { CallUser } from '../interfaces/call.interface';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import {
+  callInfoState,
+  callListState,
+  connectedUserListState,
+  peerConnectionState,
+} from '../recoil/atoms';
+import { useCreateMediaStream } from './useCreateStream';
 
-interface UsePeerConnection {
-  localStream: MediaStream | null;
-}
-
-const usePeerConnection = ({ localStream }: UsePeerConnection) => {
+const usePeerConnection = () => {
   const RTCConfig = {
     iceServers: [
       {
@@ -22,20 +25,22 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
     ],
   };
 
-  const [connectedUsers, setConnectedUsers] = useState<CallUser[]>([]);
-  const [callInfo, setCallInfo] = useState({
-    roomNo: '',
-  });
-
-  const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection | undefined }>(
-    {},
+  const {
+    userMediaStream: localStream,
+    createMediaStream,
+    stopMediaStream,
+  } = useCreateMediaStream();
+  const setCallInfo = useSetRecoilState(callInfoState);
+  const setCallList = useSetRecoilState(callListState);
+  const [connectedUsers, setConnectedUsers] = useRecoilState(
+    connectedUserListState,
   );
+  const [pcs, setPcs] = useRecoilState(peerConnectionState);
 
   useEffect(() => {
-    // 새로운 사용자가 접속하면 새로운 Peer Connection 생성
     const createPeerConnection = (receiverSocketId: string) => {
-      if (pcsRef.current[receiverSocketId]) {
-        return pcsRef.current[receiverSocketId];
+      if (pcs[receiverSocketId]) {
+        return pcs[receiverSocketId];
       }
       if (!localStream) return;
 
@@ -74,7 +79,10 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         peerConnection.addTrack(track, localStream);
       });
 
-      pcsRef.current[receiverSocketId] = peerConnection;
+      setPcs((prevPcs) => ({
+        ...prevPcs,
+        [receiverSocketId]: peerConnection,
+      }));
 
       return peerConnection;
     };
@@ -140,7 +148,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         }) => {
           const { answerSenderId, answer } = data;
 
-          const peerConnection = pcsRef.current[answerSenderId];
+          const peerConnection = pcs[answerSenderId];
 
           if (peerConnection) {
             peerConnection.setRemoteDescription(
@@ -161,7 +169,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         }) => {
           const { candidateSenderId, candidate } = data;
 
-          const peerConnection = pcsRef.current[candidateSenderId];
+          const peerConnection = pcs[candidateSenderId];
           if (peerConnection) {
             peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           }
@@ -174,7 +182,14 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
       .on(SocketEvents.RequestCall, (data) => {
         const { roomNo } = data;
         console.log('누군가가 전화를 걸었습니다: ', data);
+
         setCallInfo({ roomNo });
+        setCallList((prevCallList) => [
+          ...prevCallList,
+          {
+            roomNo,
+          },
+        ]);
       });
 
     // 상대방이 통화를 수락했을 때
@@ -184,7 +199,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         SocketEvents.AcceptCall,
         async (users: { socketId: string; id: string }[]) => {
           const promises = users.map(async (user) => {
-            if (pcsRef.current[user.socketId]) return;
+            if (pcs[user.socketId]) return;
 
             const peerConnection = createPeerConnection(user.socketId);
 
@@ -209,14 +224,11 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
     // 상대방이 통화를 종료했을 때
     socket.off(SocketEvents.ExitUser).on(SocketEvents.ExitUser, (data) => {
       const { socketId } = data;
-      pcsRef.current[socketId]?.close();
-      pcsRef.current[socketId] = undefined;
-      setConnectedUsers((prevUsers) => {
-        const filteredUsers = prevUsers.filter(
-          (user) => user.socketId !== socketId,
-        );
-        return filteredUsers;
-      });
+      pcs[socketId]?.close();
+      setPcs((prevPcs) => ({ ...prevPcs, [socketId]: undefined }));
+      setConnectedUsers((prevUsers) =>
+        prevUsers.filter((user) => user.socketId !== socketId),
+      );
     });
 
     return () => {
@@ -228,18 +240,29 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
       socket.off(SocketEvents.RejectCall);
       socket.off(SocketEvents.ExitUser);
     };
-  }, [localStream]);
+  }, [localStream, pcs]);
 
-  const handleRequestCall = (roomInfo: string) => {
+  const handleRequestCall = async (roomInfo: string) => {
+    if (!localStream?.active) {
+      await createMediaStream();
+    }
     // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
     socket.emit(SocketEvents.RequestCall, roomInfo, (data: string) => {
       console.log(data);
     });
   };
 
-  const handleAcceptCall = (roomInfo: string) => {
+  const handleAcceptCall = async (roomInfo: string) => {
+    if (!localStream?.active) {
+      await createMediaStream();
+    }
     socket.emit(SocketEvents.AcceptCall, roomInfo, (data: string) => {
-      console.log(data);
+      setCallList((prevCallList) => {
+        const filteredCallList = prevCallList.filter(
+          (call) => call.roomNo !== roomInfo,
+        );
+        return [...filteredCallList];
+      });
     });
   };
 
@@ -248,22 +271,26 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
       console.log(data);
     });
     setCallInfo({ roomNo: '' });
+    setCallList((prevList) =>
+      prevList.filter((room) => room.roomNo !== roomInfo),
+    );
   };
 
   const handleEndCall = () => {
     // TODO: 통화 중인 경우에만 이벤트 보내게끔 예외처리
-    Object.keys(pcsRef.current).forEach((key) => {
-      pcsRef.current[key]?.close();
+    socket.emit(SocketEvents.EndCall, () => {
+      stopMediaStream();
+      Object.keys(pcs).forEach((key) => {
+        pcs[key]?.close();
+      });
+      setPcs({});
+      setConnectedUsers([]);
+      setCallInfo({ roomNo: '' });
     });
-    pcsRef.current = {};
-    setConnectedUsers([]);
-    setCallInfo({ roomNo: '' });
-    socket.emit(SocketEvents.EndCall);
   };
 
   return {
     connectedUsers,
-    callInfo,
     handleRequestCall,
     handleAcceptCall,
     handleRejectCall,
