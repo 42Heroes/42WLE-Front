@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import LocalVideo from '../components/call/LocalVideo';
-import RemoteVideo from '../components/call/RemoteVideo';
-import { useCreateMediaStream } from '../hooks/useCreateStream';
 import socket from '../library/socket';
 import { SocketEvents } from '../library/socket.events.enum';
-import { callState } from '../recoil/atoms/callAtom';
+import { CallUser } from '../interfaces/call.interface';
 
-export default function PlayGround() {
+interface UsePeerConnection {
+  localStream: MediaStream | null;
+}
+
+const usePeerConnection = ({ localStream }: UsePeerConnection) => {
   const RTCConfig = {
     iceServers: [
       {
@@ -21,17 +21,15 @@ export default function PlayGround() {
       },
     ],
   };
-  // Peer Connection, getMediaStream 을 통해 얻은 stream, 화면에 보여줄 video Ref 들
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const { userMediaStream: localStream } = useCreateMediaStream(localVideoRef);
-  const [users, setUsers] = useRecoilState(callState);
+
+  const [connectedUsers, setConnectedUsers] = useState<CallUser[]>([]);
+  const [callInfo, setCallInfo] = useState({
+    roomNo: '',
+  });
+
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection | undefined }>(
     {},
   );
-
-  const TEMP_ROOM_NO = 'gamguma';
-
-  const [someOneCall, setSomeOneCall] = useState('');
 
   useEffect(() => {
     // 새로운 사용자가 접속하면 새로운 Peer Connection 생성
@@ -51,8 +49,7 @@ export default function PlayGround() {
       };
 
       const handleAddTrack = (event: RTCTrackEvent) => {
-        console.log('트랙이 추가됐습니다', event.streams[0], receiverSocketId);
-        setUsers((prevUsers) => {
+        setConnectedUsers((prevUsers) => {
           const filteredUsers = prevUsers.filter(
             (user) => user.socketId !== receiverSocketId,
           );
@@ -72,10 +69,13 @@ export default function PlayGround() {
       peerConnection.onicecandidate = handleIceCandidate;
       peerConnection.ontrack = handleAddTrack;
       peerConnection.oniceconnectionstatechange = handleIceChange;
+
       localStream.getTracks().forEach((track) => {
         peerConnection.addTrack(track, localStream);
       });
+
       pcsRef.current[receiverSocketId] = peerConnection;
+
       return peerConnection;
     };
 
@@ -100,52 +100,81 @@ export default function PlayGround() {
     };
 
     // 상대방이 오퍼를 받을 때
-    socket.off(SocketEvents.Offer).on(SocketEvents.Offer, async (data) => {
-      const { offerSenderId, offer } = data;
+    socket
+      .off(SocketEvents.Offer)
+      .on(
+        SocketEvents.Offer,
+        async (data: {
+          offerSenderId: string;
+          offer: RTCSessionDescriptionInit;
+        }) => {
+          const { offerSenderId, offer } = data;
 
-      const peerConnection = createPeerConnection(offerSenderId);
+          const peerConnection = createPeerConnection(offerSenderId);
 
-      if (peerConnection) {
-        peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-        socket.emit(SocketEvents.Answer, {
-          answer,
-          answerReceiverId: offerSenderId,
-        });
-      }
-    });
+          if (peerConnection) {
+            peerConnection.setRemoteDescription(
+              new RTCSessionDescription(offer),
+            );
+
+            const answer = await peerConnection.createAnswer();
+
+            await peerConnection.setLocalDescription(answer);
+
+            socket.emit(SocketEvents.Answer, {
+              answer,
+              answerReceiverId: offerSenderId,
+            });
+          }
+        },
+      );
 
     // 상대방의 answer 를 받을 때
     socket
       .off(SocketEvents.Answer)
-      .on(SocketEvents.Answer, async (data: any) => {
-        const { answerSenderId, answer } = data;
-        const peerConnection = pcsRef.current[answerSenderId];
-        if (peerConnection) {
-          peerConnection.setRemoteDescription(
-            new RTCSessionDescription(answer),
-          );
-        }
-      });
+      .on(
+        SocketEvents.Answer,
+        async (data: {
+          answerSenderId: string;
+          answer: RTCSessionDescriptionInit;
+        }) => {
+          const { answerSenderId, answer } = data;
+
+          const peerConnection = pcsRef.current[answerSenderId];
+
+          if (peerConnection) {
+            peerConnection.setRemoteDescription(
+              new RTCSessionDescription(answer),
+            );
+          }
+        },
+      );
 
     // 상대방이 ice candidate 를 받을 때
     socket
       .off(SocketEvents.IceCandidate)
-      .on(SocketEvents.IceCandidate, (data: any) => {
-        const { candidateSenderId, candidate } = data;
-        const peerConnection = pcsRef.current[candidateSenderId];
-        if (peerConnection) {
-          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-        }
-      });
+      .on(
+        SocketEvents.IceCandidate,
+        (data: {
+          candidateSenderId: string;
+          candidate: RTCIceCandidateInit;
+        }) => {
+          const { candidateSenderId, candidate } = data;
+
+          const peerConnection = pcsRef.current[candidateSenderId];
+          if (peerConnection) {
+            peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          }
+        },
+      );
 
     // 누군가가 전화를 걸었을 때
     socket
       .off(SocketEvents.RequestCall)
       .on(SocketEvents.RequestCall, (data) => {
         const { roomNo } = data;
-        setSomeOneCall(roomNo);
+        console.log('누군가가 전화를 걸었습니다: ', data);
+        setCallInfo({ roomNo });
       });
 
     // 상대방이 통화를 수락했을 때
@@ -167,6 +196,7 @@ export default function PlayGround() {
               });
             }
           });
+
           await Promise.all(promises);
         },
       );
@@ -181,15 +211,13 @@ export default function PlayGround() {
       const { socketId } = data;
       pcsRef.current[socketId]?.close();
       pcsRef.current[socketId] = undefined;
-      setUsers((prevUsers) => {
+      setConnectedUsers((prevUsers) => {
         const filteredUsers = prevUsers.filter(
           (user) => user.socketId !== socketId,
         );
         return filteredUsers;
       });
     });
-
-    socket.emit('join', TEMP_ROOM_NO);
 
     return () => {
       socket.off(SocketEvents.Offer);
@@ -202,13 +230,24 @@ export default function PlayGround() {
     };
   }, [localStream]);
 
-  const handleJoinClick = () => {};
-
-  const requestCall = (roomInfo: string) => {
-    socket.emit(SocketEvents.RequestCall, TEMP_ROOM_NO, (data: string) => {
-      // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
+  const handleRequestCall = (roomInfo: string) => {
+    // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
+    socket.emit(SocketEvents.RequestCall, roomInfo, (data: string) => {
       console.log(data);
     });
+  };
+
+  const handleAcceptCall = (roomInfo: string) => {
+    socket.emit(SocketEvents.AcceptCall, roomInfo, (data: string) => {
+      console.log(data);
+    });
+  };
+
+  const handleRejectCall = (roomInfo: string) => {
+    socket.emit(SocketEvents.RejectCall, roomInfo, (data: string) => {
+      console.log(data);
+    });
+    setCallInfo({ roomNo: '' });
   };
 
   const handleEndCall = () => {
@@ -217,49 +256,19 @@ export default function PlayGround() {
       pcsRef.current[key]?.close();
     });
     pcsRef.current = {};
-    setUsers([]);
-    socket.emit(SocketEvents.EndCall, TEMP_ROOM_NO);
+    setConnectedUsers([]);
+    setCallInfo({ roomNo: '' });
+    socket.emit(SocketEvents.EndCall);
   };
 
-  return (
-    <div>
-      <button
-        style={{
-          backgroundColor: someOneCall ? 'white' : '#ff9999',
-          padding: '0.5rem 2rem',
-        }}
-        onClick={requestCall}
-      >
-        Call
-      </button>
-      <button
-        style={{
-          backgroundColor: someOneCall ? 'white' : '#ff9999',
-          padding: '0.5rem 2rem',
-        }}
-        onClick={() => {
-          socket.emit(SocketEvents.AcceptCall, someOneCall, () =>
-            setSomeOneCall(''),
-          );
-        }}
-      >
-        {someOneCall}
-      </button>
-      <LocalVideo
-        videoRef={localVideoRef}
-        playsInline
-        autoPlay
-        stream={localStream}
-        handleEndCall={handleEndCall}
-      />
-      {users.map((user) => (
-        <RemoteVideo
-          key={user.socketId}
-          stream={user.stream}
-          autoPlay
-          playsInline
-        />
-      ))}
-    </div>
-  );
-}
+  return {
+    connectedUsers,
+    callInfo,
+    handleRequestCall,
+    handleAcceptCall,
+    handleRejectCall,
+    handleEndCall,
+  };
+};
+
+export default usePeerConnection;

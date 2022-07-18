@@ -83,9 +83,9 @@ export default function UserCard({ userCardData, me }: Props) {
 const Container = styled.div`
   width: 39rem;
   height: 17rem;
-  border: 0.1rem solid;
+  border: 0.1rem solid ${({ theme }) => theme.grayColor};
   border-radius: 3rem;
-  padding: 2rem 3rem;
+  padding: 2rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -113,7 +113,7 @@ const LikeButton = styled.div<{ liked: boolean }>`
 
 const UserInfo = styled.div`
   height: 100%;
-  width: 50%;
+  width: 57%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -143,9 +143,10 @@ const LearnNative = styled.div`
 `;
 const ContentsText = styled.div`
   height: 100%;
+  width: 7rem;
   display: flex;
   align-items: center;
-  margin-right: 2rem;
+  margin-right: 0.1rem;
 `;
 
 const ContentsImg = styled.div`
