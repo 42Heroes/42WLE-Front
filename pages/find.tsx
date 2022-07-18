@@ -13,10 +13,12 @@ import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateC
 import ClearIcon from '@mui/icons-material/Clear';
 import useMe from '../hooks/useMe';
 import { getUsers } from '../library/api';
+import { useRouter } from 'next/router';
 
 export default function Find() {
   const usersData = useQuery<User[]>('users', getUsers);
   const meData = useMe();
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUser, setModalUser] = useState<User | null>(null);
@@ -33,6 +35,7 @@ export default function Find() {
   const handleNLanguageClick = (clickedLanguage: LanguageInfo) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
+    router.replace('/');
   };
 
   const handleLLanguageClick = (clickedLanguage: LanguageInfo) => {
