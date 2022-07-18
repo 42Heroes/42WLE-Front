@@ -45,6 +45,9 @@ export const deleteLikeUser = async (targetId: string) => {
 
 export const logoutUser = async () => {
   const { status } = await axiosInstance.post('/users/me/logout');
+  axiosInstance.defaults.headers.common[
+    'Authorization'
+  ] = '';
 
   return status;
 };

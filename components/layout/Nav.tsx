@@ -85,7 +85,7 @@ const IconContainer = styled.div<Prop>`
     isActive ? theme.pointColor : theme.fontColor.contentColor};
   background-color: ${(prop) => (prop.isActive ? '#242526' : 'none')};
   margin-top: 3rem;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.6rem;
   border-radius: 1rem;
   cursor: pointer;
 `;

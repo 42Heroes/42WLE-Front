@@ -18,12 +18,14 @@ export default function ChatContent({ messages, activePartner }: Props) {
       {messages.map((message) =>
         message.user_id === me?._id ? (
           <UserMessage key={message._id}>
+            <TimeConatiner>{message.createdAt}</TimeConatiner>
             <p>{message.content}</p>
           </UserMessage>
         ) : (
           <PartnerMessageContainer key={message._id}>
             <ProfileImage src={activePartner.image_url} size="small" />
             <PartnerMessage>{message.content}</PartnerMessage>
+            <TimeConatiner>{message.createdAt}</TimeConatiner>
           </PartnerMessageContainer>
         ),
       )}
@@ -46,9 +48,10 @@ const UserMessage = styled.div`
     border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
     width: max-content;
     padding: 1rem;
-    text-align: right;
-    border-radius: 30rem;
+    border-radius: 2rem;
     border-top-right-radius: 0;
+    max-width: 80%;
+    word-wrap: break-word;
   }
 `;
 
@@ -60,10 +63,18 @@ const PartnerMessageContainer = styled.div`
 
 const PartnerMessage = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
-  margin: 2rem;
+  margin-left: 2rem;
+  margin-right: 1rem;
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
   padding: 1rem;
-  border-radius: 30rem;
+  border-radius: 2rem;
   border-top-left-radius: 0;
   width: max-content;
+  word-wrap: break-word;
+`;
+
+const TimeConatiner = styled.div`
+  color: ${({ theme }) => theme.fontColor.titleColor};
+  font-size: 1rem;
+  margin-right: 1rem;
 `;
