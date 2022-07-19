@@ -15,20 +15,22 @@ export default function ChatContent({ messages, activePartner }: Props) {
 
   return (
     <Container>
-      {messages.map((message) =>
-        message.user_id === me?._id ? (
+      {messages.map((message) => {
+        const localDate = new Date(message.createdAt).toString();
+
+        return message.user_id === me?._id ? (
           <UserMessage key={message._id}>
-            <TimeConatiner>{message.createdAt.slice(11, 16)}</TimeConatiner>
+            <TimeConatiner>{localDate.slice(15, 21)}</TimeConatiner>
             <p>{message.content}</p>
           </UserMessage>
         ) : (
           <PartnerMessageContainer key={message._id}>
             <ProfileImage src={activePartner.image_url} size="small" />
             <PartnerMessage>{message.content}</PartnerMessage>
-            <TimeConatiner>{message.createdAt.slice(11, 16)}</TimeConatiner>
+            <TimeConatiner>{localDate.slice(15, 21)}</TimeConatiner>
           </PartnerMessageContainer>
-        ),
-      )}
+        );
+      })}
     </Container>
   );
 }
