@@ -25,7 +25,9 @@ export default function ChatContent({ messages, activePartner }: Props) {
           </UserMessage>
         ) : (
           <PartnerMessageContainer key={message._id}>
-            <ProfileImage src={activePartner.image_url} size="small" />
+            <ImageContainer>
+              <ProfileImage src={activePartner.image_url} size="small" />
+            </ImageContainer>
             <PartnerMessage>{message.content}</PartnerMessage>
             <TimeConatiner>{localDate.slice(15, 21)}</TimeConatiner>
           </PartnerMessageContainer>
@@ -62,6 +64,10 @@ const PartnerMessageContainer = styled.div`
   display: flex;
   align-items: flex-end;
   margin: 2rem;
+`;
+
+const ImageContainer = styled.div`
+  min-width: 4rem;
 `;
 
 const PartnerMessage = styled.div`
