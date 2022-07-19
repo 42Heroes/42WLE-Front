@@ -45,6 +45,7 @@ const UserMessage = styled.div`
   margin: 2rem;
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
   p {
     background-color: #242526;
     border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
@@ -59,7 +60,7 @@ const UserMessage = styled.div`
 
 const PartnerMessageContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   margin: 2rem;
 `;
 
