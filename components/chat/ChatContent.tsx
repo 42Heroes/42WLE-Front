@@ -16,11 +16,11 @@ export default function ChatContent({ messages, activePartner }: Props) {
   return (
     <Container>
       {messages.map((message) => {
-        const localDate = new Date(message.createdAt).toString();
+        const localDate = new Date(message.createdAt).toString().slice(15, 21);
 
         return message.user_id === me?._id ? (
           <UserMessage key={message._id}>
-            <TimeConatiner>{localDate.slice(15, 21)}</TimeConatiner>
+            <TimeConatiner>{localDate}</TimeConatiner>
             <p>{message.content}</p>
           </UserMessage>
         ) : (
@@ -29,7 +29,7 @@ export default function ChatContent({ messages, activePartner }: Props) {
               <ProfileImage src={activePartner.image_url} size="small" />
             </ImageContainer>
             <PartnerMessage>{message.content}</PartnerMessage>
-            <TimeConatiner>{localDate.slice(15, 21)}</TimeConatiner>
+            <TimeConatiner>{localDate}</TimeConatiner>
           </PartnerMessageContainer>
         );
       })}
