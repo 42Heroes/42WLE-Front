@@ -2,11 +2,13 @@ import { ReactElement } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import StartPost from '../components/board/StartPost';
 import styled from 'styled-components';
+import CreatePost from '../components/board/CreatePost';
 
 export default function Board() {
   return (
     <Container>
       <StartPost />
+      <CreatePost />
     </Container>
   );
 }

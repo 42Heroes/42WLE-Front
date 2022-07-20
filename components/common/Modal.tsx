@@ -3,6 +3,7 @@ import ModalPortal from './Portal';
 import Profile from '../profile/Profile';
 import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
+import CreatePost from '../board/CreatePost';
 
 interface Props {
   user: User;
@@ -15,6 +16,18 @@ export const ProfileModal = ({ user, toggleModal }: Props) => {
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
           <Profile user={user} />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const CreatePostModal = ({ toggleModal }: Props) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <CreatePost />
         </div>
       </Background>
     </ModalPortal>
