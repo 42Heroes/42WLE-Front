@@ -1,14 +1,29 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import StartPost from '../components/board/StartPost';
 import styled from 'styled-components';
-import CreatePost from '../components/board/CreatePost';
+import { CreatePostModal } from '../components/common/Modal';
 
 export default function Board() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <Container>
-      <StartPost />
-      <CreatePost />
+      <div
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        <StartPost />
+      </div>
+      {isModalOpen && <CreatePostModal toggleModal={toggleModal} />}
     </Container>
   );
 }

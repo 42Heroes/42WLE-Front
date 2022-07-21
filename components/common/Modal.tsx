@@ -10,6 +10,10 @@ interface Props {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
+interface CreatePostModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+}
+
 export const ProfileModal = ({ user, toggleModal }: Props) => {
   return (
     <ModalPortal>
@@ -22,7 +26,7 @@ export const ProfileModal = ({ user, toggleModal }: Props) => {
   );
 };
 
-export const CreatePostModal = ({ toggleModal }: Props) => {
+export const CreatePostModal = ({ toggleModal }: CreatePostModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>

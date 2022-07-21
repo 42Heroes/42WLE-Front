@@ -7,6 +7,7 @@ export default function StartPost() {
   const { data: me, isError, isLoading } = useMe();
   if (isError) return <div>Error</div>;
   if (isLoading) return <div>Loading</div>;
+
   return (
     <Container>
       {me && <ProfileImage src={me.image_url} size="medium" />}
