@@ -32,4 +32,10 @@ Board.getLayout = function getLayout(page: ReactElement) {
   return <CommonLayout headerText="Board">{page}</CommonLayout>;
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem;
+`;
