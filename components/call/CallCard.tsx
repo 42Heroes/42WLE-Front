@@ -1,28 +1,41 @@
 import styled, { keyframes } from 'styled-components';
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
+import { useRouter } from 'next/router';
+import { useSetRecoilState } from 'recoil';
+import { activeChatRoomIdState } from '../../recoil/atoms';
+import usePeerConnection from '../../hooks/usePeerConnection';
 
 interface Props {
   callInfo: {
     roomNo: string;
   };
-  onAcceptClick: (roomNo: string) => void;
-  onRejectClick: (roomNo: string) => void;
 }
 
-export default function CallCard({
-  callInfo,
-  onAcceptClick,
-  onRejectClick,
-}: Props) {
+export default function CallCard({ callInfo }: Props) {
+  const router = useRouter();
+  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const { handleAcceptCall, handleRejectCall } = usePeerConnection();
   return (
     <Container>
       <CallCardTitle>{callInfo.roomNo}</CallCardTitle>
       <ButtonContainer>
-        <Button color="#2ecc71" onClick={() => onAcceptClick(callInfo.roomNo)}>
+        <Button
+          color="#2ecc71"
+          onClick={() => {
+            if (router.pathname !== '/chat') {
+              router.push('/chat');
+            }
+            setActiveChatRoomId(callInfo.roomNo);
+            handleAcceptCall(callInfo.roomNo);
+          }}
+        >
           <CallIcon />
         </Button>
-        <Button color="#e74c3c" onClick={() => onRejectClick(callInfo.roomNo)}>
+        <Button
+          color="#e74c3c"
+          onClick={() => handleRejectCall(callInfo.roomNo)}
+        >
           <CallEndIcon />
         </Button>
       </ButtonContainer>

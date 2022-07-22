@@ -16,6 +16,7 @@ import { SocketEvents } from '../../library/socket.events.enum';
 import { useEffect, useRef, useState } from 'react';
 import { chatState } from '../../recoil/atoms';
 import { Message } from '../../interfaces/chat.interface';
+import usePeerConnection from '../../hooks/usePeerConnection';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
@@ -25,6 +26,7 @@ export default function ActiveChat() {
   const [value, onChangeInputText, setInputText] = useInput();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
+  const { handleRequestCall } = usePeerConnection();
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!value || isPending) {
@@ -76,26 +78,26 @@ export default function ActiveChat() {
   const handleSearchBtnClick = () => {
     return;
   };
+
   const handleVideoBtnClick = () => {
-    return;
+    handleRequestCall(activeChatRoom._id);
   };
 
   return (
-    <>
+    <Container>
       <NameContainer>
         <PartnerNameBox>
           <ProfileImage src={activePartner.image_url} size="small" />
           <h1>{activePartner.nickname}</h1>
         </PartnerNameBox>
         <BtnBox>
-          <VideocamRoundedIcon
-            sx={{ fontSize: 25 }}
-            onClick={() => handleVideoBtnClick}
-          />
-          <SearchIcon
-            sx={{ fontSize: 25 }}
-            onClick={() => handleSearchBtnClick}
-          />
+          <VideoButton>
+            <VideocamRoundedIcon
+              sx={{ fontSize: 25 }}
+              onClick={handleVideoBtnClick}
+            />
+          </VideoButton>
+          <SearchIcon sx={{ fontSize: 25 }} onClick={handleSearchBtnClick} />
         </BtnBox>
       </NameContainer>
       <MessageContainer>
@@ -115,9 +117,16 @@ export default function ActiveChat() {
         />
         <SendRoundedIcon sx={{ color: SendBtnColor, fontSize: 23 }} />
       </MessageInputContainer>
-    </>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow-y: auto;
+`;
 
 const NameContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
@@ -152,6 +161,26 @@ const MessageContainer = styled.div`
   flex: 1;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
   overflow: auto;
+`;
+
+const VideoButton = styled.button`
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  aspect-ratio: 1;
+  transition: all 0.1s ease-in-out;
+  &:hover {
+    background-color: #121212;
+    svg {
+      fill: ${({ theme }) => theme.pointColor};
+    }
+  }
+  svg {
+    fill: ${({ theme }) => theme.grayColor};
+    aspect-ratio: 1;
+  }
 `;
 
 const MessageInputContainer = styled.div`

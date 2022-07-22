@@ -1,7 +1,8 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import useMe from '../../hooks/useMe';
 import { Chat } from '../../interfaces/chat.interface';
-import { activeChatRoomIdState, userState } from '../../recoil/atoms';
+import { activeChatRoomIdState } from '../../recoil/atoms';
 import ProfileImage from '../common/ProfileImage';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function ChatRoom({ chat }: Props) {
-  const me = useRecoilValue(userState);
+  const { data: me } = useMe();
   const [activeChatRoomId, setActiveChatRoomId] = useRecoilState(
     activeChatRoomIdState,
   );

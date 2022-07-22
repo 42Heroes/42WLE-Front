@@ -1,23 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import usePeerConnection from '../../hooks/usePeerConnection';
 import VideoNav from './VideoNav';
 
 interface Props {
   muted?: boolean;
   autoPlay?: boolean;
   playsInline?: boolean;
-  videoRef: React.RefObject<HTMLVideoElement>;
   stream: MediaStream | null;
-  handleEndCall: () => void;
 }
 
-export default function LocalVideo({
-  autoPlay,
-  playsInline,
-  videoRef,
-  stream,
-  handleEndCall,
-}: Props) {
+export default function LocalVideo({ autoPlay, playsInline, stream }: Props) {
+  const { handleEndCall } = usePeerConnection();
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [localCallStatus, setLocalCallStatus] = useState({
     mute: false,
     camera: true,
@@ -61,10 +56,11 @@ const Container = styled.div`
   display: inline-block;
   position: relative;
   overflow: hidden;
+  width: 100%;
 `;
 
 const Video = styled.video`
-  width: 60rem;
+  width: 100%;
   border-radius: 1rem;
   transform: rotateY(180deg);
 `;
