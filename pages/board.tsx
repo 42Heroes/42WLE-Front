@@ -3,9 +3,14 @@ import CommonLayout from '../components/layout/CommonLayout';
 import StartPost from '../components/board/StartPost';
 import styled from 'styled-components';
 import { CreatePostModal } from '../components/common/Modal';
+import { Post } from '../interfaces/board.interface';
+import { useQuery } from 'react-query';
+import { getPosts } from '../library/api/board';
 
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const postsData = useQuery<Post[]>('posts', getPosts);
+  console.log(postsData);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
