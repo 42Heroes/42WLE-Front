@@ -20,13 +20,14 @@ export default function StartPost() {
 }
 
 const Container = styled.div`
-  width: 55rem;
+  width: 65rem;
   height: 8rem;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   background-color: #242526;
   border-radius: 1rem;
+  margin-bottom: 3rem;
 `;
 
 const InputContainer = styled.div`

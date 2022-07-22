@@ -6,6 +6,7 @@ import { CreatePostModal } from '../components/common/Modal';
 import { Post } from '../interfaces/board.interface';
 import { useQuery } from 'react-query';
 import { getPosts } from '../library/api/board';
+import PostCard from '../components/board/PostCard';
 
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function Board() {
         <StartPost />
       </div>
       {isModalOpen && <CreatePostModal toggleModal={toggleModal} />}
+      <PostCard />
     </Container>
   );
 }
@@ -40,6 +42,7 @@ Board.getLayout = function getLayout(page: ReactElement) {
 const Container = styled.div`
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 6rem;
