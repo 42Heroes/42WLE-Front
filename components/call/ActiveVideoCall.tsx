@@ -28,7 +28,7 @@ export default function ActiveVideoCall() {
 const Container = styled.div`
   width: 100%;
   display: flex;
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
   flex-direction: column;
   ${media.small} {
     flex-direction: row;
