@@ -12,15 +12,24 @@ interface Props {
 
 export default function ChatContent({ messages, activePartner }: Props) {
   const me = useRecoilValue(userState);
-
+  const getLocalDate = (date: Date) => new Date(date).toString().slice(15, 21);
   return (
     <Container>
-      {messages.map((message) => {
-        const localDate = new Date(message.createdAt).toString().slice(15, 21);
+      {messages.map((message, index) => {
+        const localDate = getLocalDate(message.createdAt);
+        const isLastMessage = messages[index + 1]
+          ? messages[index + 1].user_id !== message.user_id
+          : true;
+        const isDifferentTime = messages[index + 1]
+          ? getLocalDate(messages[index].createdAt) !==
+            getLocalDate(messages[index + 1].createdAt)
+          : true;
 
         return message.user_id === me?._id ? (
           <UserMessage key={message._id}>
-            <TimeConatiner>{localDate}</TimeConatiner>
+            {(isLastMessage || isDifferentTime) && (
+              <TimeContainer>{localDate}</TimeContainer>
+            )}
             <p>{message.content}</p>
           </UserMessage>
         ) : (
@@ -29,7 +38,9 @@ export default function ChatContent({ messages, activePartner }: Props) {
               <ProfileImage src={activePartner.image_url} size="small" />
             </ImageContainer>
             <PartnerMessage>{message.content}</PartnerMessage>
-            <TimeConatiner>{localDate}</TimeConatiner>
+            {(isLastMessage || isDifferentTime) && (
+              <TimeContainer>{localDate}</TimeContainer>
+            )}
           </PartnerMessageContainer>
         );
       })}
@@ -82,7 +93,7 @@ const PartnerMessage = styled.div`
   word-wrap: break-word;
 `;
 
-const TimeConatiner = styled.div`
+const TimeContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   font-size: 1rem;
   margin-right: 1rem;
