@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import { useMutation, useQueryClient } from 'react-query';
 import { addLikeUser, deleteLikeUser } from '../../library/api';
 
@@ -42,7 +43,11 @@ export default function UserCard({ userCardData, me }: Props) {
           alt={userCardData.nickname}
         />
         <LikeButton liked={isLikedUser} onClick={handleLikeButtonClick}>
-          <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+          {isLikedUser ? (
+            <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+          ) : (
+            <FavoriteBorderOutlinedIcon sx={{ fontSize: 28 }} />
+          )}
         </LikeButton>
       </UserImageContainer>
       <UserInfo>
@@ -111,7 +116,7 @@ const UserImageContainer = styled.div`
 `;
 
 const LikeButton = styled.div<{ liked: boolean }>`
-  color: ${({ theme, liked }) => (liked ? theme.likeIcon : theme.grayColor)};
+  color: ${({ theme }) => theme.likeIcon};
   position: absolute;
   left: 75%;
   top: 80%;
