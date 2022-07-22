@@ -1,11 +1,6 @@
 import { atom } from 'recoil';
 import { CallUser } from '../../interfaces/call.interface';
 
-export const callState = atom<CallUser[]>({
-  key: 'callState',
-  default: [],
-});
-
 export const callListState = atom<{ roomNo: string }[]>({
   key: 'callListState',
   default: [],
@@ -23,9 +18,14 @@ export const connectedUserListState = atom<CallUser[]>({
   default: [],
 });
 
-export const callInfoState = atom<{ roomNo: string }>({
-  key: 'callInfoState',
-  default: { roomNo: '' },
+export const isCallingState = atom<boolean>({
+  key: 'isCallingState',
+  default: false,
+});
+
+export const roomNoState = atom<string>({
+  key: 'roomNoState',
+  default: '',
 });
 
 export const localStreamState = atom<MediaStream | null>({
