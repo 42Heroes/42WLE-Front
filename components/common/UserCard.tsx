@@ -89,6 +89,13 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.3s;
+
+  :hover {
+    transform: scale(1.05);
+    background-color: #262626;
+  }
 `;
 
 const UserImageContainer = styled.div`
