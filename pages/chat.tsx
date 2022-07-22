@@ -6,9 +6,17 @@ import { useRecoilValue } from 'recoil';
 import { chatState } from '../recoil/atoms';
 import ChatRoomList from '../components/chat/ChatRoomList';
 import ActiveChat from '../components/chat/ActiveChat';
+import ActiveVideoCall from '../components/call/ActiveVideoCall';
+import { activeChatRoomState, callInfoState } from '../recoil/selectors';
 
 export default function Chat() {
   const chatRooms = useRecoilValue(chatState);
+  const callInfo = useRecoilValue(callInfoState);
+  const activeChatRoom = useRecoilValue(activeChatRoomState);
+  console.log(chatRooms);
+  console.log(activeChatRoom);
+
+  console.log(callInfo);
 
   return (
     <Container>
@@ -20,6 +28,9 @@ export default function Chat() {
         <ChatRoomList chatRooms={chatRooms} />
       </LeftContainer>
       <RightContainer>
+        {callInfo.isCalling && callInfo.roomNo === activeChatRoom?._id && (
+          <ActiveVideoCall />
+        )}
         <ActiveChat />
       </RightContainer>
     </Container>
@@ -70,4 +81,5 @@ const RightContainer = styled.div`
   width: 65%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
