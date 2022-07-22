@@ -10,6 +10,10 @@ interface Props {
   activePartner: User;
 }
 
+interface isMarginNeededProps {
+  isMarginNeeded: boolean;
+}
+
 export default function ChatContent({ messages, activePartner }: Props) {
   const me = useRecoilValue(userState);
   const getLocalDate = (date: Date) => new Date(date).toString().slice(15, 21);
@@ -20,25 +24,38 @@ export default function ChatContent({ messages, activePartner }: Props) {
         const isLastMessage = messages[index + 1]
           ? messages[index + 1].user_id !== message.user_id
           : true;
-        const isDifferentTime = messages[index + 1]
+        const isLastTime = messages[index + 1]
           ? getLocalDate(messages[index].createdAt) !==
             getLocalDate(messages[index + 1].createdAt)
           : true;
+        const isFirstMessage = messages[index - 1]
+          ? messages[index - 1].user_id !== message.user_id
+          : true;
+        const isFirstTime = messages[index - 1]
+          ? getLocalDate(messages[index].createdAt) !==
+            getLocalDate(messages[index - 1].createdAt)
+          : true;
+        const isMarginNeeded = isLastMessage || isLastTime;
 
         return message.user_id === me?._id ? (
-          <UserMessage key={message._id}>
-            {(isLastMessage || isDifferentTime) && (
+          <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
+            {(isLastMessage || isLastTime) && (
               <TimeContainer>{localDate}</TimeContainer>
             )}
             <p>{message.content}</p>
           </UserMessage>
         ) : (
-          <PartnerMessageContainer key={message._id}>
+          <PartnerMessageContainer
+            key={message._id}
+            isMarginNeeded={isMarginNeeded}
+          >
             <ImageContainer>
-              <ProfileImage src={activePartner.image_url} size="small" />
+              {(isFirstMessage || isFirstTime) && (
+                <ProfileImage src={activePartner.image_url} size="small" />
+              )}
             </ImageContainer>
             <PartnerMessage>{message.content}</PartnerMessage>
-            {(isLastMessage || isDifferentTime) && (
+            {(isLastMessage || isLastTime) && (
               <TimeContainer>{localDate}</TimeContainer>
             )}
           </PartnerMessageContainer>
@@ -51,11 +68,12 @@ export default function ChatContent({ messages, activePartner }: Props) {
 const Container = styled.ul`
   display: flex;
   flex-direction: column;
+  padding: 2rem 2rem 0 2rem;
 `;
 
-const UserMessage = styled.div`
+const UserMessage = styled.div<isMarginNeededProps>`
   color: ${({ theme }) => theme.fontColor.titleColor};
-  margin: 2rem;
+  margin-bottom: ${(prop) => (prop.isMarginNeeded ? '2rem' : '0.5rem')};
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
@@ -71,10 +89,10 @@ const UserMessage = styled.div`
   }
 `;
 
-const PartnerMessageContainer = styled.div`
+const PartnerMessageContainer = styled.div<isMarginNeededProps>`
   display: flex;
   align-items: flex-end;
-  margin: 2rem;
+  margin-bottom: ${(prop) => (prop.isMarginNeeded ? '2rem' : '0.5rem')};
 `;
 
 const ImageContainer = styled.div`
