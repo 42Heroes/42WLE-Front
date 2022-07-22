@@ -31,7 +31,7 @@ export const CreatePostModal = ({ toggleModal }: CreatePostModalProps) => {
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <CreatePost />
+          <CreatePost toggleModal={toggleModal} />
         </div>
       </Background>
     </ModalPortal>

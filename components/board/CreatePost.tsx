@@ -5,7 +5,11 @@ import ProfileImage from '../common/ProfileImage';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import Button from '../common/Button';
 
-export default function CreatePost() {
+interface Props {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+}
+
+export default function CreatePost({ toggleModal }: Props) {
   const { data: me, isError, isLoading } = useMe();
   if (isError) return <div>Error</div>;
   if (isLoading) return <div>Loading</div>;
@@ -13,7 +17,9 @@ export default function CreatePost() {
     <Container>
       <TopLabel>
         <p>Create a post</p>
-        <ClearIcon fontSize="large" />
+        <div onClick={(e) => toggleModal(e)}>
+          <ClearIcon fontSize="large" />
+        </div>
       </TopLabel>
       <ProfileContainer>
         {me && <ProfileImage src={me.image_url} size="medium" />}
