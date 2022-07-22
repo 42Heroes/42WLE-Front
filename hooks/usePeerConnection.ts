@@ -3,10 +3,11 @@ import socket from '../library/socket';
 import { SocketEvents } from '../library/socket.events.enum';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
-  callInfoState,
   callListState,
   connectedUserListState,
+  isCallingState,
   peerConnectionState,
+  roomNoState,
 } from '../recoil/atoms';
 import { useCreateMediaStream } from './useCreateStream';
 
@@ -30,7 +31,8 @@ const usePeerConnection = () => {
     createMediaStream,
     stopMediaStream,
   } = useCreateMediaStream();
-  const setCallInfo = useSetRecoilState(callInfoState);
+  const [roomNo, setRoomNo] = useRecoilState(roomNoState);
+  const [isCalling, setIsCalling] = useRecoilState(isCallingState);
   const setCallList = useSetRecoilState(callListState);
   const [connectedUsers, setConnectedUsers] = useRecoilState(
     connectedUserListState,
@@ -183,13 +185,19 @@ const usePeerConnection = () => {
         const { roomNo } = data;
         console.log('누군가가 전화를 걸었습니다: ', data);
 
-        setCallInfo({ roomNo });
-        setCallList((prevCallList) => [
-          ...prevCallList,
-          {
-            roomNo,
-          },
-        ]);
+        setRoomNo(roomNo);
+
+        setCallList((prevCallList) => {
+          const filteredCallList = prevCallList.filter(
+            (call) => call.roomNo !== roomNo,
+          );
+          return [
+            ...filteredCallList,
+            {
+              roomNo,
+            },
+          ];
+        });
       });
 
     // 상대방이 통화를 수락했을 때
@@ -219,6 +227,15 @@ const usePeerConnection = () => {
     // 상대방이 통화를 거절했을 때
     socket.off(SocketEvents.RejectCall).on(SocketEvents.RejectCall, (data) => {
       console.log('상대방이 조금 바쁜가봐요 ㅠㅠ');
+      alert('상대방이 조금 바쁜가봐요 ㅠㅠ');
+      // setCallInfo({ roomNo: '', isCalling: false });
+    });
+
+    socket.off(SocketEvents.CancelCall).on(SocketEvents.CancelCall, (data) => {
+      console.log('상대방이 전화를 취소했습니다', data);
+      setCallList((prevCallList) =>
+        prevCallList.filter((call) => call.roomNo !== data.roomNo),
+      );
     });
 
     // 상대방이 통화를 종료했을 때
@@ -231,23 +248,26 @@ const usePeerConnection = () => {
       );
     });
 
-    return () => {
-      socket.off(SocketEvents.Offer);
-      socket.off(SocketEvents.Answer);
-      socket.off(SocketEvents.IceCandidate);
-      socket.off(SocketEvents.AcceptCall);
-      socket.off(SocketEvents.RequestCall);
-      socket.off(SocketEvents.RejectCall);
-      socket.off(SocketEvents.ExitUser);
-    };
+    // return () => {
+    //   socket.off(SocketEvents.Offer);
+    //   socket.off(SocketEvents.Answer);
+    //   socket.off(SocketEvents.IceCandidate);
+    //   socket.off(SocketEvents.AcceptCall);
+    //   socket.off(SocketEvents.RequestCall);
+    //   socket.off(SocketEvents.RejectCall);
+    //   socket.off(SocketEvents.ExitUser);
+    // };
   }, [localStream, pcs]);
 
   const handleRequestCall = async (roomInfo: string) => {
     if (!localStream?.active) {
       await createMediaStream();
     }
+
     // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
     socket.emit(SocketEvents.RequestCall, roomInfo, (data: string) => {
+      setRoomNo(roomInfo);
+      setIsCalling(true);
       console.log(data);
     });
   };
@@ -256,12 +276,14 @@ const usePeerConnection = () => {
     if (!localStream?.active) {
       await createMediaStream();
     }
+    setRoomNo(roomInfo);
+    setIsCalling(true);
     socket.emit(SocketEvents.AcceptCall, roomInfo, (data: string) => {
       setCallList((prevCallList) => {
         const filteredCallList = prevCallList.filter(
           (call) => call.roomNo !== roomInfo,
         );
-        return [...filteredCallList];
+        return filteredCallList;
       });
     });
   };
@@ -270,10 +292,11 @@ const usePeerConnection = () => {
     socket.emit(SocketEvents.RejectCall, roomInfo, (data: string) => {
       console.log(data);
     });
-    setCallInfo({ roomNo: '' });
-    setCallList((prevList) =>
-      prevList.filter((room) => room.roomNo !== roomInfo),
-    );
+    setRoomNo('');
+    setIsCalling(false);
+    setCallList((prevList) => {
+      return prevList.filter((room) => room.roomNo !== roomInfo);
+    });
   };
 
   const handleEndCall = () => {
@@ -285,7 +308,8 @@ const usePeerConnection = () => {
       });
       setPcs({});
       setConnectedUsers([]);
-      setCallInfo({ roomNo: '' });
+      setRoomNo('');
+      setIsCalling(false);
     });
   };
 
