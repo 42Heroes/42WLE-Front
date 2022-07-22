@@ -1,11 +1,8 @@
-import { User } from './user.interface';
-
 export interface Call {
   roomNo: string;
-  users: User[];
 }
 
-export interface CallUser extends User {
+export interface CallUser {
   socketId: string;
   stream: MediaStream;
 }
