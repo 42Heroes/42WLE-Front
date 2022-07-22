@@ -185,10 +185,8 @@ const usePeerConnection = () => {
     socket
       .off(SocketEvents.RequestCall)
       .on(SocketEvents.RequestCall, (data) => {
-        const { roomNo } = data;
+        const { roomNo, users } = data;
         console.log('누군가가 전화를 걸었습니다: ', data);
-
-        setRoomNo(roomNo);
 
         setCallList((prevCallList) => {
           const filteredCallList = prevCallList.filter(
@@ -198,6 +196,7 @@ const usePeerConnection = () => {
             ...filteredCallList,
             {
               roomNo,
+              users,
             },
           ];
         });
