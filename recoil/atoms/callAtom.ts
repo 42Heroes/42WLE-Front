@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
-import { CallUser } from '../../interfaces/call.interface';
+import { Call, CallUser } from '../../interfaces/call.interface';
 
-export const callListState = atom<{ roomNo: string }[]>({
+export const callListState = atom<Call[]>({
   key: 'callListState',
   default: [],
 });
@@ -18,12 +18,12 @@ export const connectedUserListState = atom<CallUser[]>({
   default: [],
 });
 
-export const isCallingState = atom<boolean>({
+export const isCallingState = atom({
   key: 'isCallingState',
   default: false,
 });
 
-export const roomNoState = atom<string>({
+export const roomNoState = atom({
   key: 'roomNoState',
   default: '',
 });

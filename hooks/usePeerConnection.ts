@@ -182,10 +182,8 @@ const usePeerConnection = () => {
     socket
       .off(SocketEvents.RequestCall)
       .on(SocketEvents.RequestCall, (data) => {
-        const { roomNo } = data;
+        const { roomNo, users } = data;
         console.log('누군가가 전화를 걸었습니다: ', data);
-
-        setRoomNo(roomNo);
 
         setCallList((prevCallList) => {
           const filteredCallList = prevCallList.filter(
@@ -195,6 +193,7 @@ const usePeerConnection = () => {
             ...filteredCallList,
             {
               roomNo,
+              users,
             },
           ];
         });
@@ -263,6 +262,10 @@ const usePeerConnection = () => {
     if (!localStream?.active) {
       await createMediaStream();
     }
+    if (isCalling && roomNo !== '') {
+      alert('이미 전화가 걸려있습니다');
+      return;
+    }
 
     // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
     socket.emit(SocketEvents.RequestCall, roomInfo, (data: string) => {
@@ -273,6 +276,20 @@ const usePeerConnection = () => {
   };
 
   const handleAcceptCall = async (roomInfo: string) => {
+    if (isCalling && roomInfo !== roomNo) {
+      const acceptChange = prompt(
+        '상대방이 전화를 걸었습니다. 수락하시겠습니까?',
+      );
+      console.log(acceptChange);
+      if (acceptChange) {
+        console.log('수락합니다');
+        handleEndCall();
+      } else {
+        console.log('거절합니다');
+        handleRejectCall(roomInfo);
+        return;
+      }
+    }
     if (!localStream?.active) {
       await createMediaStream();
     }
