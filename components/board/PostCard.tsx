@@ -6,31 +6,50 @@ import RecommendIcon from '@mui/icons-material/Recommend';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
-import { User } from '../../interfaces/user.interface';
+import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { useState } from 'react';
 
 interface Props {
   postData: object;
 }
 
 export default function PostCard({ postData }: Props) {
-  const author = postData.author;
+  // const author = postData.author;
+  const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   return (
     <Container>
       <ProfileContainer>
         <UserInfoContainer>
-          {author && <ProfileImage src={author.image_url} size="small" />}
+          {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
           <UserInfo>
-            <h1>{author?.nickname}</h1>
-            <p>{postData.createdAt}</p>
+            {/* <h1>{author?.nickname}</h1>
+            <p>{postData.createdAt}</p> */}
           </UserInfo>
         </UserInfoContainer>
-        <MoreButtonContainer>
+        <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
           <MoreHorizIcon sx={{ fontSize: 30 }} />
         </MoreButtonContainer>
       </ProfileContainer>
+      {isBtnBoxOpen && (
+        <ToggleBtnBox>
+          <BtnBox>
+            <BookmarkBorderRoundedIcon /> <p>Save post</p>
+          </BtnBox>
+          <BtnBox>
+            <EditRoundedIcon />
+            <p>Edit post</p>
+          </BtnBox>
+          <BtnBox>
+            <DeleteRoundedIcon />
+            <p>Delete post</p>
+          </BtnBox>
+        </ToggleBtnBox>
+      )}
       <ContentContainer>{postData.content}</ContentContainer>
       <LikeCountContainer>
-        <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
+        {/* <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length} */}
       </LikeCountContainer>
       <BottomButtonContainer>
         <BottomButtonBox>
@@ -55,6 +74,7 @@ const Container = styled.div`
   background-color: #242526;
   margin: 3rem;
   border-radius: 1rem;
+  position: relative;
 `;
 
 const ProfileContainer = styled.div`
@@ -90,6 +110,40 @@ const UserInfo = styled.div`
 const MoreButtonContainer = styled.div`
   svg {
     color: ${({ theme }) => theme.fontColor.contentColor};
+    cursor: pointer;
+  }
+`;
+
+const ToggleBtnBox = styled.div`
+  width: 15rem;
+  height: 10rem;
+  border: 1px solid ${({ theme }) => theme.grayColor};
+  border-radius: 1rem;
+  position: absolute;
+  left: 48rem;
+  top: 6rem;
+  color: ${({ theme }) => theme.fontColor.titleColor};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const BtnBox = styled.div`
+  display: flex;
+  align-items: center;
+  height: 33.3%;
+  padding: 0 1.5rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  svg {
+    margin-right: 0.8rem;
+  }
+  p {
+    font-size: 1.2rem;
+  }
+  &:hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => theme.grayColor};
   }
 `;
 
