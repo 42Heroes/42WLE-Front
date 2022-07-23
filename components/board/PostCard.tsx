@@ -1,33 +1,36 @@
 import styled from 'styled-components';
-import useMe from '../../hooks/useMe';
+
 import ProfileImage from '../common/ProfileImage';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
+import { User } from '../../interfaces/user.interface';
 
-export default function PostCard() {
-  const { data: me, isError, isLoading } = useMe();
-  if (isError) return <div>Error</div>;
-  if (isLoading) return <div>Loading</div>;
+interface Props {
+  postData: object;
+}
+
+export default function PostCard({ postData }: Props) {
+  const author = postData.author;
   return (
     <Container>
       <ProfileContainer>
         <UserInfoContainer>
-          {me && <ProfileImage src={me.image_url} size="small" />}
+          {author && <ProfileImage src={author.image_url} size="small" />}
           <UserInfo>
-            <h1>{me?.nickname}</h1>
-            <p>3 hours ago</p>
+            <h1>{author?.nickname}</h1>
+            <p>{postData.createdAt}</p>
           </UserInfo>
         </UserInfoContainer>
         <MoreButtonContainer>
           <MoreHorizIcon sx={{ fontSize: 30 }} />
         </MoreButtonContainer>
       </ProfileContainer>
-      <ContentContainer>Hello world!</ContentContainer>
+      <ContentContainer>{postData.content}</ContentContainer>
       <LikeCountContainer>
-        <RecommendIcon sx={{ fontSize: 20 }} /> 1.3K
+        <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
       </LikeCountContainer>
       <BottomButtonContainer>
         <BottomButtonBox>

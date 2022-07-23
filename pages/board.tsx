@@ -11,7 +11,7 @@ import PostCard from '../components/board/PostCard';
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const postsData = useQuery<Post[]>('posts', getPosts);
-  console.log(postsData);
+  console.log(postsData.data);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -30,7 +30,9 @@ export default function Board() {
         <StartPost />
       </div>
       {isModalOpen && <CreatePostModal toggleModal={toggleModal} />}
-      <PostCard />
+      {postsData.data?.map((post) => (
+        <PostCard key={post._id} postData={post} />
+      ))}
     </Container>
   );
 }
