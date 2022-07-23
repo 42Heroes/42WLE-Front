@@ -9,6 +9,7 @@ import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useState } from 'react';
+import { DeleteConfirmModal } from '../common/Modal';
 
 interface Props {
   postData: object;
@@ -17,6 +18,14 @@ interface Props {
 export default function PostCard({ postData }: Props) {
   // const author = postData.author;
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsModalOpen(!isModalOpen);
+  };
   return (
     <Container>
       <ProfileContainer>
@@ -40,12 +49,19 @@ export default function PostCard({ postData }: Props) {
             <EditRoundedIcon />
             <p>Edit post</p>
           </BtnBox>
-          <BtnBox>
-            <DeleteRoundedIcon />
-            <p>Delete post</p>
-          </BtnBox>
+          <div
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            <BtnBox>
+              <DeleteRoundedIcon />
+              <p>Delete post</p>
+            </BtnBox>
+          </div>
         </ToggleBtnBox>
       )}
+      {isModalOpen && <DeleteConfirmModal toggleModal={toggleModal} />}
       <ContentContainer>{postData.content}</ContentContainer>
       <LikeCountContainer>
         {/* <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length} */}
@@ -130,7 +146,7 @@ const ToggleBtnBox = styled.div`
 const BtnBox = styled.div`
   display: flex;
   align-items: center;
-  height: 33.3%;
+  height: 3.3rem;
   padding: 0 1.5rem;
   overflow: hidden;
   border-radius: 0.5rem;
