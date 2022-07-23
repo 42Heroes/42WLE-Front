@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { Chat } from '../../interfaces/chat.interface';
+import { Chat, Message } from '../../interfaces/chat.interface';
 
 export const activeChatRoomIdState = atom<string>({
   key: 'activeChatRoom',
@@ -8,5 +8,10 @@ export const activeChatRoomIdState = atom<string>({
 
 export const chatState = atom<Chat[]>({
   key: 'chatState',
+  default: [],
+});
+
+export const unreadMessageState = atom<Message[]>({
+  key: 'unreadMessageState',
   default: [],
 });

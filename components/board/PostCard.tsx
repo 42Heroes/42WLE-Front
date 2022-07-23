@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import ProfileImage from '../common/ProfileImage';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RecommendIcon from '@mui/icons-material/Recommend';
