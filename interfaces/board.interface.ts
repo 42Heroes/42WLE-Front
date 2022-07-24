@@ -3,9 +3,9 @@ import { User } from "./user.interface";
 export interface Post {
     _id: string;
     author: User;
-    content: string;
+    contents: string;
     images: string[];
-    comments: Comment[];
+    comment: Comment[];
     createdAt: Date;
     updatedAt: Date;
     likes: User[];

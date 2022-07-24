@@ -10,13 +10,15 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useState } from 'react';
 import { DeleteConfirmModal } from '../common/Modal';
+import { Post } from '../../interfaces/board.interface';
 
 interface Props {
-  postData: object;
+  postData: Post;
 }
 
 export default function PostCard({ postData }: Props) {
-  // const author = postData.author;
+  const author = postData.author;
+  const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -32,8 +34,8 @@ export default function PostCard({ postData }: Props) {
         <UserInfoContainer>
           {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
           <UserInfo>
-            {/* <h1>{author?.nickname}</h1>
-            <p>{postData.createdAt}</p> */}
+            <h1>{author?.nickname}</h1>
+            <p>{createdAt}</p>
           </UserInfo>
         </UserInfoContainer>
         <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
@@ -62,9 +64,9 @@ export default function PostCard({ postData }: Props) {
         </ToggleBtnBox>
       )}
       {isModalOpen && <DeleteConfirmModal toggleModal={toggleModal} />}
-      <ContentContainer>{postData.content}</ContentContainer>
+      <ContentContainer>{postData.contents.text}</ContentContainer>
       <LikeCountContainer>
-        {/* <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length} */}
+        <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
       </LikeCountContainer>
       <BottomButtonContainer>
         <BottomButtonBox>
@@ -166,6 +168,7 @@ const ContentContainer = styled.div`
   height: 35rem;
   padding: 1rem 2.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
+  font-size: 1.5rem;
 `;
 
 const LikeCountContainer = styled.div`
