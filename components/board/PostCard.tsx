@@ -11,6 +11,7 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useState } from 'react';
 import { DeleteConfirmModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
+import useMe from '../../hooks/useMe';
 
 interface Props {
   postData: Post;
@@ -18,6 +19,7 @@ interface Props {
 
 export default function PostCard({ postData }: Props) {
   const author = postData.author;
+  const { data: me } = useMe();
   const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,8 +35,10 @@ export default function PostCard({ postData }: Props) {
       <ProfileContainer>
         <UserInfoContainer>
           {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
+          {me && <ProfileImage src={me.image_url} size="medium" />}
           <UserInfo>
-            <h1>{author?.nickname}</h1>
+            {/* <h1>{author?.nickname}</h1> */}
+            <h1>{me.nickname}</h1>
             <p>{createdAt}</p>
           </UserInfo>
         </UserInfoContainer>
@@ -115,8 +119,8 @@ const UserInfo = styled.div`
   justify-content: center;
   h1 {
     color: ${({ theme }) => theme.fontColor.titleColor};
-    font-size: 1.7rem;
-    margin-bottom: 0.7rem;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
   }
   p {
     color: ${({ theme }) => theme.grayColor};
