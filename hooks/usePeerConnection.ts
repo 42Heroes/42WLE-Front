@@ -1,13 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import socket from '../library/socket';
 import { SocketEvents } from '../library/socket.events.enum';
-import { CallUser } from '../interfaces/call.interface';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { Message } from '../interfaces/chat.interface';
+import {
+  callListState,
+  chatState,
+  connectedUserListState,
+  isCallingState,
+  peerConnectionState,
+  roomNoState,
+} from '../recoil/atoms';
+import { useCreateMediaStream } from './useCreateStream';
 
-interface UsePeerConnection {
-  localStream: MediaStream | null;
-}
-
-const usePeerConnection = ({ localStream }: UsePeerConnection) => {
+const usePeerConnection = () => {
   const RTCConfig = {
     iceServers: [
       {
@@ -22,20 +28,24 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
     ],
   };
 
-  const [connectedUsers, setConnectedUsers] = useState<CallUser[]>([]);
-  const [callInfo, setCallInfo] = useState({
-    roomNo: '',
-  });
-
-  const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection | undefined }>(
-    {},
+  const {
+    userMediaStream: localStream,
+    createMediaStream,
+    stopMediaStream,
+  } = useCreateMediaStream();
+  const [roomNo, setRoomNo] = useRecoilState(roomNoState);
+  const [isCalling, setIsCalling] = useRecoilState(isCallingState);
+  const setCallList = useSetRecoilState(callListState);
+  const setChatData = useSetRecoilState(chatState);
+  const [connectedUsers, setConnectedUsers] = useRecoilState(
+    connectedUserListState,
   );
+  const [pcs, setPcs] = useRecoilState(peerConnectionState);
 
   useEffect(() => {
-    // 새로운 사용자가 접속하면 새로운 Peer Connection 생성
     const createPeerConnection = (receiverSocketId: string) => {
-      if (pcsRef.current[receiverSocketId]) {
-        return pcsRef.current[receiverSocketId];
+      if (pcs[receiverSocketId]) {
+        return pcs[receiverSocketId];
       }
       if (!localStream) return;
 
@@ -74,7 +84,10 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         peerConnection.addTrack(track, localStream);
       });
 
-      pcsRef.current[receiverSocketId] = peerConnection;
+      setPcs((prevPcs) => ({
+        ...prevPcs,
+        [receiverSocketId]: peerConnection,
+      }));
 
       return peerConnection;
     };
@@ -140,7 +153,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         }) => {
           const { answerSenderId, answer } = data;
 
-          const peerConnection = pcsRef.current[answerSenderId];
+          const peerConnection = pcs[answerSenderId];
 
           if (peerConnection) {
             peerConnection.setRemoteDescription(
@@ -161,7 +174,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         }) => {
           const { candidateSenderId, candidate } = data;
 
-          const peerConnection = pcsRef.current[candidateSenderId];
+          const peerConnection = pcs[candidateSenderId];
           if (peerConnection) {
             peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           }
@@ -172,9 +185,21 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
     socket
       .off(SocketEvents.RequestCall)
       .on(SocketEvents.RequestCall, (data) => {
-        const { roomNo } = data;
+        const { roomNo, users } = data;
         console.log('누군가가 전화를 걸었습니다: ', data);
-        setCallInfo({ roomNo });
+
+        setCallList((prevCallList) => {
+          const filteredCallList = prevCallList.filter(
+            (call) => call.roomNo !== roomNo,
+          );
+          return [
+            ...filteredCallList,
+            {
+              roomNo,
+              users,
+            },
+          ];
+        });
       });
 
     // 상대방이 통화를 수락했을 때
@@ -184,7 +209,7 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
         SocketEvents.AcceptCall,
         async (users: { socketId: string; id: string }[]) => {
           const promises = users.map(async (user) => {
-            if (pcsRef.current[user.socketId]) return;
+            if (pcs[user.socketId]) return;
 
             const peerConnection = createPeerConnection(user.socketId);
 
@@ -206,64 +231,210 @@ const usePeerConnection = ({ localStream }: UsePeerConnection) => {
       console.log('상대방이 조금 바쁜가봐요 ㅠㅠ');
     });
 
+    socket.off(SocketEvents.CancelCall).on(SocketEvents.CancelCall, (data) => {
+      console.log('상대방이 전화를 취소했습니다', data);
+      setCallList((prevCallList) =>
+        prevCallList.filter((call) => call.roomNo !== data.roomNo),
+      );
+    });
+
     // 상대방이 통화를 종료했을 때
     socket.off(SocketEvents.ExitUser).on(SocketEvents.ExitUser, (data) => {
       const { socketId } = data;
-      pcsRef.current[socketId]?.close();
-      pcsRef.current[socketId] = undefined;
-      setConnectedUsers((prevUsers) => {
-        const filteredUsers = prevUsers.filter(
-          (user) => user.socketId !== socketId,
-        );
-        return filteredUsers;
-      });
+      pcs[socketId]?.close();
+      setPcs((prevPcs) => ({ ...prevPcs, [socketId]: undefined }));
+      if (connectedUsers.length === 0) {
+        stopMediaStream();
+        setRoomNo('');
+        setIsCalling(false);
+        setPcs({});
+      }
+      setConnectedUsers((prevUsers) =>
+        prevUsers.filter((user) => user.socketId !== socketId),
+      );
     });
 
-    return () => {
-      socket.off(SocketEvents.Offer);
-      socket.off(SocketEvents.Answer);
-      socket.off(SocketEvents.IceCandidate);
-      socket.off(SocketEvents.AcceptCall);
-      socket.off(SocketEvents.RequestCall);
-      socket.off(SocketEvents.RejectCall);
-      socket.off(SocketEvents.ExitUser);
-    };
-  }, [localStream]);
+    // return () => {
+    //   socket.off(SocketEvents.Offer);
+    //   socket.off(SocketEvents.Answer);
+    //   socket.off(SocketEvents.IceCandidate);
+    //   socket.off(SocketEvents.AcceptCall);
+    //   socket.off(SocketEvents.RequestCall);
+    //   socket.off(SocketEvents.RejectCall);
+    //   socket.off(SocketEvents.ExitUser);
+    // };
+  }, [localStream, pcs]);
 
-  const handleRequestCall = (roomInfo: string) => {
-    // 전화를 걸구 서버가 판단해서 유저가 있으면 통화 진행 중 표시, 아니면 전화를 걸지 않음
-    socket.emit(SocketEvents.RequestCall, roomInfo, (data: string) => {
+  const handleRequestCall = async (roomId: string) => {
+    if (isCalling && roomNo !== '') {
+      await handleEndCall();
+    }
+    if (!localStream?.active) {
+      await createMediaStream();
+    }
+    const payload = {
+      chatRoom_id: roomId,
+      type: 'text',
+      content: 'VideoCall 👨🏻‍💻',
+    };
+    socket.emit(SocketEvents.Message, payload, (message: Message) => {
+      setChatData((prev) => {
+        const filteredChatRoom = prev.filter(
+          (chatRoom) => chatRoom._id !== message.chatRoom_id,
+        );
+        const target = prev.find(
+          (chatRoom) => chatRoom._id === message.chatRoom_id,
+        );
+        if (target) {
+          const targetRoomMessages = [...target.messages, message];
+          return [
+            { ...target, messages: targetRoomMessages },
+            ...filteredChatRoom,
+          ];
+        }
+        return prev;
+      });
+    });
+    socket.emit(SocketEvents.RequestCall, roomId, (data: string) => {
+      setRoomNo(roomId);
+      setIsCalling(true);
       console.log(data);
     });
   };
 
-  const handleAcceptCall = (roomInfo: string) => {
-    socket.emit(SocketEvents.AcceptCall, roomInfo, (data: string) => {
-      console.log(data);
+  const handleAcceptCall = async (roomId: string) => {
+    if (isCalling && roomNo !== '') {
+      await handleEndCall();
+    }
+
+    if (!localStream?.active) {
+      await createMediaStream();
+    }
+
+    const payload = {
+      chatRoom_id: roomId,
+      type: 'text',
+      content: 'Accept Video Call 👨🏻‍💻',
+    };
+
+    socket.emit(SocketEvents.Message, payload, (message: Message) => {
+      setChatData((prev) => {
+        const filteredChatRoom = prev.filter(
+          (chatRoom) => chatRoom._id !== message.chatRoom_id,
+        );
+        const target = prev.find(
+          (chatRoom) => chatRoom._id === message.chatRoom_id,
+        );
+        if (target) {
+          const targetRoomMessages = [...target.messages, message];
+          return [
+            { ...target, messages: targetRoomMessages },
+            ...filteredChatRoom,
+          ];
+        }
+        return prev;
+      });
+    });
+
+    socket.emit(SocketEvents.AcceptCall, roomId, (data: string) => {
+      console.log(roomId);
+      setRoomNo(roomId);
+      setIsCalling(true);
+      setCallList((prevCallList) => {
+        const filteredCallList = prevCallList.filter(
+          (call) => call.roomNo !== roomId,
+        );
+        return filteredCallList;
+      });
     });
   };
 
   const handleRejectCall = (roomInfo: string) => {
+    const payload = {
+      chatRoom_id: roomInfo,
+      type: 'text',
+      content: 'RejectCall 😭',
+    };
+
+    socket.emit(SocketEvents.Message, payload, (message: Message) => {
+      setChatData((prev) => {
+        const filteredChatRoom = prev.filter(
+          (chatRoom) => chatRoom._id !== message.chatRoom_id,
+        );
+        const target = prev.find(
+          (chatRoom) => chatRoom._id === message.chatRoom_id,
+        );
+        if (target) {
+          const targetRoomMessages = [...target.messages, message];
+          return [
+            { ...target, messages: targetRoomMessages },
+            ...filteredChatRoom,
+          ];
+        }
+        return prev;
+      });
+    });
+
     socket.emit(SocketEvents.RejectCall, roomInfo, (data: string) => {
       console.log(data);
     });
-    setCallInfo({ roomNo: '' });
+
+    setCallList((prevList) => {
+      return prevList.filter((room) => room.roomNo !== roomInfo);
+    });
   };
 
-  const handleEndCall = () => {
-    // TODO: 통화 중인 경우에만 이벤트 보내게끔 예외처리
-    Object.keys(pcsRef.current).forEach((key) => {
-      pcsRef.current[key]?.close();
+  const handleEndCall = (): Promise<void> => {
+    return new Promise((resolve) => {
+      socket.emit(
+        SocketEvents.EndCall,
+        ({ status, roomId }: { status: string; roomId: string }) => {
+          const payload = {
+            chatRoom_id: roomId,
+            type: 'text',
+            content: '',
+          };
+          stopMediaStream();
+          Object.keys(pcs).forEach((key) => {
+            pcs[key]?.close();
+          });
+          setPcs({});
+          setConnectedUsers([]);
+          setRoomNo('');
+          setIsCalling(false);
+          if (status === 'cancel') {
+            payload.content = 'CancelCall 😭';
+          } else if (status === 'end') {
+            payload.content = 'EndCall 😭';
+          }
+
+          socket.emit(SocketEvents.Message, payload, (message: Message) => {
+            setChatData((prev) => {
+              const filteredChatRoom = prev.filter(
+                (chatRoom) => chatRoom._id !== message.chatRoom_id,
+              );
+              const target = prev.find(
+                (chatRoom) => chatRoom._id === message.chatRoom_id,
+              );
+              if (target) {
+                const targetRoomMessages = [...target.messages, message];
+                return [
+                  { ...target, messages: targetRoomMessages },
+                  ...filteredChatRoom,
+                ];
+              }
+              return prev;
+            });
+          });
+
+          resolve();
+        },
+      );
     });
-    pcsRef.current = {};
-    setConnectedUsers([]);
-    setCallInfo({ roomNo: '' });
-    socket.emit(SocketEvents.EndCall);
   };
 
   return {
     connectedUsers,
-    callInfo,
     handleRequestCall,
     handleAcceptCall,
     handleRejectCall,
