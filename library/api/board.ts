@@ -1,3 +1,4 @@
+import { CreatePost, Post } from '../../interfaces/board.interface';
 import { axiosInstance } from './axios-instance';
 
 export const getPosts = async () => {
@@ -8,6 +9,12 @@ export const getPosts = async () => {
 
 export const getPostById = async (postId: string) => {
   const { data } = await axiosInstance.get(`/posts/${postId}`);
+
+  return data;
+};
+
+export const createPost = async (newPost: CreatePost) => {
+  const { data } = await axiosInstance.post('/board', newPost, {withCredentials: true});
 
   return data;
 };

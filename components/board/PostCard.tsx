@@ -38,7 +38,7 @@ export default function PostCard({ postData }: Props) {
           {me && <ProfileImage src={me.image_url} size="medium" />}
           <UserInfo>
             {/* <h1>{author?.nickname}</h1> */}
-            <h1>{me.nickname}</h1>
+            <h1>{me?.nickname}</h1>
             <p>{createdAt}</p>
           </UserInfo>
         </UserInfoContainer>
@@ -200,5 +200,10 @@ const BottomButtonBox = styled.div`
   align-items: center;
   svg {
     margin-right: 1rem;
+  }
+  :hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    color: ${({ theme }) => theme.fontColor.titleColor};
   }
 `;

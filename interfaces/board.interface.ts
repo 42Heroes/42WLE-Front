@@ -20,3 +20,12 @@ export interface Comment {
     likes: User[];
     is_deleted: boolean;
 }
+
+export interface boardContents {
+  text: string;
+  img: string[];
+}
+
+export interface CreatePost {
+  contents: boardContents;
+}

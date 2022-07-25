@@ -8,13 +8,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
 import { createPost } from '../../library/api/board';
+import { Post } from '../../interfaces/board.interface';
 
 interface Props {
+  prevContent: Post;
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
+export default function EditPost({
+  prevContent,
+  toggleModal,
+  setIsModalOpen,
+}: Props) {
   const queryClient = useQueryClient();
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
@@ -46,7 +52,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   return (
     <Container>
       <TopLabel>
-        <p>Create a post</p>
+        <p>Edit</p>
         <div onClick={(e) => toggleModal(e)}>
           <ClearIcon fontSize="large" />
         </div>
@@ -61,11 +67,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
         </UserInfo>
       </ProfileContainer>
       <ContentContainer>
-        <textarea
-          placeholder="What do you want to talk about?"
-          onChange={handleContentChange}
-          value={content}
-        />
+        <textarea onChange={handleContentChange} value={content} />
       </ContentContainer>
       <ButtonContainer>
         <ImageOutlinedIcon sx={{ fontSize: '3.5rem' }} />

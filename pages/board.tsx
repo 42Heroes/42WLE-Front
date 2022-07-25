@@ -29,7 +29,12 @@ export default function Board() {
       >
         <StartPost />
       </div>
-      {isModalOpen && <CreatePostModal toggleModal={toggleModal} />}
+      {isModalOpen && (
+        <CreatePostModal
+          toggleModal={toggleModal}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
       {postsData.data?.map((post) => (
         <PostCard key={post._id} postData={post} />
       ))}

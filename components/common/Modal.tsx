@@ -11,6 +11,11 @@ interface Props {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
+interface CreatePostModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  setIsModalOpen: (isOpen: boolean) => void;
+}
+
 interface toggleModalProp {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
@@ -27,12 +32,33 @@ export const ProfileModal = ({ user, toggleModal }: Props) => {
   );
 };
 
-export const CreatePostModal = ({ toggleModal }: toggleModalProp) => {
+export const CreatePostModal = ({
+  toggleModal,
+  setIsModalOpen,
+}: CreatePostModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <CreatePost toggleModal={toggleModal} />
+          <CreatePost
+            toggleModal={toggleModal}
+            setIsModalOpen={setIsModalOpen}
+          />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const EditPostModal = ({
+  toggleModal,
+  setIsModalOpen,
+}: CreatePostModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <EditPost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
         </div>
       </Background>
     </ModalPortal>
