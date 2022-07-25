@@ -1,11 +1,26 @@
+import Router from 'next/router';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import { deletePost } from '../../library/api/board';
 import Button from '../common/Button';
 
 interface Props {
+  postId: string;
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export default function DeleteConfirm({ toggleModal }: Props) {
+export default function DeleteConfirm({ postId, toggleModal }: Props) {
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deletePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+      Router.reload();
+    },
+    onError: (error) => console.log(error),
+  });
+  const handleDeleteButtonClick = () => {
+    mutate(postId);
+  };
   return (
     <Container>
       <TextContainer>Are you sure you want to delete this post?</TextContainer>
@@ -15,9 +30,11 @@ export default function DeleteConfirm({ toggleModal }: Props) {
             Cancel
           </StyledCancelButton>
         </div>
-        <StyledDeleteButton type="button" size="small">
-          Delete
-        </StyledDeleteButton>
+        <div onClick={handleDeleteButtonClick}>
+          <StyledDeleteButton type="button" size="small">
+            Delete
+          </StyledDeleteButton>
+        </div>
       </ButtonContainer>
     </Container>
   );

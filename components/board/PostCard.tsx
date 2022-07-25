@@ -79,7 +79,10 @@ export default function PostCard({ postData }: Props) {
         </ToggleBtnBox>
       )}
       {isDeleteModalOpen && (
-        <DeleteConfirmModal toggleModal={toggleDeleteModal} />
+        <DeleteConfirmModal
+          postId={postData._id}
+          toggleModal={toggleDeleteModal}
+        />
       )}
       <ContentContainer>{postData.contents.text}</ContentContainer>
       <LikeCountContainer>

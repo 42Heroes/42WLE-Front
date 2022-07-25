@@ -24,6 +24,11 @@ interface EditPostModalProps {
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
+interface DeleteConfirmModalProps {
+  postId: string;
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+}
+
 interface toggleModalProp {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
@@ -78,12 +83,15 @@ export const EditPostModal = ({
   );
 };
 
-export const DeleteConfirmModal = ({ toggleModal }: toggleModalProp) => {
+export const DeleteConfirmModal = ({
+  postId,
+  toggleModal,
+}: DeleteConfirmModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <DeleteConfirm toggleModal={toggleModal} />
+          <DeleteConfirm postId={postId} toggleModal={toggleModal} />
         </div>
       </Background>
     </ModalPortal>
