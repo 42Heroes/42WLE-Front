@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { DeleteConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
+import Comments from './Comments';
 
 interface Props {
   postData: Post;
@@ -24,6 +25,7 @@ export default function PostCard({ postData }: Props) {
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -40,85 +42,94 @@ export default function PostCard({ postData }: Props) {
   };
 
   return (
-    <Container>
-      <ProfileContainer>
-        <UserInfoContainer>
-          {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
-          {me && <ProfileImage src={me.image_url} size="medium" />}
-          <UserInfo>
-            {/* <h1>{author?.nickname}</h1> */}
-            <h1>{me?.nickname}</h1>
-            <p>{createdAt}</p>
-          </UserInfo>
-        </UserInfoContainer>
-        <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
-          <MoreHorizIcon sx={{ fontSize: 30 }} />
-        </MoreButtonContainer>
-      </ProfileContainer>
-      {isBtnBoxOpen && (
-        <ToggleBtnBox>
-          <BtnBox>
-            <BookmarkBorderRoundedIcon /> <p>Save post</p>
-          </BtnBox>
-          <div onClick={() => setIsEditModalOpen(true)}>
+    <div>
+      <Container isCommentsOpen={isCommentsOpen}>
+        <ProfileContainer>
+          <UserInfoContainer>
+            {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
+            {me && <ProfileImage src={me.image_url} size="medium" />}
+            <UserInfo>
+              {/* <h1>{author?.nickname}</h1> */}
+              <h1>{me?.nickname}</h1>
+              <p>{createdAt}</p>
+            </UserInfo>
+          </UserInfoContainer>
+          <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
+            <MoreHorizIcon sx={{ fontSize: 30 }} />
+          </MoreButtonContainer>
+        </ProfileContainer>
+        {isBtnBoxOpen && (
+          <ToggleBtnBox>
             <BtnBox>
-              <EditRoundedIcon />
-              <p>Edit post</p>
+              <BookmarkBorderRoundedIcon /> <p>Save post</p>
             </BtnBox>
+            <div onClick={() => setIsEditModalOpen(true)}>
+              <BtnBox>
+                <EditRoundedIcon />
+                <p>Edit post</p>
+              </BtnBox>
+            </div>
+            <div
+              onClick={() => {
+                setIsDeleteModalOpen(true);
+              }}
+            >
+              <BtnBox>
+                <DeleteRoundedIcon />
+                <p>Delete post</p>
+              </BtnBox>
+            </div>
+          </ToggleBtnBox>
+        )}
+        {isDeleteModalOpen && (
+          <DeleteConfirmModal
+            postId={postData._id}
+            toggleModal={toggleDeleteModal}
+          />
+        )}
+        <ContentContainer>{postData.contents.text}</ContentContainer>
+        <LikeCountContainer>
+          <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
+        </LikeCountContainer>
+        <BottomButtonContainer>
+          <BottomButtonBox>
+            <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
+          </BottomButtonBox>
+          <div onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
+            <BottomButtonBox>
+              <CommentOutlinedIcon sx={{ fontSize: 20 }} /> Comments
+            </BottomButtonBox>
           </div>
-          <div
-            onClick={() => {
-              setIsDeleteModalOpen(true);
-            }}
-          >
-            <BtnBox>
-              <DeleteRoundedIcon />
-              <p>Delete post</p>
-            </BtnBox>
-          </div>
-        </ToggleBtnBox>
-      )}
-      {isDeleteModalOpen && (
-        <DeleteConfirmModal
-          postId={postData._id}
-          toggleModal={toggleDeleteModal}
-        />
-      )}
-      <ContentContainer>{postData.contents.text}</ContentContainer>
-      <LikeCountContainer>
-        <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
-      </LikeCountContainer>
-      <BottomButtonContainer>
-        <BottomButtonBox>
-          <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
-        </BottomButtonBox>
-        <BottomButtonBox>
-          <CommentOutlinedIcon sx={{ fontSize: 20 }} /> Comments
-        </BottomButtonBox>
-        <BottomButtonBox>
-          <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
-        </BottomButtonBox>
-      </BottomButtonContainer>
-      <Comments></Comments>
-      {isEditModalOpen && (
-        <EditPostModal
-          prevContent={postData}
-          toggleModal={toggleEditModal}
-          setIsModalOpen={setIsEditModalOpen}
-        />
-      )}
-    </Container>
+          <BottomButtonBox>
+            <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
+          </BottomButtonBox>
+        </BottomButtonContainer>
+        {isEditModalOpen && (
+          <EditPostModal
+            prevContent={postData}
+            toggleModal={toggleEditModal}
+            setIsModalOpen={setIsEditModalOpen}
+          />
+        )}
+      </Container>
+      {isCommentsOpen && <Comments />}
+    </div>
   );
 }
 
-const Container = styled.div`
+interface IsCommentsOpen {
+  isCommentsOpen: boolean;
+}
+
+const Container = styled.div<IsCommentsOpen>`
   display: flex;
   flex-direction: column;
   width: 65rem;
-  height: 55rem;
+  height: 54rem;
   background-color: #242526;
-  margin: 3rem;
-  border-radius: 1rem;
+  margin: 3rem 3rem 0 3rem;
+  border-radius: ${(props) =>
+    props.isCommentsOpen ? '1rem 1rem 0 0' : '1rem'};
   position: relative;
 `;
 
@@ -231,5 +242,3 @@ const BottomButtonBox = styled.div`
     color: ${({ theme }) => theme.fontColor.titleColor};
   }
 `;
-
-const Comments = styled.div``;

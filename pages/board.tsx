@@ -11,6 +11,7 @@ import PostCard from '../components/board/PostCard';
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const postsData = useQuery<Post[]>('posts', getPosts);
+  console.log(postsData);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
