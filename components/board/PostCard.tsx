@@ -99,6 +99,7 @@ export default function PostCard({ postData }: Props) {
           <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
         </BottomButtonBox>
       </BottomButtonContainer>
+      <Comments></Comments>
       {isEditModalOpen && (
         <EditPostModal
           prevContent={postData}
@@ -230,3 +231,5 @@ const BottomButtonBox = styled.div`
     color: ${({ theme }) => theme.fontColor.titleColor};
   }
 `;
+
+const Comments = styled.div``;
