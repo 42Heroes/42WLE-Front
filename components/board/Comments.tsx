@@ -3,12 +3,37 @@ import useInput from '../../hooks/useInput';
 import useMe from '../../hooks/useMe';
 import ProfileImage from '../common/ProfileImage';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import { createComment } from '../../library/api/board';
+import { useMutation, useQueryClient } from 'react-query';
 
-export default function Comments() {
+interface Props {
+  postId: string;
+}
+
+export default function Comments({ postId }: Props) {
   const { data: me } = useMe();
   const [value, onChangeInputText, setInputText] = useInput();
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {};
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(createComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+      setInputText('');
+    },
+    onError: (error) => console.log(error),
+  });
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!value) {
+      return;
+    }
+    if (e.code === 'Enter') {
+      const payload = {
+        boardId: postId,
+        content: value,
+      };
+      mutate(payload);
+    }
+  };
   return (
     <Container>
       <WriteCommentContainer>

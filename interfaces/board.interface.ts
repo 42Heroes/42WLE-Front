@@ -34,3 +34,8 @@ export interface UpdatePost {
   boardId: string;
   contents: boardContents;
 }
+
+export interface CreateComment {
+  boardId: string;
+  content: string;
+}
