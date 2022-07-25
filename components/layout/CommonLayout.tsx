@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import usePeerConnection from '../../hooks/usePeerConnection';
+import CallList from '../call/CallList';
 import Header from './Header';
 import Nav from './Nav';
 
@@ -9,12 +11,15 @@ interface Props {
 }
 
 export default function CommonLayout({ children, headerText }: Props) {
+  usePeerConnection();
+
   return (
     <Container>
       <EmptyBox />
       <Header headerText={headerText} />
       <Nav />
       <Main>{children}</Main>
+      <CallList />
     </Container>
   );
 }
