@@ -104,6 +104,7 @@ const TopLabel = styled.div`
   }
   svg {
     color: ${({ theme }) => theme.grayColor};
+    cursor: pointer;
   }
 `;
 

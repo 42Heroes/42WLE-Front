@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
 import CreatePost from '../board/CreatePost';
 import DeleteConfirm from '../board/DeleteConfirm';
+import { Post } from '../../interfaces/board.interface';
+import EditPost from '../board/EditPost';
 
 interface Props {
   user: User;
@@ -12,6 +14,12 @@ interface Props {
 }
 
 interface CreatePostModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  setIsModalOpen: (isOpen: boolean) => void;
+}
+
+interface EditPostModalProps {
+  prevContent: Post;
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
@@ -51,14 +59,19 @@ export const CreatePostModal = ({
 };
 
 export const EditPostModal = ({
+  prevContent,
   toggleModal,
   setIsModalOpen,
-}: CreatePostModalProps) => {
+}: EditPostModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <EditPost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
+          <EditPost
+            prevContent={prevContent}
+            toggleModal={toggleModal}
+            setIsModalOpen={setIsModalOpen}
+          />
         </div>
       </Background>
     </ModalPortal>

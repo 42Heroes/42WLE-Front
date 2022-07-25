@@ -6,8 +6,9 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import Button from '../common/Button';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Router from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
-import { createPost } from '../../library/api/board';
+import { createPost, updatePost } from '../../library/api/board';
 import { Post } from '../../interfaces/board.interface';
 
 interface Props {
@@ -22,15 +23,16 @@ export default function EditPost({
   setIsModalOpen,
 }: Props) {
   const queryClient = useQueryClient();
-  const { mutate } = useMutation(createPost, {
+  const router = useRouter();
+  const { mutate } = useMutation(updatePost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
-      setIsModalOpen(false);
+      Router.reload();
     },
     onError: (error) => console.log(error),
   });
 
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(prevContent.contents.text);
   const handleContentChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const {
       currentTarget: { value },
@@ -42,8 +44,9 @@ export default function EditPost({
   if (isError) return <div>Error</div>;
   if (isLoading) return <div>Loading</div>;
 
-  const handlePostButtonClick = () => {
+  const handleEditButtonClick = () => {
     const payload = {
+      boardId: prevContent._id,
       contents: { text: content, img: [] },
     };
     mutate(payload);
@@ -74,9 +77,9 @@ export default function EditPost({
         <StyledPostButton
           type="button"
           size="medium"
-          onClick={handlePostButtonClick}
+          onClick={handleEditButtonClick}
         >
-          Post
+          Edit
         </StyledPostButton>
       </ButtonContainer>
     </Container>
@@ -106,6 +109,7 @@ const TopLabel = styled.div`
   }
   svg {
     color: ${({ theme }) => theme.grayColor};
+    cursor: pointer;
   }
 `;
 

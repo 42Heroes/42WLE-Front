@@ -29,3 +29,8 @@ export interface boardContents {
 export interface CreatePost {
   contents: boardContents;
 }
+
+export interface UpdatePost {
+  boardId: string;
+  contents: boardContents;
+}

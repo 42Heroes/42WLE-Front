@@ -1,4 +1,4 @@
-import { CreatePost, Post } from '../../interfaces/board.interface';
+import { CreatePost, Post, UpdatePost } from '../../interfaces/board.interface';
 import { axiosInstance } from './axios-instance';
 
 export const getPosts = async () => {
@@ -15,6 +15,12 @@ export const getPostById = async (postId: string) => {
 
 export const createPost = async (newPost: CreatePost) => {
   const { data } = await axiosInstance.post('/board', newPost, {withCredentials: true});
+
+  return data;
+};
+
+export const updatePost = async ({boardId, contents}: UpdatePost) => {
+  const { data } = await axiosInstance.put('/board', {boardId, contents});
 
   return data;
 };

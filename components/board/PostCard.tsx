@@ -9,7 +9,7 @@ import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useState } from 'react';
-import { DeleteConfirmModal } from '../common/Modal';
+import { DeleteConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
 
@@ -22,14 +22,23 @@ export default function PostCard({ postData }: Props) {
   const { data: me } = useMe();
   const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
+  const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
       return;
     }
-    setIsModalOpen(!isModalOpen);
+    setIsDeleteModalOpen(!isDeleteModalOpen);
   };
+
+  const toggleEditModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsEditModalOpen(!isEditModalOpen);
+  };
+
   return (
     <Container>
       <ProfileContainer>
@@ -51,13 +60,15 @@ export default function PostCard({ postData }: Props) {
           <BtnBox>
             <BookmarkBorderRoundedIcon /> <p>Save post</p>
           </BtnBox>
-          <BtnBox>
-            <EditRoundedIcon />
-            <p>Edit post</p>
-          </BtnBox>
+          <div onClick={() => setIsEditModalOpen(true)}>
+            <BtnBox>
+              <EditRoundedIcon />
+              <p>Edit post</p>
+            </BtnBox>
+          </div>
           <div
             onClick={() => {
-              setIsModalOpen(true);
+              setIsDeleteModalOpen(true);
             }}
           >
             <BtnBox>
@@ -67,7 +78,9 @@ export default function PostCard({ postData }: Props) {
           </div>
         </ToggleBtnBox>
       )}
-      {isModalOpen && <DeleteConfirmModal toggleModal={toggleModal} />}
+      {isDeleteModalOpen && (
+        <DeleteConfirmModal toggleModal={toggleDeleteModal} />
+      )}
       <ContentContainer>{postData.contents.text}</ContentContainer>
       <LikeCountContainer>
         <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
@@ -83,6 +96,13 @@ export default function PostCard({ postData }: Props) {
           <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
         </BottomButtonBox>
       </BottomButtonContainer>
+      {isEditModalOpen && (
+        <EditPostModal
+          prevContent={postData}
+          toggleModal={toggleEditModal}
+          setIsModalOpen={setIsEditModalOpen}
+        />
+      )}
     </Container>
   );
 }
