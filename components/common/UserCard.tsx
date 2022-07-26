@@ -21,7 +21,10 @@ export default function UserCard({ userCardData, me }: Props) {
   const isLikedUser =
     me?.liked_users.some((user) => user._id === userCardData._id) ?? false;
 
-  const handleLikeButtonClick = () => {
+  const handleLikeButtonClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
     mutateLikeUser({ targetId: userCardData._id, like: !isLikedUser });
   };
 

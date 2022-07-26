@@ -32,6 +32,17 @@ export default function Find() {
 
   const [languages] = useState(languagesBase);
 
+  const handleCardClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    user: User,
+  ) => {
+    if (event.defaultPrevented) {
+      return;
+    }
+    setModalUser(user);
+    setIsModalOpen(true);
+  };
+
   const handleNLanguageClick = (clickedLanguage: LanguageInfo) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
@@ -151,13 +162,7 @@ export default function Find() {
       </LanguageDropdownContainer>
       <UserCardWrapper>
         {filteredUsers?.map((user) => (
-          <div
-            key={user._id}
-            onClick={() => {
-              setModalUser(user);
-              setIsModalOpen(true);
-            }}
-          >
+          <div key={user._id} onClick={(event) => handleCardClick(event, user)}>
             <UserCard userCardData={user} me={meData.data} />
           </div>
         ))}
