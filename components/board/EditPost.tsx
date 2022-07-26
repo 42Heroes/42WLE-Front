@@ -27,7 +27,7 @@ export default function EditPost({
   const { mutate } = useMutation(updatePost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
-      Router.reload();
+      setIsModalOpen(false);
     },
     onError: (error) => console.log(error),
   });
