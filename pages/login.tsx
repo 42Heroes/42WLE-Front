@@ -5,24 +5,18 @@ import LoginLayout from '../components/layout/LoginLayout';
 import FTLogo from '../public/assets/icons/42Logo.svg';
 
 export default function Login() {
-  const handleLoginButtonClick = () => {
-    // TODO: oAuth 로그인 로직
-  };
   return (
     <Container>
       <MainMsg>
         <h1>Log in</h1>
         <h2>with just one click!</h2>
       </MainMsg>
-      <StyledButton
-        type="button"
-        size="large"
-        color="blue"
-        onClick={handleLoginButtonClick}
-      >
-        <FTLogo />
-        Sign In with 42 Intra
-      </StyledButton>
+      <a href={process.env.NEXT_PUBLIC_42_LOGIN_URL}>
+        <StyledButton type="button" size="large" color="blue">
+          <FTLogo />
+          Sign In with 42 Intra
+        </StyledButton>
+      </a>
     </Container>
   );
 }

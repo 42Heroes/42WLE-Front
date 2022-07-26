@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import { axiosInstance } from '../../library/api/axios-instance';
-import { loginState } from '../../recoil/atoms';
-import { useRecoilState } from 'recoil';
+import { chatState, loginState } from '../../recoil/atoms';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { logoutUser } from '../../library/api';
 
 interface Prop {
@@ -20,6 +20,7 @@ export default function Nav() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const setChatData = useSetRecoilState(chatState);
 
   const handleLogoutButtonClick = async () => {
     const status = await logoutUser();
@@ -27,6 +28,7 @@ export default function Nav() {
       axiosInstance.defaults.headers.common['Authorization'] = '';
       queryClient.removeQueries(['user', 'me']);
       router.replace('/find');
+      setChatData([]);
       setIsLoggedIn(false);
     }
   };
