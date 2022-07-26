@@ -1,4 +1,3 @@
-import Router from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { deletePost } from '../../library/api/board';
@@ -14,7 +13,6 @@ export default function DeleteConfirm({ postId, toggleModal }: Props) {
   const { mutate } = useMutation(deletePost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
-      Router.reload();
     },
     onError: (error) => console.log(error),
   });

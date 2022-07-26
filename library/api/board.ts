@@ -25,8 +25,8 @@ export const updatePost = async ({boardId, contents}: UpdatePost) => {
   return data;
 };
 
-export const deletePost = async (targetId: string) => {
-  const { data } = await axiosInstance.delete(`/posts/${targetId}`);
+export const deletePost = async (boardId: string) => {
+  const { data } = await axiosInstance.delete('/board', {data:boardId});
 
   return data;
 };

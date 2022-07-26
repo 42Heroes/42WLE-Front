@@ -6,7 +6,6 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { createComment } from '../../library/api/board';
 import { useMutation, useQueryClient } from 'react-query';
 import { Post } from '../../interfaces/board.interface';
-import Router from 'next/router';
 
 interface Props {
   postData: Post;
@@ -17,7 +16,7 @@ export default function Comments({ postData }: Props) {
   const [value, onChangeInputText, setInputText] = useInput();
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const queryClient = useQueryClient();
-  const { mutate } = useMutation(createComment, {
+  const { mutate, isLoading } = useMutation(createComment, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
       setInputText('');
