@@ -25,8 +25,8 @@ const darkTheme: DefaultTheme = {
     commentColor: 'rgba(255,255,255,0.3)',
   },
   likeIcon: '#F47979',
-  activated: '2F3135',
-  newChat: 'F37F64',
+  activated: '#2F3135',
+  newChat: '#F37F64',
   grayColor: '#727272',
 };
 

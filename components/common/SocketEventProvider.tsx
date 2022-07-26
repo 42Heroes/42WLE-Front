@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { Chat, Message } from '../../interfaces/chat.interface';
 import socket from '../../library/socket';
 import { SocketEvents } from '../../library/socket.events.enum';
-import { chatState } from '../../recoil/atoms';
+import { chatState, unreadMessageState } from '../../recoil/atoms';
 
 interface Props {
   children: React.ReactNode;
@@ -11,6 +11,7 @@ interface Props {
 
 export default function SocketProvider({ children }: Props) {
   const setChatData = useSetRecoilState(chatState);
+  const setUnreadMessage = useSetRecoilState(unreadMessageState);
 
   useEffect(() => {
     socket.on(SocketEvents.Error, (err) => {
@@ -54,6 +55,10 @@ export default function SocketProvider({ children }: Props) {
             ];
           }
           return prev;
+        });
+        setUnreadMessage((prevMessages) => {
+          const unreadMessages = [...prevMessages, message];
+          return unreadMessages;
         });
       });
   }, []);

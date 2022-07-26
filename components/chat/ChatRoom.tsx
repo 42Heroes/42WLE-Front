@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import useMe from '../../hooks/useMe';
 import { Chat } from '../../interfaces/chat.interface';
-import { activeChatRoomIdState } from '../../recoil/atoms';
+import { activeChatRoomIdState, unreadMessageState } from '../../recoil/atoms';
 import ProfileImage from '../common/ProfileImage';
 
 interface Props {
@@ -11,9 +11,12 @@ interface Props {
 
 export default function ChatRoom({ chat }: Props) {
   const { data: me } = useMe();
+  const [unreadMessages, setUnreadMessages] =
+    useRecoilState(unreadMessageState);
   const [activeChatRoomId, setActiveChatRoomId] = useRecoilState(
     activeChatRoomIdState,
   );
+  console.log(unreadMessages);
 
   const otherUser = chat.users.find((user) => user._id !== me?._id);
   const lastMessage = chat.messages.length
@@ -38,6 +41,9 @@ export default function ChatRoom({ chat }: Props) {
         <h1>{otherUser?.nickname}</h1>
         <p>{lastMessage}</p>
       </MessageContainer>
+      <MessageNotification>
+        <p>3</p>
+      </MessageNotification>
     </Container>
   );
 }
@@ -60,7 +66,7 @@ const ImageContainer = styled.div`
 const MessageContainer = styled.div`
   padding: 0.5rem 1.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
-  width: 90%;
+  width: 80%;
   height: 100%;
 
   h1 {
@@ -77,5 +83,20 @@ const MessageContainer = styled.div`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     word-wrap: break-word;
+  }
+`;
+
+const MessageNotification = styled.div`
+  background-color: ${({ theme }) => theme.newChat};
+  border-radius: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  p {
+    color: ${({ theme }) => theme.fontColor.titleColor};
+    font-weight: bold;
   }
 `;
