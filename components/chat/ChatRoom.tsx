@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import useMe from '../../hooks/useMe';
 import { Chat } from '../../interfaces/chat.interface';
@@ -7,16 +7,15 @@ import ProfileImage from '../common/ProfileImage';
 
 interface Props {
   chat: Chat;
+  newMessages: number;
 }
 
-export default function ChatRoom({ chat }: Props) {
+export default function ChatRoom({ chat, newMessages }: Props) {
   const { data: me } = useMe();
-  const [unreadMessages, setUnreadMessages] =
-    useRecoilState(unreadMessageState);
+  const setUnreadMessages = useSetRecoilState(unreadMessageState);
   const [activeChatRoomId, setActiveChatRoomId] = useRecoilState(
     activeChatRoomIdState,
   );
-  console.log(unreadMessages);
 
   const otherUser = chat.users.find((user) => user._id !== me?._id);
   const lastMessage = chat.messages.length
@@ -29,6 +28,9 @@ export default function ChatRoom({ chat }: Props) {
   const isActiveRoom = chat._id === activeChatRoomId;
 
   const handleChatRoomClick = () => {
+    setUnreadMessages((unreadMessages) =>
+      unreadMessages.filter((message) => message.chatRoom_id !== chat._id),
+    );
     setActiveChatRoomId(chat._id);
   };
 
@@ -41,9 +43,11 @@ export default function ChatRoom({ chat }: Props) {
         <h1>{otherUser?.nickname}</h1>
         <p>{lastMessage}</p>
       </MessageContainer>
-      <MessageNotification>
-        <p>3</p>
-      </MessageNotification>
+      {newMessages !== 0 && (
+        <MessageNotification>
+          <p>{newMessages}</p>
+        </MessageNotification>
+      )}
     </Container>
   );
 }
