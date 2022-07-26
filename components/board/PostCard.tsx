@@ -110,7 +110,7 @@ export default function PostCard({ postData }: Props) {
           />
         )}
       </Container>
-      {isCommentsOpen && <Comments postId={postData._id} />}
+      {isCommentsOpen && <Comments postData={postData} />}
     </div>
   );
 }

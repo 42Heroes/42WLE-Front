@@ -5,7 +5,7 @@ export interface Post {
     author: User;
     contents: string;
     images: string[];
-    comment: Comment[];
+    comments: Comment[];
     createdAt: Date;
     updatedAt: Date;
     likes: User[];
