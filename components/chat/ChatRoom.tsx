@@ -16,7 +16,6 @@ export default function ChatRoom({ chat, newMessages }: Props) {
   const [activeChatRoomId, setActiveChatRoomId] = useRecoilState(
     activeChatRoomIdState,
   );
-
   const otherUser = chat.users.find((user) => user._id !== me?._id);
   const lastMessage = chat.messages.length
     ? chat?.messages[chat.messages.length - 1].content
