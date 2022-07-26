@@ -115,7 +115,7 @@ export default function Profile({ user, className }: Props) {
         </SocialInfo>
         <SocialInfo>
           <LocationOnIcon sx={{ fontSize: 25 }} />
-          {user.country}
+          {user.campus}
         </SocialInfo>
         <SocialInfo>
           <GitHubIcon sx={{ fontSize: 25 }} />
