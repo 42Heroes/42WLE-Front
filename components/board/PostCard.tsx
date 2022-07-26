@@ -46,11 +46,9 @@ export default function PostCard({ postData }: Props) {
       <Container isCommentsOpen={isCommentsOpen}>
         <ProfileContainer>
           <UserInfoContainer>
-            {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
-            {me && <ProfileImage src={me.image_url} size="medium" />}
+            {author && <ProfileImage src={author.image_url} size="medium" />}
             <UserInfo>
-              {/* <h1>{author?.nickname}</h1> */}
-              <h1>{me?.nickname}</h1>
+              <h1>{author?.nickname}</h1>
               <p>{createdAt}</p>
             </UserInfo>
           </UserInfoContainer>
@@ -144,6 +142,7 @@ const ProfileContainer = styled.div`
 
 const UserInfoContainer = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const UserInfo = styled.div`
@@ -155,7 +154,7 @@ const UserInfo = styled.div`
   h1 {
     color: ${({ theme }) => theme.fontColor.titleColor};
     font-size: 1.6rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
   }
   p {
     color: ${({ theme }) => theme.grayColor};
