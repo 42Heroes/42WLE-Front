@@ -15,11 +15,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   activeChatRoomIdState,
   chatState,
-  userState,
+  loginState,
 } from '../../recoil/atoms';
 import socket from '../../library/socket';
 import { SocketEvents } from '../../library/socket.events.enum';
 import { useRouter } from 'next/router';
+import useMe from '../../hooks/useMe';
+import { useMutation, useQueryClient } from 'react-query';
+import { changeLikeUser } from '../../library/api';
 
 interface Props {
   user: User;
@@ -27,25 +30,33 @@ interface Props {
 }
 
 export default function Profile({ user, className }: Props) {
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const me = useRecoilValue(userState);
+  const { data: me } = useMe();
+  const { mutate: mutateLikeUser } = useMutation(changeLikeUser, {
+    onSuccess: () => queryClient.invalidateQueries(['user', 'me']),
+  });
   const setChatData = useSetRecoilState(chatState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const isLoggedIn = useRecoilValue(loginState);
   const isUserModal = user._id !== me?._id;
-
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
 
   const handleLikeButtonClick = () => {
-    // TODO: mutation
+    if (!isLoggedIn) {
+      //TODO: 로그인 팝업창 띄우기
+      router.push('/login');
+      return;
+    }
+    mutateLikeUser({ targetId: user._id, like: !isLikedUser });
   };
 
-  /*
-    1. ReqCreateRoom 요청 보내기 (target_id) <- 서버측에서 확인
-    2. 없다면 ChatData 에 추가, 있다면 패스
-    3. activeChatRoomId 상태를 방금 받은 roomId 로 변경
-    4. /chat 페이지로 라우트 이동
-  */
   const handleMessageButtonClick = () => {
+    if (!isLoggedIn) {
+      //TODO: 로그인 팝업창 띄우기
+      router.push('/login');
+      return;
+    }
     const payload = {
       target_id: user._id,
     };
@@ -137,7 +148,13 @@ export default function Profile({ user, className }: Props) {
             <EmailRoundedIcon sx={{ fontSize: 25 }} />
             Message
           </MessageButton>
-          <LikeButton type="button" size="medium" color="gray6" outline>
+          <LikeButton
+            type="button"
+            size="medium"
+            color="gray6"
+            outline
+            onClick={handleLikeButtonClick}
+          >
             {isLikedUser ? (
               <FavoriteRoundedIcon sx={{ fontSize: 22 }} />
             ) : (
