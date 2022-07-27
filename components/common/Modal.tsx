@@ -4,7 +4,7 @@ import Profile from '../profile/Profile';
 import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
 import CreatePost from '../board/CreatePost';
-import DeleteConfirm from '../board/DeleteConfirm';
+import Confirm from './Confirm';
 import { Post } from '../../interfaces/board.interface';
 import EditPost from '../board/EditPost';
 
@@ -24,13 +24,12 @@ interface EditPostModalProps {
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-interface DeleteConfirmModalProps {
-  postId: string;
+interface ConfirmModalProps {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
-}
-
-interface toggleModalProp {
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  mainText: string;
+  buttonText: string;
+  handleButtonClick: () => void;
+  postId?: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -83,15 +82,24 @@ export const EditPostModal = ({
   );
 };
 
-export const DeleteConfirmModal = ({
+export const ConfirmModal = ({
   postId,
   toggleModal,
-}: DeleteConfirmModalProps) => {
+  mainText,
+  buttonText,
+  handleButtonClick,
+}: ConfirmModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <DeleteConfirm postId={postId} toggleModal={toggleModal} />
+          <Confirm
+            toggleModal={toggleModal}
+            mainText={mainText}
+            buttonText={buttonText}
+            handleButtonClick={handleButtonClick}
+            postId={postId}
+          />
         </div>
       </Background>
     </ModalPortal>

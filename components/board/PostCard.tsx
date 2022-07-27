@@ -10,12 +10,12 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import { useState } from 'react';
-import { DeleteConfirmModal, EditPostModal } from '../common/Modal';
+import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
 import Comments from './Comments';
 import { useMutation, useQueryClient } from 'react-query';
-import { likePost } from '../../library/api/board';
+import { deletePost, likePost } from '../../library/api/board';
 
 interface Props {
   postData: Post;
@@ -43,8 +43,17 @@ export default function PostCard({ postData }: Props) {
     }
     setIsEditModalOpen(!isEditModalOpen);
   };
+
   const queryClient = useQueryClient();
-  const { mutate } = useMutation(likePost, {
+
+  const { mutate: likePostMutate } = useMutation(likePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const { mutate: deletePostMutate } = useMutation(deletePost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
     },
@@ -52,8 +61,11 @@ export default function PostCard({ postData }: Props) {
   });
 
   const handleLikeButtonClick = () => {
-    const payload = postData._id;
-    mutate(payload);
+    likePostMutate(postData._id);
+  };
+
+  const handleDeleteButtonClick = () => {
+    deletePostMutate(postData._id);
   };
 
   return (
@@ -95,9 +107,12 @@ export default function PostCard({ postData }: Props) {
           </ToggleBtnBox>
         )}
         {isDeleteModalOpen && (
-          <DeleteConfirmModal
-            postId={postData._id}
+          <ConfirmModal
             toggleModal={toggleDeleteModal}
+            mainText="Are you sure you want to delete this post?"
+            buttonText="Delete"
+            handleButtonClick={handleDeleteButtonClick}
+            postId={postData._id}
           />
         )}
         <ContentContainer>{postData.contents.text}</ContentContainer>

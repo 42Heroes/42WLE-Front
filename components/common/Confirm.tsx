@@ -1,36 +1,35 @@
 import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { deletePost } from '../../library/api/board';
-import Button from '../common/Button';
+import Button from './Button';
 
 interface Props {
-  postId: string;
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  mainText: string;
+  buttonText: string;
+  handleButtonClick: () => void;
+  postId?: string;
 }
 
-export default function DeleteConfirm({ postId, toggleModal }: Props) {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation(deletePost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['board']);
-    },
-    onError: (error) => console.log(error),
-  });
-  const handleDeleteButtonClick = () => {
-    mutate(postId);
-  };
+export default function Confirm({
+  toggleModal,
+  mainText,
+  buttonText,
+  handleButtonClick,
+  postId,
+}: Props) {
   return (
     <Container>
-      <TextContainer>Are you sure you want to delete this post?</TextContainer>
+      <TextContainer>{mainText}</TextContainer>
       <ButtonContainer>
         <div onClick={(e) => toggleModal(e)}>
           <StyledCancelButton type="button" size="small">
             Cancel
           </StyledCancelButton>
         </div>
-        <div onClick={handleDeleteButtonClick}>
+        <div onClick={handleButtonClick}>
           <StyledDeleteButton type="button" size="small">
-            Delete
+            {buttonText}
           </StyledDeleteButton>
         </div>
       </ButtonContainer>
