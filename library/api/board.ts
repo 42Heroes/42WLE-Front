@@ -39,6 +39,12 @@ export const deletePost = async (boardId: string) => {
   return data;
 };
 
+export const likePost = async (boardId: string) => {
+  const { data } = await axiosInstance.post('/board/like', { boardId });
+
+  return data;
+};
+
 export const createComment = async ({ boardId, content }: CreateComment) => {
   const { data } = await axiosInstance.post(
     '/board/comment',

@@ -13,6 +13,8 @@ import { DeleteConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
 import Comments from './Comments';
+import { useMutation, useQueryClient } from 'react-query';
+import { likePost } from '../../library/api/board';
 
 interface Props {
   postData: Post;
@@ -39,6 +41,18 @@ export default function PostCard({ postData }: Props) {
       return;
     }
     setIsEditModalOpen(!isEditModalOpen);
+  };
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(likePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const handleLikeButtonClick = () => {
+    const payload = postData._id;
+    mutate(payload);
   };
 
   return (
@@ -90,9 +104,11 @@ export default function PostCard({ postData }: Props) {
           <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
         </LikeCountContainer>
         <BottomButtonContainer>
-          <BottomButtonBox>
-            <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
-          </BottomButtonBox>
+          <div onClick={handleLikeButtonClick}>
+            <BottomButtonBox>
+              <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
+            </BottomButtonBox>
+          </div>
           <div onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
             <BottomButtonBox>
               <CommentOutlinedIcon sx={{ fontSize: 20 }} /> Comments
