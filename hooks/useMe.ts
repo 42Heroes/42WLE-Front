@@ -16,6 +16,6 @@ export default function useMe() {
       setUser(response);
     },
     onError: () => setIsLoggedIn(false),
-    retry: false,
+    retry: 2,
   });
 }
