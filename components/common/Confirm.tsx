@@ -55,6 +55,9 @@ const TextContainer = styled.div`
   line-height: 3rem;
   text-align: center;
   padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ButtonContainer = styled.div`
