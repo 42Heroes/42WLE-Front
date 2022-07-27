@@ -8,6 +8,7 @@ import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import { useState } from 'react';
 import { DeleteConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
@@ -100,9 +101,12 @@ export default function PostCard({ postData }: Props) {
           />
         )}
         <ContentContainer>{postData.contents.text}</ContentContainer>
-        <LikeCountContainer>
-          <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
-        </LikeCountContainer>
+        <LikeCommentCountContainer>
+          <RecommendIcon sx={{ fontSize: 20 }} /> <p>{postData.likes.length}</p>
+          <ArticleRoundedIcon sx={{ fontSize: 20 }} />
+          <p>{postData.comments.length}</p>
+        </LikeCommentCountContainer>
+
         <BottomButtonContainer>
           <div onClick={handleLikeButtonClick}>
             <BottomButtonBox>
@@ -225,7 +229,7 @@ const ContentContainer = styled.div`
   font-size: 1.5rem;
 `;
 
-const LikeCountContainer = styled.div`
+const LikeCommentCountContainer = styled.div`
   height: 5rem;
   padding: 2.5rem;
   display: flex;
@@ -233,6 +237,9 @@ const LikeCountContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.contentColor};
   svg {
     margin-right: 0.5rem;
+  }
+  p {
+    margin-right: 1.5rem;
   }
 `;
 
