@@ -63,12 +63,12 @@ export default function Comments({ postData }: Props) {
         return (
           <CommentContainer key={comment._id}>
             {/* 이후 코멘트 작성자 이미지로 변경 필요 */}
-            <ProfileImage src={me.image_url} size="small" />
+            <ProfileImage src={comment.author.image_url} size="small" />
             <CommentBox>
               <AuthorInfo>
-                <p>{me.nickname}</p>
+                <p>{comment.author.nickname}</p>
                 <span>
-                  {me?.campus} • {me?.country}
+                  {comment.author.campus} • {comment.author.country}
                 </span>
               </AuthorInfo>
               <h1>{comment.content}</h1>
