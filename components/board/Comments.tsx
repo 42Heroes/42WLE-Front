@@ -3,9 +3,13 @@ import useInput from '../../hooks/useInput';
 import useMe from '../../hooks/useMe';
 import ProfileImage from '../common/ProfileImage';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { createComment } from '../../library/api/board';
 import { useMutation, useQueryClient } from 'react-query';
 import { Post } from '../../interfaces/board.interface';
+import { useState } from 'react';
 
 interface Props {
   postData: Post;
@@ -14,6 +18,7 @@ interface Props {
 export default function Comments({ postData }: Props) {
   const { data: me } = useMe();
   const [value, onChangeInputText, setInputText] = useInput();
+  const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(createComment, {
@@ -59,7 +64,6 @@ export default function Comments({ postData }: Props) {
         </WriteCommentBox>
       </WriteCommentContainer>
       {postData.comments.map((comment) => {
-        const createdAt = new Date(comment.createdAt).toString().slice(4, 21);
         return (
           <CommentContainer key={comment._id}>
             {/* 이후 코멘트 작성자 이미지로 변경 필요 */}
@@ -73,6 +77,32 @@ export default function Comments({ postData }: Props) {
               </AuthorInfo>
               <h1>{comment.content}</h1>
             </CommentBox>
+            {me?._id === comment.author._id && (
+              <MoreHorizIcon
+                sx={{ fontSize: 17 }}
+                onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
+              />
+            )}
+            {isBtnBoxOpen && (
+              <ToggleBtnBox>
+                {/* <div onClick={() => setIsEditModalOpen(true)}> */}
+                <BtnBox>
+                  <EditRoundedIcon sx={{ fontSize: 13 }} />
+                  <p>Edit</p>
+                </BtnBox>
+                {/* </div>
+                <div
+                  onClick={() => {
+                    setIsDeleteModalOpen(true);
+                  }}
+                > */}
+                <BtnBox>
+                  <DeleteRoundedIcon sx={{ fontSize: 13 }} />
+                  <p>Delete</p>
+                </BtnBox>
+                {/* </div> */}
+              </ToggleBtnBox>
+            )}
           </CommentContainer>
         );
       })}
@@ -87,6 +117,7 @@ const Container = styled.div`
   background-color: #242526;
   border-top: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 0 0 1rem 1rem;
+  position: relative;
 `;
 
 const WriteCommentContainer = styled.div`
@@ -130,6 +161,11 @@ const WriteCommentBox = styled.div<{ disabled: boolean }>`
 const CommentContainer = styled.div`
   margin-top: 1.8rem;
   display: flex;
+  svg {
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    cursor: pointer;
+    margin-left: 0.5rem;
+  }
 `;
 
 const CommentBox = styled.div`
@@ -159,4 +195,44 @@ const CommentBox = styled.div`
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const ToggleBtnBox = styled.div`
+  width: 9rem;
+  height: 5rem;
+  border: 1px solid ${({ theme }) => theme.grayColor};
+  border-radius: 1rem;
+  position: absolute;
+  left: 29rem;
+  top: 8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const BtnBox = styled.div`
+  display: flex;
+  align-items: center;
+  height: 3.3rem;
+  padding: 0 0.8rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  svg {
+    margin-right: 0.8rem;
+    color: ${({ theme }) => theme.fontColor.commentColor};
+  }
+  p {
+    font-size: 1rem;
+    color: ${({ theme }) => theme.fontColor.commentColor};
+  }
+  &:hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => theme.grayColor};
+    svg {
+      color: ${({ theme }) => theme.fontColor.contentColor};
+    }
+    p {
+      color: ${({ theme }) => theme.fontColor.contentColor};
+    }
+  }
 `;
