@@ -23,30 +23,39 @@ export default function Comments({ postData }: Props) {
     },
     onError: (error) => console.log(error),
   });
+
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === 'Enter') {
+      postComment();
+    }
+  };
+
+  const postComment = () => {
     if (!value) {
       return;
     }
-    if (e.code === 'Enter') {
-      const payload = {
-        boardId: postData._id,
-        content: value,
-      };
-      mutate(payload);
-    }
+    const payload = {
+      boardId: postData._id,
+      content: value,
+    };
+    mutate(payload);
   };
+
   return (
     <Container>
       <WriteCommentContainer>
         {me && <ProfileImage src={me.image_url} size="small" />}
-        <WriteCommentBox>
+        <WriteCommentBox disabled={!value}>
           <input
             placeholder="Write a comment"
             value={value}
             onChange={onChangeInputText}
             onKeyDown={handleInputKeyDown}
           />
-          <SendRoundedIcon sx={{ color: SendBtnColor, fontSize: 23 }} />
+          <SendRoundedIcon
+            sx={{ color: SendBtnColor, fontSize: 23 }}
+            onClick={postComment}
+          />
         </WriteCommentBox>
       </WriteCommentContainer>
       {postData.comments.map((comment) => {
@@ -85,7 +94,7 @@ const WriteCommentContainer = styled.div`
   align-items: center;
 `;
 
-const WriteCommentBox = styled.div`
+const WriteCommentBox = styled.div<{ disabled: boolean }>`
   width: 100%;
   display: flex;
   align-items: center;
@@ -110,6 +119,11 @@ const WriteCommentBox = styled.div`
       transform: rotateZ(-45deg);
       margin-bottom: 0.5rem;
     }
+    ${({ disabled }) =>
+      !disabled &&
+      `
+    cursor: pointer;
+  `}
   }
 `;
 
