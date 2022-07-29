@@ -2,6 +2,7 @@ import {
   CreateComment,
   CreatePost,
   DeleteComment,
+  UpdateComment,
   UpdatePost,
 } from '../../interfaces/board.interface';
 import { axiosInstance } from './axios-instance';
@@ -52,6 +53,20 @@ export const createComment = async ({ boardId, content }: CreateComment) => {
     { boardId, content },
     { withCredentials: true },
   );
+
+  return data;
+};
+
+export const updateComment = async ({
+  boardId,
+  content,
+  commentId,
+}: UpdateComment) => {
+  const { data } = await axiosInstance.patch('/board/comment', {
+    boardId,
+    content,
+    commentId,
+  });
 
   return data;
 };

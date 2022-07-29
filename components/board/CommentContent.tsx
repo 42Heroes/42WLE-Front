@@ -3,12 +3,14 @@ import { Comment, Post } from '../../interfaces/board.interface';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ProfileImage from '../common/ProfileImage';
 import useMe from '../../hooks/useMe';
 import { useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
 import { useMutation, useQueryClient } from 'react-query';
-import { deleteComment } from '../../library/api/board';
+import { deleteComment, updateComment } from '../../library/api/board';
+import useInput from '../../hooks/useInput';
 
 interface Props {
   postData: Post;
@@ -19,10 +21,23 @@ export default function CommentContent({ postData, commentData }: Props) {
   const { data: me } = useMe();
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditInputOpen, setIsEditInputOpen] = useState(false);
+  const [value, onChangeInputText, setInputText] = useInput(
+    commentData.content,
+  );
+  const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const { mutate: updateCommentMutate } = useMutation(updateComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board', 'comment']);
+      setIsEditInputOpen(false);
     },
     onError: (error) => console.log(error),
   });
@@ -43,32 +58,59 @@ export default function CommentContent({ postData, commentData }: Props) {
     setIsDeleteModalOpen(false);
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === 'Enter') {
+      postUpdatedComment();
+    }
+  };
+
+  const postUpdatedComment = () => {
+    if (!value) {
+      return;
+    }
+    const payload = {
+      boardId: postData._id,
+      content: value,
+      commentId: commentData._id,
+    };
+    updateCommentMutate(payload);
+  };
+
   return (
     <Container key={commentData._id}>
       <ProfileImage src={commentData.author.image_url} size="small" />
-      <CommentBox>
-        <AuthorInfo>
-          <p>{commentData.author.nickname}</p>
-          <span>
-            {commentData.author.campus} • {commentData.author.country}
-          </span>
-        </AuthorInfo>
-        <h1>{commentData.content}</h1>
-      </CommentBox>
-      {me?._id === commentData.author._id && (
-        <MoreHorizIcon
-          sx={{ fontSize: 17 }}
-          onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
-        />
+
+      {!isEditInputOpen && (
+        <CommentContainer>
+          <CommentBox>
+            <AuthorInfo>
+              <p>{commentData.author.nickname}</p>
+              <span>
+                {commentData.author.campus} • {commentData.author.country}
+              </span>
+            </AuthorInfo>
+            <h1>{commentData.content}</h1>
+          </CommentBox>
+          {me?._id === commentData.author._id && (
+            <MoreHorizIcon
+              sx={{ fontSize: 17 }}
+              onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
+            />
+          )}
+        </CommentContainer>
       )}
       {isBtnBoxOpen && (
         <ToggleBtnBox>
-          {/* <div onClick={() => setIsEditModalOpen(true)}> */}
-          <BtnBox>
+          <BtnBox
+            onClick={() => {
+              setIsEditInputOpen(true);
+              setIsBtnBoxOpen(false);
+            }}
+          >
             <EditRoundedIcon sx={{ fontSize: 13 }} />
             <p>Edit</p>
           </BtnBox>
-          {/* </div> */}
+
           <BtnBox
             onClick={() => {
               setIsDeleteModalOpen(true);
@@ -89,6 +131,20 @@ export default function CommentContent({ postData, commentData }: Props) {
           targetId={commentData._id}
         />
       )}
+      {isEditInputOpen && (
+        <WriteCommentBox disabled={!value}>
+          <input
+            placeholder="Write a comment"
+            value={value}
+            onChange={onChangeInputText}
+            onKeyDown={handleInputKeyDown}
+          />
+          <SendRoundedIcon
+            sx={{ color: SendBtnColor, fontSize: 23 }}
+            onClick={postUpdatedComment}
+          />
+        </WriteCommentBox>
+      )}
     </Container>
   );
 }
@@ -102,6 +158,10 @@ const Container = styled.div`
     cursor: pointer;
     margin-left: 0.5rem;
   }
+`;
+
+const CommentContainer = styled.div`
+  display: flex;
 `;
 
 const CommentBox = styled.div`
@@ -162,5 +222,38 @@ const BtnBox = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.grayColor};
+  }
+`;
+
+const WriteCommentBox = styled.div<{ disabled: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 1rem;
+  background-color: #3a3b3c;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  input {
+    width: 100%;
+    margin-left: 1rem;
+    background-color: inherit;
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    ::placeholder {
+      color: ${({ theme }) => theme.fontColor.contentColor};
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+  svg {
+    &:last-child {
+      transform: rotateZ(-45deg);
+      margin-bottom: 0.5rem;
+    }
+    ${({ disabled }) =>
+      !disabled &&
+      `
+    cursor: pointer;
+  `}
   }
 `;

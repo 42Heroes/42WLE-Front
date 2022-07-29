@@ -40,6 +40,12 @@ export interface CreateComment {
   content: string;
 }
 
+export interface UpdateComment {
+  boardId: string;
+  content: string;
+  commentId: string;
+}
+
 export interface DeleteComment {
   commentId: string;
   boardId: string;
