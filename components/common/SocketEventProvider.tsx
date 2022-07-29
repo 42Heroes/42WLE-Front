@@ -61,11 +61,13 @@ export default function SocketProvider({ children }: Props) {
           }
           return prev;
         });
-
-        setUnreadMessage((prevMessages) => {
-          const unreadMessages = [...prevMessages, message];
-          return unreadMessages;
-        });
+        console.log(activeChatRoomId);
+        if (activeChatRoomId !== message.chatRoom_id) {
+          setUnreadMessage((prevMessages) => {
+            const unreadMessages = [...prevMessages, message];
+            return unreadMessages;
+          });
+        }
       });
   }, []);
   return <>{children}</>;

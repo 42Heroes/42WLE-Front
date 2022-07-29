@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
-import Comments from './Comments';
+import Comments from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
 
