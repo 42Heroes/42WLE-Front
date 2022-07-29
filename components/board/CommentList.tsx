@@ -61,7 +61,13 @@ export default function CommentList({ postData }: Props) {
         </WriteCommentBox>
       </WriteCommentContainer>
       {postData.comments.map((comment) => {
-        return <Comment key={comment._id} comment={comment} />;
+        return (
+          <Comment
+            key={comment._id}
+            postData={postData}
+            commentData={comment}
+          />
+        );
       })}
     </Container>
   );

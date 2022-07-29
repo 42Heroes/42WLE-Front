@@ -29,7 +29,7 @@ interface ConfirmModalProps {
   mainText: string;
   buttonText: string;
   handleButtonClick: () => void;
-  postId?: string;
+  targetId?: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -83,11 +83,11 @@ export const EditPostModal = ({
 };
 
 export const ConfirmModal = ({
-  postId,
   toggleModal,
   mainText,
   buttonText,
   handleButtonClick,
+  targetId,
 }: ConfirmModalProps) => {
   return (
     <ModalPortal>
@@ -98,7 +98,7 @@ export const ConfirmModal = ({
             mainText={mainText}
             buttonText={buttonText}
             handleButtonClick={handleButtonClick}
-            postId={postId}
+            postId={targetId}
           />
         </div>
       </Background>

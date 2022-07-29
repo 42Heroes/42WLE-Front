@@ -1,6 +1,7 @@
 import {
   CreateComment,
   CreatePost,
+  DeleteComment,
   UpdatePost,
 } from '../../interfaces/board.interface';
 import { axiosInstance } from './axios-instance';
@@ -51,6 +52,14 @@ export const createComment = async ({ boardId, content }: CreateComment) => {
     { boardId, content },
     { withCredentials: true },
   );
+
+  return data;
+};
+
+export const deleteComment = async ({ commentId, boardId }: DeleteComment) => {
+  const { data } = await axiosInstance.delete('/board/comment', {
+    data: { commentId, boardId },
+  });
 
   return data;
 };

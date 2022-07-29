@@ -1,33 +1,61 @@
 import styled from 'styled-components';
-import { Comment } from '../../interfaces/board.interface';
+import { Comment, Post } from '../../interfaces/board.interface';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ProfileImage from '../common/ProfileImage';
 import useMe from '../../hooks/useMe';
 import { useState } from 'react';
+import { ConfirmModal } from '../common/Modal';
+import { useMutation, useQueryClient } from 'react-query';
+import { deleteComment } from '../../library/api/board';
 
 interface Props {
-  comment: Comment;
+  postData: Post;
+  commentData: Comment;
 }
 
-export default function CommentContent({ comment }: Props) {
+export default function CommentContent({ postData, commentData }: Props) {
   const { data: me } = useMe();
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
-  console.log(me);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsDeleteModalOpen(!isDeleteModalOpen);
+  };
+
+  const handleDeleteButtonClick = () => {
+    const payload = {
+      commentId: commentData._id,
+      boardId: postData._id,
+    };
+    deleteCommentMutate(payload);
+    setIsDeleteModalOpen(false);
+  };
+
   return (
-    <Container key={comment._id}>
-      <ProfileImage src={comment.author.image_url} size="small" />
+    <Container key={commentData._id}>
+      <ProfileImage src={commentData.author.image_url} size="small" />
       <CommentBox>
         <AuthorInfo>
-          <p>{comment.author.nickname}</p>
+          <p>{commentData.author.nickname}</p>
           <span>
-            {comment.author.campus} • {comment.author.country}
+            {commentData.author.campus} • {commentData.author.country}
           </span>
         </AuthorInfo>
-        <h1>{comment.content}</h1>
+        <h1>{commentData.content}</h1>
       </CommentBox>
-      {me?._id === comment.author._id && (
+      {me?._id === commentData.author._id && (
         <MoreHorizIcon
           sx={{ fontSize: 17 }}
           onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
@@ -40,18 +68,26 @@ export default function CommentContent({ comment }: Props) {
             <EditRoundedIcon sx={{ fontSize: 13 }} />
             <p>Edit</p>
           </BtnBox>
-          {/* </div>
-                <div
-                  onClick={() => {
-                    setIsDeleteModalOpen(true);
-                  }}
-                > */}
-          <BtnBox>
+          {/* </div> */}
+          <BtnBox
+            onClick={() => {
+              setIsDeleteModalOpen(true);
+              setIsBtnBoxOpen(false);
+            }}
+          >
             <DeleteRoundedIcon sx={{ fontSize: 13 }} />
             <p>Delete</p>
           </BtnBox>
-          {/* </div> */}
         </ToggleBtnBox>
+      )}
+      {isDeleteModalOpen && (
+        <ConfirmModal
+          toggleModal={toggleDeleteModal}
+          mainText="Are you sure you want to delete this comment?"
+          buttonText="Delete"
+          handleButtonClick={handleDeleteButtonClick}
+          targetId={commentData._id}
+        />
       )}
     </Container>
   );

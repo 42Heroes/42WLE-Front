@@ -39,3 +39,8 @@ export interface CreateComment {
   boardId: string;
   content: string;
 }
+
+export interface DeleteComment {
+  commentId: string;
+  boardId: string;
+}

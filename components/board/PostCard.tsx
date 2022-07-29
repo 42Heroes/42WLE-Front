@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
-import Comments from './CommentList';
+import CommentsList from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
 
@@ -112,7 +112,7 @@ export default function PostCard({ postData }: Props) {
             mainText="Are you sure you want to delete this post?"
             buttonText="Delete"
             handleButtonClick={handleDeleteButtonClick}
-            postId={postData._id}
+            targetId={postData._id}
           />
         )}
         <ContentContainer>{postData.contents.text}</ContentContainer>
@@ -145,7 +145,7 @@ export default function PostCard({ postData }: Props) {
           />
         )}
       </Container>
-      {isCommentsOpen && <Comments postData={postData} />}
+      {isCommentsOpen && <CommentsList postData={postData} />}
     </div>
   );
 }
