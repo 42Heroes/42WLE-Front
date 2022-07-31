@@ -9,13 +9,15 @@ import { useRecoilState } from 'recoil';
 import { loginState } from '../recoil/atoms';
 import { logoutUser } from '../library/api';
 import { useQueryClient } from 'react-query';
+import { useRegister } from '../hooks/useRegister';
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
   const queryClient = useQueryClient();
 
-  // Todo: localStorage에 언어 정보 있으면 find 페이지로 이동
-  const startPage = isLoggedIn ? '/find' : 'learn';
+  const [registerUser] = useRegister();
+  const { l_language, n_language } = registerUser;
+  const startPage = l_language.length && n_language.length ? '/find' : 'learn';
 
   const handleLogoutClick = () => {
     setIsLoggedIn(false);

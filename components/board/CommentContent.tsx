@@ -22,9 +22,7 @@ export default function CommentContent({ postData, commentData }: Props) {
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
-  const [value, onChangeInputText, setInputText] = useInput(
-    commentData.content,
-  );
+  const [value, onChangeInputText] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
@@ -36,7 +34,7 @@ export default function CommentContent({ postData, commentData }: Props) {
 
   const { mutate: updateCommentMutate } = useMutation(updateComment, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['board', 'comment']);
+      queryClient.invalidateQueries(['board']);
       setIsEditInputOpen(false);
     },
     onError: (error) => console.log(error),
