@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { useRouter } from 'next/router';
 import { ReactElement, useCallback, useState } from 'react';
@@ -13,6 +12,7 @@ import {
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
 import { uploadFileToS3 } from '../../library/api';
+import { axiosInstance } from '../../library/api/axios-instance';
 
 export default function ProfileImage() {
   const router = useRouter();
@@ -30,11 +30,9 @@ export default function ProfileImage() {
 
     const uploadUrl = await uploadFileToS3(file, '/profile-image');
 
-    const res = await axios.patch('/me/profile', {
+    const res = await axiosInstance.patch('/users/me/profile', {
       image_url: uploadUrl,
     });
-
-    console.log(res);
 
     router.push('/register/introduction');
   };
