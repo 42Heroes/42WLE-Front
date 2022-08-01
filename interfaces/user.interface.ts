@@ -20,6 +20,7 @@ export interface User {
   n_language: LanguageInfo[];
   l_language: LanguageInfo[];
   join_data: Date;
+  isRegisterDone: boolean;
 }
 
 export interface RegisterUser {
