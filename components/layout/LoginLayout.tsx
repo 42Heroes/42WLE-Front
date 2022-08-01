@@ -1,11 +1,28 @@
 import styled from 'styled-components';
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import { useRouter } from 'next/router';
 
 interface Props {
   children: React.ReactNode;
 }
 
 export default function LoginLayout({ children }: Props) {
-  return <Container>{children}</Container>;
+  const router = useRouter();
+
+  return (
+    <Container>
+      <UpperNav>
+        <span
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <ArrowBackIosNewRoundedIcon />
+        </span>
+      </UpperNav>
+      {children}
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -17,4 +34,28 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const UpperNav = styled.nav`
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 3rem;
+  span {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease-in-out;
+    &:hover {
+      background-color: #2c2d2e;
+    }
+  }
+  svg {
+    font-size: 3rem;
+    color: #fff;
+  }
 `;
