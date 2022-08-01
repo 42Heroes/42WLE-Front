@@ -24,7 +24,10 @@ export default function UserCard({ userCardData, me }: Props) {
   const isLikedUser =
     me?.liked_users.some((user) => user._id === userCardData._id) ?? false;
 
-  const handleLikeButtonClick = () => {
+  const handleLikeButtonClick: React.MouseEventHandler<HTMLDivElement> = (
+    e,
+  ) => {
+    e.stopPropagation();
     if (isLikedUser) {
       return mutateDeleteLikeUser(userCardData._id);
     }

@@ -54,7 +54,9 @@ export default function ChatContent({ messages, activePartner }: Props) {
                 <ProfileImage src={activePartner.image_url} size="small" />
               )}
             </ImageContainer>
-            <PartnerMessage>{message.content}</PartnerMessage>
+            <PartnerMessage>
+              <p>{message.content}</p>
+            </PartnerMessage>
             {(isLastMessage || isLastTime) && (
               <TimeContainer>{localDate}</TimeContainer>
             )}
@@ -104,10 +106,11 @@ const PartnerMessage = styled.div`
   margin-left: 2rem;
   margin-right: 1rem;
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
-  padding: 1rem;
   border-radius: 2rem;
   border-top-left-radius: 0;
   width: max-content;
+  padding: 1rem;
+  max-width: 80%;
   word-wrap: break-word;
 `;
 
