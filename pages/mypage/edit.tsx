@@ -158,6 +158,7 @@ export default function ProfileEdit() {
 
       mutateProfileImage(uploadUrl);
     }
+
     const payload = {
       github_id: githubId,
       nickname,
