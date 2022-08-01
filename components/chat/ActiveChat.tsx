@@ -190,9 +190,9 @@ const MessageInputContainer = styled.div`
   justify-content: center;
   margin: 1rem;
   height: 4.5rem;
-  border-radius: 1rem;
   padding: 1.5rem;
   background-color: #242526;
+  border-radius: 1rem;
   input {
     width: 100%;
     background-color: inherit;
