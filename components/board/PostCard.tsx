@@ -88,22 +88,26 @@ export default function PostCard({ postData }: Props) {
             <BtnBox>
               <BookmarkBorderRoundedIcon /> <p>Save post</p>
             </BtnBox>
-            <div onClick={() => setIsEditModalOpen(true)}>
-              <BtnBox>
-                <EditRoundedIcon />
-                <p>Edit post</p>
-              </BtnBox>
-            </div>
-            <div
-              onClick={() => {
-                setIsDeleteModalOpen(true);
-              }}
-            >
-              <BtnBox>
-                <DeleteRoundedIcon />
-                <p>Delete post</p>
-              </BtnBox>
-            </div>
+            {me?._id === author._id && (
+              <div>
+                <div onClick={() => setIsEditModalOpen(true)}>
+                  <BtnBox>
+                    <EditRoundedIcon />
+                    <p>Edit post</p>
+                  </BtnBox>
+                </div>
+                <div
+                  onClick={() => {
+                    setIsDeleteModalOpen(true);
+                  }}
+                >
+                  <BtnBox>
+                    <DeleteRoundedIcon />
+                    <p>Delete post</p>
+                  </BtnBox>
+                </div>
+              </div>
+            )}
           </ToggleBtnBox>
         )}
         {isDeleteModalOpen && (
@@ -206,7 +210,6 @@ const MoreButtonContainer = styled.div`
 
 const ToggleBtnBox = styled.div`
   width: 15rem;
-  height: 10rem;
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
   position: absolute;
