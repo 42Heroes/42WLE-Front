@@ -9,6 +9,7 @@ import useMe from '../../hooks/useMe';
 import UserCard from '../../components/common/UserCard';
 import { User } from '../../interfaces/user.interface';
 import { ProfileModal } from '../../components/common/Modal';
+import ProtectedPage from '../../components/auth/ProtectedPage';
 
 export default function MyPage() {
   const router = useRouter();
@@ -73,7 +74,11 @@ export default function MyPage() {
 }
 
 MyPage.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="My Page">{page}</CommonLayout>;
+  return (
+    <CommonLayout headerText="My Page">
+      <ProtectedPage>{page}</ProtectedPage>
+    </CommonLayout>
+  );
 };
 
 const Container = styled.div`

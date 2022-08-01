@@ -8,6 +8,7 @@ import ChatRoomList from '../components/chat/ChatRoomList';
 import ActiveChat from '../components/chat/ActiveChat';
 import ActiveVideoCall from '../components/call/ActiveVideoCall';
 import { activeChatRoomState, callInfoState } from '../recoil/selectors';
+import ProtectedPage from '../components/auth/ProtectedPage';
 
 export default function Chat() {
   const chatRooms = useRecoilValue(chatState);
@@ -38,7 +39,11 @@ export default function Chat() {
 }
 
 Chat.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="Chat">{page}</CommonLayout>;
+  return (
+    <CommonLayout headerText="Chat">
+      <ProtectedPage>{page}</ProtectedPage>
+    </CommonLayout>
+  );
 };
 
 const Container = styled.div`
