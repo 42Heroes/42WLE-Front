@@ -18,7 +18,7 @@ export default function CommentList({ postData }: Props) {
 
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const queryClient = useQueryClient();
-  const { mutate } = useMutation(createComment, {
+  const { mutate, isLoading } = useMutation(createComment, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
       setInputText('');
@@ -33,7 +33,7 @@ export default function CommentList({ postData }: Props) {
   };
 
   const postComment = () => {
-    if (!value) {
+    if (!value || isLoading) {
       return;
     }
     const payload = {
