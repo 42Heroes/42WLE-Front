@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import { useRouter } from 'next/router';
+import useMe from '../../hooks/useMe';
 
 interface Props {
   children: React.ReactNode;
@@ -8,6 +9,12 @@ interface Props {
 
 export default function LoginLayout({ children }: Props) {
   const router = useRouter();
+
+  const { data: me, isLoading } = useMe();
+
+  if (typeof window !== 'undefined' && !isLoading && me?.isRegisterDone) {
+    router.push('/find');
+  }
 
   return (
     <Container>
