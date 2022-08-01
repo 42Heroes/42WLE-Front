@@ -10,11 +10,12 @@ import PostCard from '../components/board/PostCard';
 
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const postsData = useQuery<Post[]>('posts', getPosts);
+  const postsData = useQuery<Post[]>(['board'], getPosts);
   console.log(postsData.data);
 
-  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.defaultPrevented) {
+  const toggleModal = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement>) => {
+    console.log(e.currentTarget, e.target);
+    if (e.currentTarget !== e.target) {
       return;
     }
     setIsModalOpen(!isModalOpen);

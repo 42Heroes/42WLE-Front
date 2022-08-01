@@ -15,11 +15,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   activeChatRoomIdState,
   chatState,
+  loginState,
   userState,
 } from '../../recoil/atoms';
 import socket from '../../library/socket';
 import { SocketEvents } from '../../library/socket.events.enum';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { ConfirmModal } from '../common/Modal';
 
 interface Props {
   user: User;
@@ -28,14 +31,27 @@ interface Props {
 
 export default function Profile({ user, className }: Props) {
   const router = useRouter();
+  const isLoggedIn = useRecoilValue(loginState);
   const me = useRecoilValue(userState);
   const setChatData = useSetRecoilState(chatState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
   const isUserModal = user._id !== me?._id;
 
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
+  const [isLoginConfirmModalOpen, setLoginConfirmModalOpen] = useState(false);
+
+  const toggleLoginModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setLoginConfirmModalOpen(!isLoginConfirmModalOpen);
+  };
 
   const handleLikeButtonClick = () => {
+    if (!isLoggedIn) {
+      setLoginConfirmModalOpen(true);
+      return;
+    }
     // TODO: mutation
   };
 
@@ -46,6 +62,10 @@ export default function Profile({ user, className }: Props) {
     4. /chat 페이지로 라우트 이동
   */
   const handleMessageButtonClick = () => {
+    if (!isLoggedIn) {
+      setLoginConfirmModalOpen(true);
+      return;
+    }
     const payload = {
       target_id: user._id,
     };
@@ -62,6 +82,8 @@ export default function Profile({ user, className }: Props) {
     });
     router.push('/chat');
   };
+
+  const handleLoginButtonClick = () => router.push('/login');
 
   return (
     <Container className={className}>
@@ -137,7 +159,13 @@ export default function Profile({ user, className }: Props) {
             <EmailRoundedIcon sx={{ fontSize: 25 }} />
             Message
           </MessageButton>
-          <LikeButton type="button" size="medium" color="gray6" outline>
+          <LikeButton
+            type="button"
+            size="medium"
+            color="gray6"
+            outline
+            onClick={handleLikeButtonClick}
+          >
             {isLikedUser ? (
               <FavoriteRoundedIcon sx={{ fontSize: 22 }} />
             ) : (
@@ -145,6 +173,14 @@ export default function Profile({ user, className }: Props) {
             )}
           </LikeButton>
         </ButtonContainer>
+      )}
+      {isLoginConfirmModalOpen && (
+        <ConfirmModal
+          toggleModal={toggleLoginModal}
+          mainText="Please login to continue."
+          buttonText="Login"
+          handleButtonClick={handleLoginButtonClick}
+        />
       )}
     </Container>
   );

@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import { axiosInstance } from '../../library/api/axios-instance';
-import { loginState } from '../../recoil/atoms';
-import { useRecoilState } from 'recoil';
+import { loginState, unreadMessageState } from '../../recoil/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { logoutUser } from '../../library/api';
 
 interface Prop {
@@ -20,6 +20,7 @@ export default function Nav() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const unreadMessages = useRecoilValue(unreadMessageState);
 
   const handleLogoutButtonClick = async () => {
     const status = await logoutUser();
@@ -42,6 +43,7 @@ export default function Nav() {
         <Link href="/chat" passHref>
           <IconContainer isActive={router.pathname.includes('/chat')}>
             <ChatRoundedIcon sx={{ fontSize: 25 }} />
+            {unreadMessages.length > 0 && <ChatNotification />}
           </IconContainer>
         </Link>
         <Link href="/board" passHref>
@@ -108,4 +110,13 @@ const LowerNav = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+`;
+
+const ChatNotification = styled.div`
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: ${({ theme }) => theme.newChat};
+  border-radius: 50%;
+  position: absolute;
+  right: 2rem;
 `;
