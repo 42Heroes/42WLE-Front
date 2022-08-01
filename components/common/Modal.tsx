@@ -51,12 +51,9 @@ export const CreatePostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
-        <div onClick={(e) => e.preventDefault()}>
-          <CreatePost
-            toggleModal={toggleModal}
-            setIsModalOpen={setIsModalOpen}
-          />
-        </div>
+        {/* <div onClick={(e) => e.preventDefault()}> */}
+        <CreatePost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
+        {/* </div> */}
       </Background>
     </ModalPortal>
   );

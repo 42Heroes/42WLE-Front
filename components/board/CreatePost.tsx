@@ -14,7 +14,9 @@ import {
 } from '../../library/ImageConverter';
 
 interface Props {
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
@@ -72,9 +74,8 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
     <Container>
       <TopLabel>
         <p>Create a post</p>
-        <div onClick={(e) => toggleModal(e)}>
-          <ClearIcon fontSize="large" />
-        </div>
+
+        <ClearIcon fontSize="large" onClick={(e) => toggleModal(e)} />
       </TopLabel>
       <ProfileContainer>
         {me && <ProfileImage src={me.image_url} size="medium" />}
