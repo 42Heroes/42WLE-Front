@@ -77,8 +77,9 @@ export default function CommentContent({ postData, commentData }: Props) {
 
   return (
     <Container key={commentData._id}>
-      <ProfileImage src={commentData.author.image_url} size="small" />
-
+      <ProfileImageWrapper>
+        <ProfileImage src={commentData.author.image_url} size="small" />
+      </ProfileImageWrapper>
       {!isEditInputOpen && (
         <CommentContainer>
           <CommentBox>
@@ -157,6 +158,10 @@ const Container = styled.div`
     cursor: pointer;
     margin-left: 0.5rem;
   }
+`;
+
+const ProfileImageWrapper = styled.div`
+  min-width: 4rem;
 `;
 
 const CommentContainer = styled.div`
