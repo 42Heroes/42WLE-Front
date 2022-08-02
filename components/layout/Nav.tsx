@@ -2,14 +2,15 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
 import LibraryBooksRoundedIcon from '@mui/icons-material/LibraryBooksRounded';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import { axiosInstance } from '../../library/api/axios-instance';
-import { loginState } from '../../recoil/atoms';
-import { useRecoilState } from 'recoil';
+import { loginState, unreadMessageState } from '../../recoil/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { logoutUser } from '../../library/api';
 
 interface Prop {
@@ -20,6 +21,7 @@ export default function Nav() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const unreadMessages = useRecoilValue(unreadMessageState);
 
   const handleLogoutButtonClick = async () => {
     const status = await logoutUser();
@@ -31,6 +33,10 @@ export default function Nav() {
     }
   };
 
+  const handleLoginButtonClick = () => {
+    router.push('/login');
+  };
+
   return (
     <Container>
       <UpperNav>
@@ -39,11 +45,14 @@ export default function Nav() {
             <PersonAddAltOutlinedIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         </Link>
-        <Link href="/chat" passHref>
-          <IconContainer isActive={router.pathname.includes('/chat')}>
-            <ChatRoundedIcon sx={{ fontSize: 25 }} />
-          </IconContainer>
-        </Link>
+        {isLoggedIn && (
+          <Link href="/chat" passHref>
+            <IconContainer isActive={router.pathname.includes('/chat')}>
+              <ChatRoundedIcon sx={{ fontSize: 25 }} />
+              {unreadMessages.length > 0 && <ChatNotification />}
+            </IconContainer>
+          </Link>
+        )}
         <Link href="/board" passHref>
           <IconContainer isActive={router.pathname.includes('/board')}>
             <LibraryBooksRoundedIcon sx={{ fontSize: 25 }} />
@@ -51,21 +60,29 @@ export default function Nav() {
         </Link>
       </UpperNav>
       <LowerNav>
-        <Link href="/mypage" passHref>
-          <IconContainer isActive={router.pathname.includes('/mypage')}>
-            <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
-          </IconContainer>
-        </Link>
+        {isLoggedIn && (
+          <Link href="/mypage" passHref>
+            <IconContainer isActive={router.pathname.includes('/mypage')}>
+              <AccountCircleOutlinedIcon sx={{ fontSize: 25 }} />
+            </IconContainer>
+          </Link>
+        )}
         {isLoggedIn ? (
           <IconContainer
             isActive={false}
             as="button"
             onClick={handleLogoutButtonClick}
           >
-            <ExitToAppOutlinedIcon sx={{ fontSize: 25 }} />
+            <LogoutIcon sx={{ fontSize: 25 }} />
           </IconContainer>
         ) : (
-          'login'
+          <IconContainer
+            isActive={false}
+            as="button"
+            onClick={handleLoginButtonClick}
+          >
+            <LoginIcon sx={{ fontSize: 25 }} />
+          </IconContainer>
         )}
       </LowerNav>
     </Container>
@@ -107,5 +124,15 @@ const UpperNav = styled.div`
 const LowerNav = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ChatNotification = styled.div`
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: ${({ theme }) => theme.newChat};
+  border-radius: 50%;
+  position: absolute;
+  right: 2rem;
 `;

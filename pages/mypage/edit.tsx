@@ -21,6 +21,7 @@ import {
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
 import media from '../../styles/media';
+import ProtectedPage from '../../components/auth/ProtectedPage';
 
 export default function ProfileEdit() {
   const queryClient = useQueryClient();
@@ -174,12 +175,6 @@ export default function ProfileEdit() {
     selectedLLanguages.length &&
     selectedNLanguages.length;
 
-  useEffect(() => {
-    if (isLoading || error) {
-      router.replace('/mypage');
-    }
-  }, []);
-
   return (
     <ContainerWrapper>
       <Container>
@@ -319,7 +314,11 @@ export default function ProfileEdit() {
 }
 
 ProfileEdit.getLayout = function getLayout(page: ReactElement) {
-  return <CommonLayout headerText="Profile Setting">{page}</CommonLayout>;
+  return (
+    <CommonLayout headerText="Profile Setting">
+      <ProtectedPage>{page}</ProtectedPage>
+    </CommonLayout>
+  );
 };
 
 const ContainerWrapper = styled.div`

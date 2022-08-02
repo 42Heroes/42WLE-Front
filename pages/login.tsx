@@ -3,11 +3,15 @@ import Button from '../components/common/Button';
 import { ReactElement } from 'react';
 import LoginLayout from '../components/layout/LoginLayout';
 import FTLogo from '../public/assets/icons/42Logo.svg';
+import { useRouter } from 'next/router';
 
 export default function Login() {
+  const router = useRouter();
+
   const handleLoginButtonClick = () => {
-    // TODO: oAuth 로그인 로직
+    router.push(process.env.NEXT_PUBLIC_42_LOGIN_URL as string);
   };
+
   return (
     <Container>
       <MainMsg>

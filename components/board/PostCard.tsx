@@ -8,10 +8,14 @@ import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import { useState } from 'react';
-import { DeleteConfirmModal } from '../common/Modal';
+import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
+import CommentsList from './CommentList';
+import { useMutation, useQueryClient } from 'react-query';
+import { deletePost, likePost } from '../../library/api/board';
 
 interface Props {
   postData: Post;
@@ -22,79 +26,143 @@ export default function PostCard({ postData }: Props) {
   const { data: me } = useMe();
   const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
   const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-  const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
+  const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
       return;
     }
-    setIsModalOpen(!isModalOpen);
+    setIsDeleteModalOpen(!isDeleteModalOpen);
   };
+
+  const toggleEditModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsEditModalOpen(!isEditModalOpen);
+  };
+
+  const queryClient = useQueryClient();
+
+  const { mutate: likePostMutate } = useMutation(likePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const { mutate: deletePostMutate } = useMutation(deletePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['board']);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const handleLikeButtonClick = () => {
+    likePostMutate(postData._id);
+  };
+
+  const handleDeleteButtonClick = () => {
+    deletePostMutate(postData._id);
+  };
+
   return (
-    <Container>
-      <ProfileContainer>
-        <UserInfoContainer>
-          {/* {author && <ProfileImage src={author.image_url} size="small" />} */}
-          {me && <ProfileImage src={me.image_url} size="medium" />}
-          <UserInfo>
-            {/* <h1>{author?.nickname}</h1> */}
-            <h1>{me?.nickname}</h1>
-            <p>{createdAt}</p>
-          </UserInfo>
-        </UserInfoContainer>
-        <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
-          <MoreHorizIcon sx={{ fontSize: 30 }} />
-        </MoreButtonContainer>
-      </ProfileContainer>
-      {isBtnBoxOpen && (
-        <ToggleBtnBox>
-          <BtnBox>
-            <BookmarkBorderRoundedIcon /> <p>Save post</p>
-          </BtnBox>
-          <BtnBox>
-            <EditRoundedIcon />
-            <p>Edit post</p>
-          </BtnBox>
-          <div
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          >
+    <div>
+      <Container isCommentsOpen={isCommentsOpen}>
+        <ProfileContainer>
+          <UserInfoContainer>
+            {author && <ProfileImage src={author.image_url} size="medium" />}
+            <UserInfo>
+              <h1>{author?.nickname}</h1>
+              <p>{createdAt}</p>
+            </UserInfo>
+          </UserInfoContainer>
+          <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
+            <MoreHorizIcon sx={{ fontSize: 30 }} />
+          </MoreButtonContainer>
+        </ProfileContainer>
+        {isBtnBoxOpen && (
+          <ToggleBtnBox>
             <BtnBox>
-              <DeleteRoundedIcon />
-              <p>Delete post</p>
+              <BookmarkBorderRoundedIcon /> <p>Save post</p>
             </BtnBox>
+            <div onClick={() => setIsEditModalOpen(true)}>
+              <BtnBox>
+                <EditRoundedIcon />
+                <p>Edit post</p>
+              </BtnBox>
+            </div>
+            <div
+              onClick={() => {
+                setIsDeleteModalOpen(true);
+              }}
+            >
+              <BtnBox>
+                <DeleteRoundedIcon />
+                <p>Delete post</p>
+              </BtnBox>
+            </div>
+          </ToggleBtnBox>
+        )}
+        {isDeleteModalOpen && (
+          <ConfirmModal
+            toggleModal={toggleDeleteModal}
+            mainText="Are you sure you want to delete this post?"
+            buttonText="Delete"
+            handleButtonClick={handleDeleteButtonClick}
+            targetId={postData._id}
+          />
+        )}
+        <ContentContainer>{postData.contents.text}</ContentContainer>
+        <LikeCommentCountContainer>
+          <RecommendIcon sx={{ fontSize: 20 }} /> <p>{postData.likes.length}</p>
+          <ArticleRoundedIcon sx={{ fontSize: 20 }} />
+          <p>{postData.comments.length}</p>
+        </LikeCommentCountContainer>
+
+        <BottomButtonContainer>
+          <div onClick={handleLikeButtonClick}>
+            <BottomButtonBox>
+              <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
+            </BottomButtonBox>
           </div>
-        </ToggleBtnBox>
-      )}
-      {isModalOpen && <DeleteConfirmModal toggleModal={toggleModal} />}
-      <ContentContainer>{postData.contents.text}</ContentContainer>
-      <LikeCountContainer>
-        <RecommendIcon sx={{ fontSize: 20 }} /> {postData.likes.length}
-      </LikeCountContainer>
-      <BottomButtonContainer>
-        <BottomButtonBox>
-          <ThumbUpAltOutlinedIcon sx={{ fontSize: 20 }} /> Like
-        </BottomButtonBox>
-        <BottomButtonBox>
-          <CommentOutlinedIcon sx={{ fontSize: 20 }} /> Comments
-        </BottomButtonBox>
-        <BottomButtonBox>
-          <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
-        </BottomButtonBox>
-      </BottomButtonContainer>
-    </Container>
+          <div onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
+            <BottomButtonBox>
+              <CommentOutlinedIcon sx={{ fontSize: 20 }} /> Comments
+            </BottomButtonBox>
+          </div>
+          <BottomButtonBox>
+            <ReplyRoundedIcon sx={{ fontSize: 20 }} /> Share
+          </BottomButtonBox>
+        </BottomButtonContainer>
+        {isEditModalOpen && (
+          <EditPostModal
+            prevContent={postData}
+            toggleModal={toggleEditModal}
+            setIsModalOpen={setIsEditModalOpen}
+          />
+        )}
+      </Container>
+      {isCommentsOpen && <CommentsList postData={postData} />}
+    </div>
   );
 }
 
-const Container = styled.div`
+interface IsCommentsOpen {
+  isCommentsOpen: boolean;
+}
+
+const Container = styled.div<IsCommentsOpen>`
   display: flex;
   flex-direction: column;
   width: 65rem;
-  height: 55rem;
+  height: 54rem;
   background-color: #242526;
-  margin: 3rem;
-  border-radius: 1rem;
+  margin: 3rem 3rem 0 3rem;
+  border-radius: ${(props) =>
+    props.isCommentsOpen ? '1rem 1rem 0 0' : '1rem'};
   position: relative;
 `;
 
@@ -109,6 +177,7 @@ const ProfileContainer = styled.div`
 
 const UserInfoContainer = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const UserInfo = styled.div`
@@ -120,7 +189,7 @@ const UserInfo = styled.div`
   h1 {
     color: ${({ theme }) => theme.fontColor.titleColor};
     font-size: 1.6rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
   }
   p {
     color: ${({ theme }) => theme.grayColor};
@@ -175,7 +244,7 @@ const ContentContainer = styled.div`
   font-size: 1.5rem;
 `;
 
-const LikeCountContainer = styled.div`
+const LikeCommentCountContainer = styled.div`
   height: 5rem;
   padding: 2.5rem;
   display: flex;
@@ -183,6 +252,9 @@ const LikeCountContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.contentColor};
   svg {
     margin-right: 0.5rem;
+  }
+  p {
+    margin-right: 1.5rem;
   }
 `;
 

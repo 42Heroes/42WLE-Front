@@ -8,14 +8,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
 import { createPost } from '../../library/api/board';
+import {
+  dataURLtoFile,
+  encodeBase64ImageFile,
+} from '../../library/ImageConverter';
 
 interface Props {
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
 export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   const queryClient = useQueryClient();
+  const [isImageExist, setIsImageExist] = useState(false);
+  const [image, setImage] = useState('');
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
@@ -43,13 +51,31 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
     mutate(payload);
   };
 
+  const onChangeImage = async (
+    e: React.ChangeEvent<HTMLInputElement> | any,
+  ) => {
+    let selectedImage;
+    if (e.type === 'change') {
+      selectedImage = e.target.files[0];
+    } else if (e.type === 'drop') {
+      selectedImage = e.dataTransfer.files[0];
+    }
+
+    if (selectedImage && selectedImage.size <= 2000000) {
+      setIsImageExist(true);
+
+      const encodedImage = await encodeBase64ImageFile(selectedImage);
+
+      setImage(encodedImage);
+    }
+  };
+
   return (
     <Container>
       <TopLabel>
         <p>Create a post</p>
-        <div onClick={(e) => toggleModal(e)}>
-          <ClearIcon fontSize="large" />
-        </div>
+
+        <ClearIcon fontSize="large" onClick={(e) => toggleModal(e)} />
       </TopLabel>
       <ProfileContainer>
         {me && <ProfileImage src={me.image_url} size="medium" />}
@@ -68,7 +94,17 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
         />
       </ContentContainer>
       <ButtonContainer>
-        <ImageOutlinedIcon sx={{ fontSize: '3.5rem' }} />
+        <ImageIconWrapper as="label" htmlFor="image_upload">
+          <ImageOutlinedIcon sx={{ fontSize: '3.5rem' }} />
+        </ImageIconWrapper>
+        <InputContainer>
+          <input
+            id="image_upload"
+            type="file"
+            accept="image/png, image/jpeg, image/jpg"
+            onChange={onChangeImage}
+          />
+        </InputContainer>
         <StyledPostButton
           type="button"
           size="medium"
@@ -104,6 +140,7 @@ const TopLabel = styled.div`
   }
   svg {
     color: ${({ theme }) => theme.grayColor};
+    cursor: pointer;
   }
 `;
 
@@ -154,6 +191,16 @@ const ButtonContainer = styled.div`
   padding: 0 2rem;
   svg {
     color: ${({ theme }) => theme.grayColor};
+  }
+`;
+
+const ImageIconWrapper = styled.div`
+  cursor: pointer;
+`;
+
+const InputContainer = styled.div`
+  input {
+    /* display: none; */
   }
 `;
 

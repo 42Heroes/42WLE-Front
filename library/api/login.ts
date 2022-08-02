@@ -4,7 +4,9 @@ import { axiosInstance } from './axios-instance';
 export const onSilentRefresh = () => {
   return new Promise((resolve, reject) => {
     axios
-      .get('http://localhost:8080/auth/refresh', { withCredentials: true })
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh` as string, {
+        withCredentials: true,
+      })
       .then((response) => {
         onLoginSuccess(response);
         resolve(response.data);
