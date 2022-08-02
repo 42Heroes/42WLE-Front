@@ -6,27 +6,18 @@ import FTLogo from '../public/assets/icons/42Logo.svg';
 import { useRouter } from 'next/router';
 
 export default function Login() {
-  const router = useRouter();
-
-  const handleLoginButtonClick = () => {
-    router.push(process.env.NEXT_PUBLIC_42_LOGIN_URL as string);
-  };
-
   return (
     <Container>
       <MainMsg>
         <h1>Log in</h1>
         <h2>with just one click!</h2>
       </MainMsg>
-      <StyledButton
-        type="button"
-        size="large"
-        color="blue"
-        onClick={handleLoginButtonClick}
-      >
-        <FTLogo />
-        Sign In with 42 Intra
-      </StyledButton>
+      <a href={process.env.NEXT_PUBLIC_42_LOGIN_URL}>
+        <StyledButton type="button" size="large" color="blue">
+          <FTLogo />
+          Sign In with 42 Intra
+        </StyledButton>
+      </a>
     </Container>
   );
 }

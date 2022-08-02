@@ -33,8 +33,7 @@ export default function Home() {
             Logout
           </LogOutButton>
         ) : (
-          // Todo: 로그인 url env로 빼기
-          <a href="https://api.intra.42.fr/oauth/authorize?client_id=71352ab465a87dd80775022d80e3e9af2f5a221de5a4eade94aaca475ea595e1&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsocial&response_type=code">
+          <a href={process.env.NEXT_PUBLIC_42_LOGIN_URL}>
             <LogInButton type="button" size="medium">
               Login
             </LogInButton>
