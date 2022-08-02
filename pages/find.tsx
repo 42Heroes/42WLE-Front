@@ -21,14 +21,13 @@ export default function Find() {
   const meData = useMe();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUser, setModalUser] = useState<User | null>(null);
-
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
       return;
     }
     setIsModalOpen(!isModalOpen);
   };
-
+  console.log(usersData);
   const [languages] = useState(languagesBase);
 
   const handleNLanguageClick = (clickedLanguage: LanguageInfo) => {

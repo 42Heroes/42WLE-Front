@@ -74,7 +74,7 @@ export default function CommentContent({ postData, commentData }: Props) {
     };
     updateCommentMutate(payload);
   };
-
+  console.log(commentData);
   return (
     <Container key={commentData._id}>
       <ProfileImageWrapper>
@@ -202,8 +202,9 @@ const ToggleBtnBox = styled.div`
   height: 5rem;
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
-  position: absolute;
-  left: 27rem;
+  /* position: absolute; */
+  /* left: 30rem; */
+  margin-left: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
