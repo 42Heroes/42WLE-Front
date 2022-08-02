@@ -32,13 +32,14 @@ export default function CommentContent({ postData, commentData }: Props) {
     onError: (error) => console.log(error),
   });
 
-  const { mutate: updateCommentMutate } = useMutation(updateComment, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['board']);
-      setIsEditInputOpen(false);
-    },
-    onError: (error) => console.log(error),
-  });
+  const { mutate: updateCommentMutate, isLoading: isUpdateCommentLoading } =
+    useMutation(updateComment, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['board']);
+        setIsEditInputOpen(false);
+      },
+      onError: (error) => console.log(error),
+    });
 
   const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -63,7 +64,7 @@ export default function CommentContent({ postData, commentData }: Props) {
   };
 
   const postUpdatedComment = () => {
-    if (!value) {
+    if (!value || isUpdateCommentLoading) {
       return;
     }
     const payload = {
