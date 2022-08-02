@@ -5,19 +5,25 @@ import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import DragDrop from '../../components/common/DragDrop';
 import Title from '../../components/common/Title';
-import LoginLayout from '../../components/layout/LoginLayout';
 import { useRegister } from '../../hooks/useRegister';
 import {
   dataURLtoFile,
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
-import { uploadFileToS3 } from '../../library/api';
-import { axiosInstance } from '../../library/api/axios-instance';
+import { updateImage, uploadFileToS3 } from '../../library/api';
+import { useMutation } from 'react-query';
+import LoadingIndicator from '../../components/common/LoadingIndicator';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 
 export default function ProfileImage() {
   const router = useRouter();
   const [isExceededSize, setIsExceededSize] = useState(false);
   const [registerUser, setRegisterUser] = useRegister();
+
+  const { mutate: updateProfileImage, isLoading } = useMutation(updateImage, {
+    onError: (error) => console.log(error),
+    onSuccess: () => router.push('/register/introduction'),
+  });
 
   const { image_url: image } = registerUser;
 
@@ -30,11 +36,7 @@ export default function ProfileImage() {
 
     const uploadUrl = await uploadFileToS3(file, '/profile-image');
 
-    const res = await axiosInstance.patch('/users/me/profile', {
-      image_url: uploadUrl,
-    });
-
-    router.push('/register/introduction');
+    updateProfileImage(uploadUrl);
   };
 
   const onChangeImage = useCallback(
@@ -70,12 +72,13 @@ export default function ProfileImage() {
       >
         NEXT
       </StyledButton>
+      {isLoading && <LoadingIndicator />}
     </Container>
   );
 }
 
 ProfileImage.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`
