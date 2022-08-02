@@ -31,8 +31,6 @@ export interface RegisterUser {
   introduction: string;
   hashtags: string[];
   github_id: string;
-  intra_id: string;
-  country: string;
 }
 
 export interface UpdateUserInfo {

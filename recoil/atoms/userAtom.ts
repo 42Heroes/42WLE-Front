@@ -2,8 +2,6 @@ import { atom } from 'recoil';
 import { RegisterUser, User } from '../../interfaces/user.interface';
 import { recoilPersist } from 'recoil-persist';
 
-// TODO: dummyUserData 추후 수정 필요
-
 const { persistAtom } = recoilPersist({
   key: 'registerUserData',
 });
@@ -23,8 +21,6 @@ export const registerState = atom<RegisterUser>({
     introduction: '',
     hashtags: [],
     github_id: '',
-    country: '',
-    intra_id: '',
   },
   effects: [persistAtom],
 });
