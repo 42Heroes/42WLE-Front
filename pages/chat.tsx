@@ -14,6 +14,7 @@ export default function Chat() {
   const chatRooms = useRecoilValue(chatState);
   const callInfo = useRecoilValue(callInfoState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
+  console.log(chatRooms);
 
   return (
     <Container>
