@@ -1,20 +1,21 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import useMe from '../../hooks/useMe';
 import { Chat } from '../../interfaces/chat.interface';
-import { activeChatRoomIdState } from '../../recoil/atoms';
+import { activeChatRoomIdState, unreadMessageState } from '../../recoil/atoms';
 import ProfileImage from '../common/ProfileImage';
 
 interface Props {
   chat: Chat;
+  newMessages: number;
 }
 
-export default function ChatRoom({ chat }: Props) {
+export default function ChatRoom({ chat, newMessages }: Props) {
   const { data: me } = useMe();
+  const setUnreadMessages = useSetRecoilState(unreadMessageState);
   const [activeChatRoomId, setActiveChatRoomId] = useRecoilState(
     activeChatRoomIdState,
   );
-
   const otherUser = chat.users.find((user) => user._id !== me?._id);
   const lastMessage = chat.messages.length
     ? chat?.messages[chat.messages.length - 1].content
@@ -26,6 +27,9 @@ export default function ChatRoom({ chat }: Props) {
   const isActiveRoom = chat._id === activeChatRoomId;
 
   const handleChatRoomClick = () => {
+    setUnreadMessages((unreadMessages) =>
+      unreadMessages.filter((message) => message.chatRoom_id !== chat._id),
+    );
     setActiveChatRoomId(chat._id);
   };
 
@@ -38,6 +42,11 @@ export default function ChatRoom({ chat }: Props) {
         <h1>{otherUser?.nickname}</h1>
         <p>{lastMessage}</p>
       </MessageContainer>
+      {newMessages !== 0 && (
+        <MessageNotification>
+          <p>{newMessages}</p>
+        </MessageNotification>
+      )}
     </Container>
   );
 }
@@ -60,7 +69,7 @@ const ImageContainer = styled.div`
 const MessageContainer = styled.div`
   padding: 0.5rem 1.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
-  width: 90%;
+  width: 80%;
   height: 100%;
 
   h1 {
@@ -77,5 +86,20 @@ const MessageContainer = styled.div`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     word-wrap: break-word;
+  }
+`;
+
+const MessageNotification = styled.div`
+  background-color: ${({ theme }) => theme.newChat};
+  border-radius: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  p {
+    color: ${({ theme }) => theme.fontColor.titleColor};
+    font-weight: bold;
   }
 `;

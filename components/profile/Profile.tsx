@@ -23,6 +23,8 @@ import { useRouter } from 'next/router';
 import useMe from '../../hooks/useMe';
 import { useMutation, useQueryClient } from 'react-query';
 import { changeLikeUser } from '../../library/api';
+import { useState } from 'react';
+import { ConfirmModal } from '../common/Modal';
 
 interface Props {
   user: User;
@@ -41,11 +43,18 @@ export default function Profile({ user, className }: Props) {
   const isLoggedIn = useRecoilValue(loginState);
   const isUserModal = user._id !== me?._id;
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
+  const [isLoginConfirmModalOpen, setLoginConfirmModalOpen] = useState(false);
+
+  const toggleLoginModal = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setLoginConfirmModalOpen(!isLoginConfirmModalOpen);
+  };
 
   const handleLikeButtonClick = () => {
     if (!isLoggedIn) {
-      //TODO: 로그인 팝업창 띄우기
-      router.push('/login');
+      setLoginConfirmModalOpen(true);
       return;
     }
     mutateLikeUser({ targetId: user._id, like: !isLikedUser });
@@ -53,8 +62,7 @@ export default function Profile({ user, className }: Props) {
 
   const handleMessageButtonClick = () => {
     if (!isLoggedIn) {
-      //TODO: 로그인 팝업창 띄우기
-      router.push('/login');
+      setLoginConfirmModalOpen(true);
       return;
     }
     const payload = {
@@ -72,6 +80,10 @@ export default function Profile({ user, className }: Props) {
       }
     });
     router.push('/chat');
+  };
+
+  const handleLoginButtonClick = () => {
+    router.push('/login');
   };
 
   return (
@@ -162,6 +174,14 @@ export default function Profile({ user, className }: Props) {
             )}
           </LikeButton>
         </ButtonContainer>
+      )}
+      {isLoginConfirmModalOpen && (
+        <ConfirmModal
+          toggleModal={toggleLoginModal}
+          mainText="Please login to continue."
+          buttonText="Login"
+          handleButtonClick={handleLoginButtonClick}
+        />
       )}
     </Container>
   );

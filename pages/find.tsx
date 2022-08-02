@@ -11,6 +11,7 @@ import languagesBase from '../library/languages';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 import ClearIcon from '@mui/icons-material/Clear';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import useMe from '../hooks/useMe';
 import { getUsers } from '../library/api';
 import { useRouter } from 'next/router';
@@ -46,7 +47,6 @@ export default function Find() {
   const handleNLanguageClick = (clickedLanguage: LanguageInfo) => {
     setSelectedNLanguage(clickedLanguage);
     setIsNDropdownOpened(false);
-    router.replace('/');
   };
 
   const handleLLanguageClick = (clickedLanguage: LanguageInfo) => {
@@ -170,6 +170,13 @@ export default function Find() {
           <ProfileModal user={modalUser} toggleModal={toggleModal} />
         )}
       </UserCardWrapper>
+      {!filteredUsers?.length && (
+        <NoUserContainer>
+          <SentimentDissatisfiedIcon sx={{ fontSize: 50 }} />
+          <h1>There are no users corresponding to this language setting.</h1>
+          <p>Register your profile and other users will send you a message!</p>
+        </NoUserContainer>
+      )}
     </Container>
   );
 }
@@ -249,4 +256,27 @@ const SelectedLanguageBox = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+`;
+
+const NoUserContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 5rem 20rem;
+  text-align: center;
+  svg {
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    margin-bottom: 2rem;
+  }
+  h1 {
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  p {
+    color: ${({ theme }) => theme.fontColor.commentColor};
+    font-size: 1.5rem;
+  }
 `;

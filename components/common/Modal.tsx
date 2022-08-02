@@ -4,7 +4,9 @@ import Profile from '../profile/Profile';
 import styled from 'styled-components';
 import { User } from '../../interfaces/user.interface';
 import CreatePost from '../board/CreatePost';
-import DeleteConfirm from '../board/DeleteConfirm';
+import Confirm from './Confirm';
+import { Post } from '../../interfaces/board.interface';
+import EditPost from '../board/EditPost';
 
 interface Props {
   user: User;
@@ -16,8 +18,18 @@ interface CreatePostModalProps {
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-interface toggleModalProp {
+interface EditPostModalProps {
+  prevContent: Post;
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  setIsModalOpen: (isOpen: boolean) => void;
+}
+
+interface ConfirmModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  mainText: string;
+  buttonText: string;
+  handleButtonClick: () => void;
+  targetId?: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -39,8 +51,25 @@ export const CreatePostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
+        {/* <div onClick={(e) => e.preventDefault()}> */}
+        <CreatePost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
+        {/* </div> */}
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const EditPostModal = ({
+  prevContent,
+  toggleModal,
+  setIsModalOpen,
+}: EditPostModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <CreatePost
+          <EditPost
+            prevContent={prevContent}
             toggleModal={toggleModal}
             setIsModalOpen={setIsModalOpen}
           />
@@ -50,27 +79,24 @@ export const CreatePostModal = ({
   );
 };
 
-export const EditPostModal = ({
+export const ConfirmModal = ({
   toggleModal,
-  setIsModalOpen,
-}: CreatePostModalProps) => {
+  mainText,
+  buttonText,
+  handleButtonClick,
+  targetId,
+}: ConfirmModalProps) => {
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
-          <EditPost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
-        </div>
-      </Background>
-    </ModalPortal>
-  );
-};
-
-export const DeleteConfirmModal = ({ toggleModal }: toggleModalProp) => {
-  return (
-    <ModalPortal>
-      <Background onClick={toggleModal}>
-        <div onClick={(e) => e.preventDefault()}>
-          <DeleteConfirm toggleModal={toggleModal} />
+          <Confirm
+            toggleModal={toggleModal}
+            mainText={mainText}
+            buttonText={buttonText}
+            handleButtonClick={handleButtonClick}
+            postId={targetId}
+          />
         </div>
       </Background>
     </ModalPortal>
