@@ -73,7 +73,6 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
       const encodedImage = await encodeBase64ImageFile(selectedImage);
       setImages([...images, encodedImage]);
     }
-    console.log(images);
   };
 
   const removeImage = (i: number) => {
