@@ -122,7 +122,10 @@ export default function PostCard({ postData }: Props) {
         <ContentContainer>
           {postData.contents.text}
           <ImageWrapper>
-            {postData.contents.img && <img src={postData.contents.img[0]} />}
+            {postData.contents.img &&
+              postData.contents.img.map((image, i) => (
+                <img key={i} src={image} width="200" />
+              ))}
           </ImageWrapper>
         </ContentContainer>
 
@@ -253,7 +256,9 @@ const ContentContainer = styled.div`
   font-size: 1.5rem;
 `;
 
-const ImageWrapper = styled.div``;
+const ImageWrapper = styled.div`
+  margin-top: 3rem;
+`;
 
 const LikeCommentCountContainer = styled.div`
   height: 5rem;

@@ -24,7 +24,7 @@ interface Props {
 export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   const queryClient = useQueryClient();
   const [isImageExist, setIsImageExist] = useState(false);
-  const [image, setImage] = useState('');
+  const [images, setImages] = useState<string[]>([]);
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
@@ -47,13 +47,17 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
 
   const handlePostButtonClick = async () => {
     if (isImageExist) {
-      const file = dataURLtoFile(image, uuid());
-      const uploadUrl = await uploadFileToS3(file, '/post-image');
-      setImage(uploadUrl);
+      const files = [];
+      for (let i = 0; i < images.length; i++) {
+        const file = dataURLtoFile(images[i], uuid());
+        const uploadUrl = await uploadFileToS3(file, '/post-image');
+        files.push(uploadUrl);
+      }
+      setImages(files);
     }
 
     const payload = {
-      contents: { text: content, img: [image] },
+      contents: { text: content, img: images },
     };
     mutate(payload);
   };
@@ -66,8 +70,9 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
     if (selectedImage && selectedImage.size <= 2000000) {
       setIsImageExist(true);
       const encodedImage = await encodeBase64ImageFile(selectedImage);
-      setImage(encodedImage);
+      setImages([...images, encodedImage]);
     }
+    console.log(images);
   };
 
   return (
@@ -92,6 +97,10 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
           onChange={handleContentChange}
           value={content}
         />
+        <ImageWrapper>
+          {images &&
+            images.map((image, i) => <img key={i} src={image} width="100" />)}
+        </ImageWrapper>
       </ContentContainer>
       <ButtonContainer>
         <ImageIconWrapper as="label" htmlFor="image_upload">
@@ -183,6 +192,8 @@ const ContentContainer = styled.div`
     resize: none;
   }
 `;
+
+const ImageWrapper = styled.div``;
 
 const ButtonContainer = styled.div`
   display: flex;
