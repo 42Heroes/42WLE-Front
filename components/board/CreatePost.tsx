@@ -76,7 +76,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   };
 
   return (
-    <Container>
+    <Container isImageExist={isImageExist}>
       <TopLabel>
         <p>Create a post</p>
 
@@ -97,11 +97,16 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
           onChange={handleContentChange}
           value={content}
         />
-        <ImageWrapper>
-          {images &&
-            images.map((image, i) => <img key={i} src={image} width="100" />)}
-        </ImageWrapper>
       </ContentContainer>
+      {isImageExist && (
+        <ImageContainer>
+          {images.map((image, i) => (
+            <ImageWrapper key={i}>
+              <img src={image} width="100" height="100" />
+            </ImageWrapper>
+          ))}
+        </ImageContainer>
+      )}
       <ButtonContainer>
         <ImageIconWrapper as="label" htmlFor="image_upload">
           <ImageOutlinedIcon sx={{ fontSize: '3.5rem' }} />
@@ -126,9 +131,13 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   );
 }
 
-const Container = styled.div`
+interface isImageExist {
+  isImageExist: boolean;
+}
+
+const Container = styled.div<isImageExist>`
   width: 50rem;
-  height: 40rem;
+  height: ${(props) => (props.isImageExist ? '54rem' : '40rem')};
   background-color: #242526;
   border-radius: 1rem;
   margin: 2rem;
@@ -136,7 +145,7 @@ const Container = styled.div`
 
 const TopLabel = styled.div`
   width: 100%;
-  height: 15%;
+  height: 6rem;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor};
   display: flex;
   align-items: center;
@@ -155,7 +164,7 @@ const TopLabel = styled.div`
 
 const ProfileContainer = styled.div`
   width: 100%;
-  height: 22%;
+  height: 8.8rem;
   display: flex;
   padding: 2rem;
 `;
@@ -179,7 +188,7 @@ const UserInfo = styled.div`
 
 const ContentContainer = styled.div`
   width: 100%;
-  height: 50%;
+  height: 20rem;
   textarea {
     width: 100%;
     height: 100%;
@@ -193,7 +202,14 @@ const ContentContainer = styled.div`
   }
 `;
 
-const ImageWrapper = styled.div``;
+const ImageContainer = styled.div`
+  padding: 2rem;
+  display: flex;
+`;
+
+const ImageWrapper = styled.div`
+  margin-right: 1rem;
+`;
 
 const ButtonContainer = styled.div`
   display: flex;

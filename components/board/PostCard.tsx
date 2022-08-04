@@ -218,6 +218,7 @@ const MoreButtonContainer = styled.div`
 `;
 
 const ToggleBtnBox = styled.div`
+  background-color: inherit;
   width: 15rem;
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
