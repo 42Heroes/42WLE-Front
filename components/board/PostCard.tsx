@@ -119,7 +119,13 @@ export default function PostCard({ postData }: Props) {
             targetId={postData._id}
           />
         )}
-        <ContentContainer>{postData.contents.text}</ContentContainer>
+        <ContentContainer>
+          {postData.contents.text}
+          <ImageWrapper>
+            {postData.contents.img && <img src={postData.contents.img[0]} />}
+          </ImageWrapper>
+        </ContentContainer>
+
         <LikeCommentCountContainer>
           <RecommendIcon sx={{ fontSize: 20 }} /> <p>{postData.likes.length}</p>
           <ArticleRoundedIcon sx={{ fontSize: 20 }} />
@@ -246,6 +252,8 @@ const ContentContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   font-size: 1.5rem;
 `;
+
+const ImageWrapper = styled.div``;
 
 const LikeCommentCountContainer = styled.div`
   height: 5rem;

@@ -5,13 +5,14 @@ import ProfileImage from '../common/ProfileImage';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import Button from '../common/Button';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
 import { createPost } from '../../library/api/board';
 import {
   dataURLtoFile,
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
+import { v4 as uuid } from 'uuid';
+import { uploadFileToS3 } from '../../library/api';
 
 interface Props {
   toggleModal: (
@@ -44,9 +45,15 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   if (isError) return <div>Error</div>;
   if (isLoading) return <div>Loading</div>;
 
-  const handlePostButtonClick = () => {
+  const handlePostButtonClick = async () => {
+    if (isImageExist) {
+      const file = dataURLtoFile(image, uuid());
+      const uploadUrl = await uploadFileToS3(file, '/post-image');
+      setImage(uploadUrl);
+    }
+
     const payload = {
-      contents: { text: content, img: [] },
+      contents: { text: content, img: [image] },
     };
     mutate(payload);
   };
@@ -54,18 +61,11 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   const onChangeImage = async (
     e: React.ChangeEvent<HTMLInputElement> | any,
   ) => {
-    let selectedImage;
-    if (e.type === 'change') {
-      selectedImage = e.target.files[0];
-    } else if (e.type === 'drop') {
-      selectedImage = e.dataTransfer.files[0];
-    }
+    const selectedImage = e.target.files[0];
 
     if (selectedImage && selectedImage.size <= 2000000) {
       setIsImageExist(true);
-
       const encodedImage = await encodeBase64ImageFile(selectedImage);
-
       setImage(encodedImage);
     }
   };
@@ -200,7 +200,7 @@ const ImageIconWrapper = styled.div`
 
 const InputContainer = styled.div`
   input {
-    /* display: none; */
+    display: none;
   }
 `;
 

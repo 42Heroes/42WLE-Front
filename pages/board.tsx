@@ -14,7 +14,6 @@ export default function Board() {
   console.log(postsData.data);
 
   const toggleModal = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement>) => {
-    console.log(e.currentTarget, e.target);
     if (e.currentTarget !== e.target) {
       return;
     }
