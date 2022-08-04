@@ -3,6 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import useMe from '../../hooks/useMe';
 import ProfileImage from '../common/ProfileImage';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Button from '../common/Button';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -75,6 +76,15 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
     console.log(images);
   };
 
+  const removeImage = (i: number) => {
+    const newImages = [...images];
+    newImages.splice(i, 1);
+    setImages(newImages);
+    if (newImages.length === 0) {
+      setIsImageExist(false);
+    }
+  };
+
   return (
     <Container isImageExist={isImageExist}>
       <TopLabel>
@@ -103,6 +113,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
           {images.map((image, i) => (
             <ImageWrapper key={i}>
               <img src={image} width="100" height="100" />
+              <CancelIcon fontSize="large" onClick={() => removeImage(i)} />
             </ImageWrapper>
           ))}
         </ImageContainer>
@@ -208,7 +219,18 @@ const ImageContainer = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  margin-right: 1rem;
+  width: 10rem;
+  margin-right: 2rem;
+  position: relative;
+  svg {
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.fontColor.titleColor};
+    color: ${({ theme }) => theme.bgColor};
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    cursor: pointer;
+  }
 `;
 
 const ButtonContainer = styled.div`
