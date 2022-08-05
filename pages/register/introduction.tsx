@@ -1,10 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 import Title from '../../components/common/Title';
 import styled from 'styled-components';
-import LoginLayout from '../../components/layout/LoginLayout';
 import Button from '../../components/common/Button';
 import { useRouter } from 'next/router';
 import { useRegister } from '../../hooks/useRegister';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 
 export default function Introduction() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function Introduction() {
 }
 
 Introduction.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`

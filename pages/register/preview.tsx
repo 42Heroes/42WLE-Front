@@ -1,25 +1,45 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
+import LoadingIndicator from '../../components/common/LoadingIndicator';
 import Title from '../../components/common/Title';
-import LoginLayout from '../../components/layout/LoginLayout';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 import Profile from '../../components/profile/Profile';
+import useMe from '../../hooks/useMe';
 import { useRegister } from '../../hooks/useRegister';
 import { User } from '../../interfaces/user.interface';
+import { updateMe } from '../../library/api';
 
 export default function Preview() {
-  const [registerUser] = useRegister();
-  const [isMount, setIsMount] = useState(false);
+  const [{ image_url, ...rest }] = useRegister();
+  const { data: me, isLoading } = useMe();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { mutate: updateUser, isLoading: isUpdateLoading } = useMutation(
+    updateMe,
+    {
+      onSuccess: (data) => {
+        queryClient.setQueryData(['user', 'me'], data);
+        router.replace('/find');
+      },
+      onError: (error) => console.log(error),
+    },
+  );
 
-  // TODO: 가회원가입되어 있는 정보와 registerUser 정보 조합하여 아래 Profile 컴포넌트 렌더링 필요 (데이터 요청 후 해당 데이터로 settRegisterUser)
-
-  const handleStartButtonClick = () => {
-    // TODO: 버튼 누를시 useQuery mutation 필요 (회원가입 마무리) && 응답 핸들링 필요 (이미 회원가입이 된 유저나 데이터 검증)
+  const userData = {
+    ...me,
+    ...rest,
   };
 
-  useEffect(() => {
-    setIsMount(true);
-  }, []);
+  const handleStartButtonClick = () => {
+    updateUser({ ...rest });
+  };
+
+  if (isLoading || isUpdateLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <Container>
@@ -27,7 +47,7 @@ export default function Preview() {
         Great! <br />
         Now you are ready to explore 42WLE
       </Title>
-      {isMount && <Profile user={registerUser as User} />}
+      <Profile user={userData as User} />
       <StyledButton
         type="button"
         size="medium"
@@ -41,7 +61,7 @@ export default function Preview() {
 }
 
 Preview.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`

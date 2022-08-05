@@ -3,32 +3,20 @@ import Button from '../components/common/Button';
 import { ReactElement } from 'react';
 import LoginLayout from '../components/layout/LoginLayout';
 import FTLogo from '../public/assets/icons/42Logo.svg';
-import { useRouter } from 'next/router';
 
 export default function Login() {
-  const router = useRouter();
-
-  const handleLoginButtonClick = () => {
-    router.push(
-      'https://api.intra.42.fr/oauth/authorize?client_id=71352ab465a87dd80775022d80e3e9af2f5a221de5a4eade94aaca475ea595e1&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsocial&response_type=code',
-    );
-  };
-
   return (
     <Container>
       <MainMsg>
         <h1>Log in</h1>
         <h2>with just one click!</h2>
       </MainMsg>
-      <StyledButton
-        type="button"
-        size="large"
-        color="blue"
-        onClick={handleLoginButtonClick}
-      >
-        <FTLogo />
-        Sign In with 42 Intra
-      </StyledButton>
+      <a href={process.env.NEXT_PUBLIC_42_LOGIN_URL}>
+        <StyledButton type="button" size="large" color="blue">
+          <FTLogo />
+          Sign In with 42 Intra
+        </StyledButton>
+      </a>
     </Container>
   );
 }

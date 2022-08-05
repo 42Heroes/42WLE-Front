@@ -5,7 +5,7 @@ import { getFlagImage } from '../../library/utils';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import { useMutation, useQueryClient } from 'react-query';
-import { addLikeUser, deleteLikeUser } from '../../library/api';
+import { changeLikeUser } from '../../library/api';
 
 interface Props {
   userCardData: User;
@@ -14,24 +14,18 @@ interface Props {
 
 export default function UserCard({ userCardData, me }: Props) {
   const queryClient = useQueryClient();
-  const { mutate: mutateAddLikeUser } = useMutation(addLikeUser, {
-    onSuccess: () => queryClient.invalidateQueries(['user', 'me']),
-  });
-  const { mutate: mutateDeleteLikeUser } = useMutation(deleteLikeUser, {
+  const { mutate: mutateLikeUser } = useMutation(changeLikeUser, {
     onSuccess: () => queryClient.invalidateQueries(['user', 'me']),
   });
 
   const isLikedUser =
     me?.liked_users.some((user) => user._id === userCardData._id) ?? false;
 
-  const handleLikeButtonClick: React.MouseEventHandler<HTMLDivElement> = (
-    e,
+  const handleLikeButtonClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    e.stopPropagation();
-    if (isLikedUser) {
-      return mutateDeleteLikeUser(userCardData._id);
-    }
-    mutateAddLikeUser(userCardData._id);
+    event.preventDefault();
+    mutateLikeUser({ targetId: userCardData._id, like: !isLikedUser });
   };
 
   const isNicknameLong = userCardData.nickname.length > 11;

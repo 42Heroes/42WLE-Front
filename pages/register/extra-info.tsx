@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
-import LoginLayout from '../../components/layout/LoginLayout';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useRouter } from 'next/router';
 import { useRegister } from '../../hooks/useRegister';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 
 export default function ExtraInfo() {
   const router = useRouter();
@@ -113,7 +113,7 @@ export default function ExtraInfo() {
 }
 
 ExtraInfo.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`

@@ -35,7 +35,7 @@ const postImage = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const url = await s3.getSignedUrlPromise('putObject', fileParams);
 
-    res.status(200).json({ url });
+    res.status(200).json({ url: url.split('?')[0] });
   } catch (error) {
     console.log(error);
 

@@ -4,11 +4,11 @@ import Button from '../../components/common/Button';
 import { ReactElement, useState } from 'react';
 import LanguageDropdown from '../../components/common/LanguageDropdown';
 import LanguageSelected from '../../components/common/LanguageSelected';
-import LoginLayout from '../../components/layout/LoginLayout';
 import languagesBase from '../../library/languages';
 import { useRouter } from 'next/router';
 import { LanguageInfo } from '../../interfaces/user.interface';
 import { useRegister } from '../../hooks/useRegister';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 
 export default function Learn() {
   const router = useRouter();
@@ -78,7 +78,7 @@ export default function Learn() {
 }
 
 Learn.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`
