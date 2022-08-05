@@ -16,6 +16,7 @@ import useMe from '../../hooks/useMe';
 import CommentsList from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
+import Image from 'next/image';
 
 interface Props {
   postData: Post;
@@ -121,12 +122,15 @@ export default function PostCard({ postData }: Props) {
         )}
         <ContentContainer>
           {postData.contents.text}
-          <ImageWrapper>
-            {postData.contents.img &&
-              postData.contents.img.map((image, i) => (
-                <img key={i} src={image} width="200" />
+          {postData.contents.img && (
+            <ImageContainer>
+              {postData.contents.img.map((image, i) => (
+                <ImageWrapper key={i}>
+                  <Image src={image} width="200" height="200" alt="image" />
+                </ImageWrapper>
               ))}
-          </ImageWrapper>
+            </ImageContainer>
+          )}
         </ContentContainer>
 
         <LikeCommentCountContainer>
@@ -229,6 +233,7 @@ const ToggleBtnBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index: 1;
 `;
 
 const BtnBox = styled.div`
@@ -257,8 +262,16 @@ const ContentContainer = styled.div`
   font-size: 1.5rem;
 `;
 
-const ImageWrapper = styled.div`
+const ImageContainer = styled.div`
+  display: flex;
   margin-top: 3rem;
+`;
+
+const ImageWrapper = styled.div`
+  margin-right: 0.8rem;
+  img {
+    object-fit: cover;
+  }
 `;
 
 const LikeCommentCountContainer = styled.div`

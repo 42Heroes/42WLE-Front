@@ -14,6 +14,7 @@ import {
 } from '../../library/ImageConverter';
 import { v4 as uuid } from 'uuid';
 import { uploadFileToS3 } from '../../library/api';
+import Image from 'next/image';
 
 interface Props {
   toggleModal: (
@@ -111,7 +112,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
         <ImageContainer>
           {images.map((image, i) => (
             <ImageWrapper key={i}>
-              <img src={image} width="100" height="100" />
+              <Image src={image} width="100" height="100" alt="image" />
               <CancelIcon fontSize="large" onClick={() => removeImage(i)} />
             </ImageWrapper>
           ))}
@@ -221,6 +222,9 @@ const ImageWrapper = styled.div`
   width: 10rem;
   margin-right: 2rem;
   position: relative;
+  img {
+    object-fit: cover;
+  }
   svg {
     border-radius: 50%;
     background-color: ${({ theme }) => theme.fontColor.titleColor};
