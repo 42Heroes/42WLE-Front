@@ -3,7 +3,6 @@ import Button from '../components/common/Button';
 import { ReactElement } from 'react';
 import LoginLayout from '../components/layout/LoginLayout';
 import FTLogo from '../public/assets/icons/42Logo.svg';
-import { useRouter } from 'next/router';
 
 export default function Login() {
   return (

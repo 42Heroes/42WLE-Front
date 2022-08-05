@@ -19,18 +19,15 @@ import { useRouter } from 'next/router';
 export default function Find() {
   const usersData = useQuery<User[]>('users', getUsers);
   const meData = useMe();
-  const router = useRouter();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUser, setModalUser] = useState<User | null>(null);
-
   const toggleModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
       return;
     }
     setIsModalOpen(!isModalOpen);
   };
-
+  console.log(usersData);
   const [languages] = useState(languagesBase);
 
   const handleCardClick = (

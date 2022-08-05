@@ -61,7 +61,6 @@ export default function SocketProvider({ children }: Props) {
           }
           return prev;
         });
-        console.log(activeChatRoomId);
         if (activeChatRoomId !== message.chatRoom_id) {
           setUnreadMessage((prevMessages) => {
             const unreadMessages = [...prevMessages, message];
@@ -69,6 +68,7 @@ export default function SocketProvider({ children }: Props) {
           });
         }
       });
-  }, []);
+  }, [activeChatRoomId]);
+
   return <>{children}</>;
 }

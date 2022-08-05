@@ -1,10 +1,13 @@
 import { User } from './user.interface';
 
+export interface PostContent {
+  text: string;
+  img: string[];
+}
 export interface Post {
   _id: string;
   author: User;
-  contents: string;
-  images: string[];
+  contents: PostContent;
   comments: Comment[];
   createdAt: Date;
   updatedAt: Date;

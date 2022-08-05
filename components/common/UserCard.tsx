@@ -28,6 +28,8 @@ export default function UserCard({ userCardData, me }: Props) {
     mutateLikeUser({ targetId: userCardData._id, like: !isLikedUser });
   };
 
+  const isNicknameLong = userCardData.nickname.length > 11;
+
   return (
     <Container>
       <UserImageContainer>
@@ -48,7 +50,9 @@ export default function UserCard({ userCardData, me }: Props) {
         </LikeButton>
       </UserImageContainer>
       <UserInfo>
-        <Nickname>{userCardData.nickname}</Nickname>
+        <Nickname isNicknameLong={isNicknameLong}>
+          {userCardData.nickname}
+        </Nickname>
         <Languages>
           <LearnNative>
             <ContentsText>Learning</ContentsText>
@@ -130,10 +134,12 @@ const UserInfo = styled.div`
   padding: 1rem 0;
 `;
 
-const Nickname = styled.div`
-  font-size: ${({ theme }) => theme.font.subTitleRegular};
+const Nickname = styled.div<{ isNicknameLong: boolean }>`
+  font-size: ${({ isNicknameLong }) => (isNicknameLong ? '2.3rem' : '3.3rem')};
+  line-height: ${({ isNicknameLong }) => (isNicknameLong ? '1.2' : '')};
   font-weight: 600;
   height: 50%;
+  word-break: break-all;
 `;
 
 const Languages = styled.div`

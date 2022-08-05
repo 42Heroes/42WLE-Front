@@ -74,11 +74,11 @@ export default function CommentContent({ postData, commentData }: Props) {
     };
     updateCommentMutate(payload);
   };
-
   return (
     <Container key={commentData._id}>
-      <ProfileImage src={commentData.author.image_url} size="small" />
-
+      <ProfileImageWrapper>
+        <ProfileImage src={commentData.author.image_url} size="small" />
+      </ProfileImageWrapper>
       {!isEditInputOpen && (
         <CommentContainer>
           <CommentBox>
@@ -159,6 +159,10 @@ const Container = styled.div`
   }
 `;
 
+const ProfileImageWrapper = styled.div`
+  min-width: 4rem;
+`;
+
 const CommentContainer = styled.div`
   display: flex;
 `;
@@ -197,8 +201,7 @@ const ToggleBtnBox = styled.div`
   height: 5rem;
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
-  position: absolute;
-  left: 27rem;
+  margin-left: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;

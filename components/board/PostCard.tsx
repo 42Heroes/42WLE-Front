@@ -16,6 +16,7 @@ import useMe from '../../hooks/useMe';
 import CommentsList from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
+import Image from 'next/image';
 
 interface Props {
   postData: Post;
@@ -88,22 +89,26 @@ export default function PostCard({ postData }: Props) {
             <BtnBox>
               <BookmarkBorderRoundedIcon /> <p>Save post</p>
             </BtnBox>
-            <div onClick={() => setIsEditModalOpen(true)}>
-              <BtnBox>
-                <EditRoundedIcon />
-                <p>Edit post</p>
-              </BtnBox>
-            </div>
-            <div
-              onClick={() => {
-                setIsDeleteModalOpen(true);
-              }}
-            >
-              <BtnBox>
-                <DeleteRoundedIcon />
-                <p>Delete post</p>
-              </BtnBox>
-            </div>
+            {me?._id === author._id && (
+              <div>
+                <div onClick={() => setIsEditModalOpen(true)}>
+                  <BtnBox>
+                    <EditRoundedIcon />
+                    <p>Edit post</p>
+                  </BtnBox>
+                </div>
+                <div
+                  onClick={() => {
+                    setIsDeleteModalOpen(true);
+                  }}
+                >
+                  <BtnBox>
+                    <DeleteRoundedIcon />
+                    <p>Delete post</p>
+                  </BtnBox>
+                </div>
+              </div>
+            )}
           </ToggleBtnBox>
         )}
         {isDeleteModalOpen && (
@@ -115,7 +120,19 @@ export default function PostCard({ postData }: Props) {
             targetId={postData._id}
           />
         )}
-        <ContentContainer>{postData.contents.text}</ContentContainer>
+        <ContentContainer>
+          {postData.contents.text}
+          {postData.contents.img && (
+            <ImageContainer>
+              {postData.contents.img.map((image, i) => (
+                <ImageWrapper key={i}>
+                  <Image src={image} width="200" height="200" alt="image" />
+                </ImageWrapper>
+              ))}
+            </ImageContainer>
+          )}
+        </ContentContainer>
+
         <LikeCommentCountContainer>
           <RecommendIcon sx={{ fontSize: 20 }} /> <p>{postData.likes.length}</p>
           <ArticleRoundedIcon sx={{ fontSize: 20 }} />
@@ -205,8 +222,8 @@ const MoreButtonContainer = styled.div`
 `;
 
 const ToggleBtnBox = styled.div`
+  background-color: inherit;
   width: 15rem;
-  height: 10rem;
   border: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 1rem;
   position: absolute;
@@ -216,6 +233,7 @@ const ToggleBtnBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index: 1;
 `;
 
 const BtnBox = styled.div`
@@ -242,6 +260,18 @@ const ContentContainer = styled.div`
   padding: 1rem 2.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
   font-size: 1.5rem;
+`;
+
+const ImageContainer = styled.div`
+  display: flex;
+  margin-top: 3rem;
+`;
+
+const ImageWrapper = styled.div`
+  margin-right: 0.8rem;
+  img {
+    object-fit: cover;
+  }
 `;
 
 const LikeCommentCountContainer = styled.div`
