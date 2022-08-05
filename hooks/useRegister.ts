@@ -15,8 +15,6 @@ export function useRegister(): [RegisterUser, SetterOrUpdater<RegisterUser>] {
     introduction: '',
     hashtags: [],
     github_id: '',
-    intra_id: '',
-    country: '',
   };
 
   useEffect(() => {

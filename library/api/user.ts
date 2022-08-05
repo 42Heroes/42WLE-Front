@@ -26,7 +26,9 @@ export const updateMe = async (newInfo: UpdateUserInfo) => {
 };
 
 export const updateImage = async (newImageUrl: string) => {
-  const { data } = await axiosInstance.patch('/users/me/profile', newImageUrl);
+  const { data } = await axiosInstance.patch('/users/me/profile', {
+    image_url: newImageUrl,
+  });
 
   return data;
 };

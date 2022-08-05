@@ -3,7 +3,7 @@ import { ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import Title from '../../components/common/Title';
-import LoginLayout from '../../components/layout/LoginLayout';
+import RegisterLayout from '../../components/layout/RegisterLayout';
 import useInput from '../../hooks/useInput';
 import { useRegister } from '../../hooks/useRegister';
 
@@ -54,7 +54,7 @@ export default function Nickname() {
 }
 
 Nickname.getLayout = function getLayout(page: ReactElement) {
-  return <LoginLayout>{page}</LoginLayout>;
+  return <RegisterLayout>{page}</RegisterLayout>;
 };
 
 const Container = styled.div`
