@@ -19,6 +19,7 @@ export default function Auth({ children }: Props) {
       .then((data) => {
         setIsLoggedIn(true);
 
+        socket.connect();
         const payload = { token: `Bearer ${data}` };
         // socket 유저 인증
         socket.emit(
