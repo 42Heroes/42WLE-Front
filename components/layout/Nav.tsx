@@ -8,9 +8,8 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
-import { axiosInstance } from '../../library/api/axios-instance';
-import { loginState, unreadMessageState } from '../../recoil/atoms';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { chatState, loginState, unreadMessageState } from '../../recoil/atoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { logoutUser } from '../../library/api';
 
 interface Prop {
@@ -21,16 +20,15 @@ export default function Nav() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const setChatData = useSetRecoilState(chatState);
   const unreadMessages = useRecoilValue(unreadMessageState);
 
   const handleLogoutButtonClick = async () => {
-    const status = await logoutUser();
-    if (status === 200) {
-      axiosInstance.defaults.headers.common['Authorization'] = '';
-      queryClient.removeQueries(['user', 'me']);
-      router.replace('/find');
-      setIsLoggedIn(false);
-    }
+    await logoutUser();
+    queryClient.removeQueries(['user', 'me']);
+    router.replace('/find');
+    setChatData([]);
+    setIsLoggedIn(false);
   };
 
   const handleLoginButtonClick = () => {

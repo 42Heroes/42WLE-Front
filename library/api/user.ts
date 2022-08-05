@@ -31,23 +31,23 @@ export const updateImage = async (newImageUrl: string) => {
   return data;
 };
 
-export const addLikeUser = async (targetId: string) => {
-  const { data } = await axiosInstance.patch(`/users/me/like/${targetId}`);
-
-  return data;
-};
-
-export const deleteLikeUser = async (targetId: string) => {
-  const { data } = await axiosInstance.delete(`/users/me/like/${targetId}`);
+export const changeLikeUser = async ({
+  targetId,
+  like,
+}: {
+  targetId: string;
+  like: boolean;
+}) => {
+  const { data } = await axiosInstance.patch(`/users/me/like/${targetId}`, {
+    like,
+  });
 
   return data;
 };
 
 export const logoutUser = async () => {
   const { status } = await axiosInstance.post('/users/me/logout');
-  axiosInstance.defaults.headers.common[
-    'Authorization'
-  ] = '';
+  axiosInstance.defaults.headers.common['Authorization'] = '';
 
   return status;
 };

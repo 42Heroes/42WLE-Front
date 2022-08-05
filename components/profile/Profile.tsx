@@ -16,11 +16,13 @@ import {
   activeChatRoomIdState,
   chatState,
   loginState,
-  userState,
 } from '../../recoil/atoms';
 import socket from '../../library/socket';
 import { SocketEvents } from '../../library/socket.events.enum';
 import { useRouter } from 'next/router';
+import useMe from '../../hooks/useMe';
+import { useMutation, useQueryClient } from 'react-query';
+import { changeLikeUser } from '../../library/api';
 import { useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
 
@@ -30,13 +32,16 @@ interface Props {
 }
 
 export default function Profile({ user, className }: Props) {
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const isLoggedIn = useRecoilValue(loginState);
-  const me = useRecoilValue(userState);
+  const { data: me } = useMe();
+  const { mutate: mutateLikeUser } = useMutation(changeLikeUser, {
+    onSuccess: () => queryClient.invalidateQueries(['user', 'me']),
+  });
   const setChatData = useSetRecoilState(chatState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const isLoggedIn = useRecoilValue(loginState);
   const isUserModal = user._id !== me?._id;
-
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
   const [isLoginConfirmModalOpen, setLoginConfirmModalOpen] = useState(false);
 
@@ -52,15 +57,9 @@ export default function Profile({ user, className }: Props) {
       setLoginConfirmModalOpen(true);
       return;
     }
-    // TODO: mutation
+    mutateLikeUser({ targetId: user._id, like: !isLikedUser });
   };
 
-  /*
-    1. ReqCreateRoom 요청 보내기 (target_id) <- 서버측에서 확인
-    2. 없다면 ChatData 에 추가, 있다면 패스
-    3. activeChatRoomId 상태를 방금 받은 roomId 로 변경
-    4. /chat 페이지로 라우트 이동
-  */
   const handleMessageButtonClick = () => {
     if (!isLoggedIn) {
       setLoginConfirmModalOpen(true);
@@ -83,7 +82,9 @@ export default function Profile({ user, className }: Props) {
     router.push('/chat');
   };
 
-  const handleLoginButtonClick = () => router.push('/login');
+  const handleLoginButtonClick = () => {
+    router.push('/login');
+  };
 
   return (
     <Container className={className}>
@@ -137,7 +138,7 @@ export default function Profile({ user, className }: Props) {
         </SocialInfo>
         <SocialInfo>
           <LocationOnIcon sx={{ fontSize: 25 }} />
-          {user.country}
+          {user.campus}
         </SocialInfo>
         <SocialInfo>
           <GitHubIcon sx={{ fontSize: 25 }} />
