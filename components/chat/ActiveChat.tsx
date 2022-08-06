@@ -11,55 +11,35 @@ import {
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
 import useInput from '../../hooks/useInput';
-import socket from '../../library/socket';
-import { SocketEvents } from '../../library/socket.events.enum';
 import { useEffect, useRef, useState } from 'react';
-import { chatState } from '../../recoil/atoms';
-import { Message } from '../../interfaces/chat.interface';
 import usePeerConnection from '../../hooks/usePeerConnection';
+import useMessage from '../../hooks/useMessage';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
-  const setChatData = useSetRecoilState(chatState);
-  const [isPending, setIsPending] = useState(false);
   const [value, onChangeInputText, setInputText] = useInput();
+  const [isPending, setIsPending] = useState(false);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const { handleRequestCall } = usePeerConnection();
+  const { handleSendMessage } = useMessage();
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!value || isPending) {
+  const handleInputKeyDown = async (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (!value || isPending || e.code !== 'Enter' || !activeChatRoom) {
       return;
     }
-    if (e.code === 'Enter') {
-      setIsPending(true);
-      const payload = {
-        chatRoom_id: activeChatRoom?._id,
-        type: 'text',
-        content: value,
-      };
-      socket.emit(SocketEvents.Message, payload, (message: Message) => {
-        setInputText('');
-        setIsPending(false);
-        setChatData((prev) => {
-          const filteredChatRoom = prev.filter(
-            (chatRoom) => chatRoom._id !== message.chatRoom_id,
-          );
-          const target = prev.find(
-            (chatRoom) => chatRoom._id === message.chatRoom_id,
-          );
-          if (target) {
-            const targetRoomMessages = [...target.messages, message];
-            return [
-              { ...target, messages: targetRoomMessages },
-              ...filteredChatRoom,
-            ];
-          }
-          return prev;
-        });
-      });
-    }
+    setIsPending(true);
+    const payload = {
+      chatRoom_id: activeChatRoom?._id,
+      type: 'text',
+      content: value,
+    };
+    await handleSendMessage(payload);
+    setIsPending(false);
+    setInputText('');
   };
 
   useEffect(() => {
