@@ -38,8 +38,10 @@ export default function PostCard({ postData }: Props) {
     setIsDeleteModalOpen(!isDeleteModalOpen);
   };
 
-  const toggleEditModal = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.defaultPrevented) {
+  const toggleEditModal = (
+    e: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => {
+    if (e.currentTarget !== e.target) {
       return;
     }
     setIsEditModalOpen(!isEditModalOpen);

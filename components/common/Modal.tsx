@@ -14,13 +14,17 @@ interface Props {
 }
 
 interface CreatePostModalProps {
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
 interface EditPostModalProps {
   prevContent: Post;
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
@@ -51,9 +55,7 @@ export const CreatePostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
-        {/* <div onClick={(e) => e.preventDefault()}> */}
         <CreatePost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
-        {/* </div> */}
       </Background>
     </ModalPortal>
   );
@@ -67,13 +69,11 @@ export const EditPostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
-        <div onClick={(e) => e.preventDefault()}>
-          <EditPost
-            prevContent={prevContent}
-            toggleModal={toggleModal}
-            setIsModalOpen={setIsModalOpen}
-          />
-        </div>
+        <EditPost
+          prevContent={prevContent}
+          toggleModal={toggleModal}
+          setIsModalOpen={setIsModalOpen}
+        />
       </Background>
     </ModalPortal>
   );
