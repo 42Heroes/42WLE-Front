@@ -11,6 +11,7 @@ import { updatePost } from '../../library/api/board';
 import { Post } from '../../interfaces/board.interface';
 import Image from 'next/image';
 import { encodeBase64ImageFile } from '../../library/ImageConverter';
+import { AlertModal } from '../common/Modal';
 
 interface Props {
   prevContent: Post;
@@ -39,6 +40,7 @@ export default function EditPost({
     prevContent.contents.img ? true : false,
   );
   const [images, setImages] = useState<string[]>(prevContent.contents.img);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const handleContentChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const {
@@ -59,6 +61,11 @@ export default function EditPost({
   const onChangeImage = async (
     e: React.ChangeEvent<HTMLInputElement> | any,
   ) => {
+    if (images.length >= 3) {
+      setIsAlertOpen(true);
+      return;
+    }
+
     const selectedImage = e.target.files[0];
 
     if (selectedImage && selectedImage.size <= 2000000) {
@@ -66,6 +73,13 @@ export default function EditPost({
       const encodedImage = await encodeBase64ImageFile(selectedImage);
       setImages([...images, encodedImage]);
     }
+  };
+
+  const toggleAlert = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsAlertOpen(!isAlertOpen);
   };
 
   const { data: me, isError, isLoading } = useMe();
@@ -128,6 +142,12 @@ export default function EditPost({
           Edit
         </StyledPostButton>
       </ButtonContainer>
+      {isAlertOpen && (
+        <AlertModal
+          toggleModal={toggleAlert}
+          mainText="You can upload 3 images maximum."
+        />
+      )}
     </Container>
   );
 }

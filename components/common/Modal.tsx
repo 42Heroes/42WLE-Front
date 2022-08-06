@@ -7,6 +7,7 @@ import CreatePost from '../board/CreatePost';
 import Confirm from './Confirm';
 import { Post } from '../../interfaces/board.interface';
 import EditPost from '../board/EditPost';
+import Alert from './Alert';
 
 interface Props {
   user: User;
@@ -34,6 +35,11 @@ interface ConfirmModalProps {
   buttonText: string;
   handleButtonClick: () => void;
   targetId?: string;
+}
+
+interface AlertModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  mainText: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -97,6 +103,18 @@ export const ConfirmModal = ({
             handleButtonClick={handleButtonClick}
             postId={targetId}
           />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const AlertModal = ({ toggleModal, mainText }: AlertModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <Alert toggleModal={toggleModal} mainText={mainText} />
         </div>
       </Background>
     </ModalPortal>
