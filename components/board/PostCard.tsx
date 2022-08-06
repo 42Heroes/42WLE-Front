@@ -93,7 +93,12 @@ export default function PostCard({ postData }: Props) {
             </BtnBox>
             {me?._id === author._id && (
               <div>
-                <div onClick={() => setIsEditModalOpen(true)}>
+                <div
+                  onClick={() => {
+                    setIsEditModalOpen(true);
+                    setIsBtnBoxOpen(false);
+                  }}
+                >
                   <BtnBox>
                     <EditRoundedIcon />
                     <p>Edit post</p>
@@ -101,7 +106,10 @@ export default function PostCard({ postData }: Props) {
                 </div>
                 <div
                   onClick={() => {
-                    setIsDeleteModalOpen(true);
+                    {
+                      setIsDeleteModalOpen(true);
+                      setIsBtnBoxOpen(false);
+                    }
                   }}
                 >
                   <BtnBox>
