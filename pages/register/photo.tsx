@@ -11,18 +11,22 @@ import {
   encodeBase64ImageFile,
 } from '../../library/ImageConverter';
 import { updateImage, uploadFileToS3 } from '../../library/api';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import LoadingIndicator from '../../components/common/LoadingIndicator';
 import RegisterLayout from '../../components/layout/RegisterLayout';
 
 export default function ProfileImage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isExceededSize, setIsExceededSize] = useState(false);
   const [registerUser, setRegisterUser] = useRegister();
 
   const { mutate: updateProfileImage, isLoading } = useMutation(updateImage, {
     onError: (error) => console.log(error),
-    onSuccess: () => router.push('/register/introduction'),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['user', 'me']);
+      router.push('/register/introduction');
+    },
   });
 
   const { image_url: image } = registerUser;
