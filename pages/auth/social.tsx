@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { axiosInstance } from '../../library/api/axios-instance';
 import { chatState, loginState } from '../../recoil/atoms';
 import { SocketEvents } from '../../library/socket.events.enum';
 import socket from '../../library/socket';
 import { Chat } from '../../interfaces/chat.interface';
+import { fetchAccessTokenWithApplyHeaders } from '../../library/api';
+import LoadingIndicator from '../../components/common/LoadingIndicator';
 
 export default function Social() {
   const router = useRouter();
@@ -15,15 +16,11 @@ export default function Social() {
   const { code } = router.query;
 
   useEffect(() => {
-    const fetchToken = async () => {
+    const fetchToken = async (code: string) => {
       try {
-        const { data: accessToken } = await axiosInstance.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/social/42?code=${code}`,
-        );
+        const accessToken = await fetchAccessTokenWithApplyHeaders(code);
 
-        axiosInstance.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${accessToken}`;
+        socket.connect();
 
         const payload = { token: `Bearer ${accessToken}` };
         // socket 유저 인증
@@ -46,10 +43,11 @@ export default function Social() {
         console.log(error);
       }
     };
-    if (code) {
-      fetchToken();
+
+    if (typeof code === 'string') {
+      fetchToken(code);
     }
   }, [code]);
 
-  return 'hi';
+  return <LoadingIndicator />;
 }

@@ -1,5 +1,7 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
+import useMe from '../../hooks/useMe';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import CallList from '../call/CallList';
 import Header from './Header';
@@ -12,6 +14,13 @@ interface Props {
 
 export default function CommonLayout({ children, headerText }: Props) {
   usePeerConnection();
+
+  const { data } = useMe();
+  const router = useRouter();
+
+  if (typeof window !== 'undefined' && data?.isRegisterDone === false) {
+    router.replace('/register/learn');
+  }
 
   return (
     <Container>
