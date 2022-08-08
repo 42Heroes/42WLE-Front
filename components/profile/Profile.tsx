@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { changeLikeUser } from '../../library/api';
 import { useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
+import { Chat } from '../../interfaces/chat.interface';
 
 interface Props {
   user: User;
@@ -68,17 +69,21 @@ export default function Profile({ user, className }: Props) {
     const payload = {
       target_id: user._id,
     };
-    socket.emit(SocketEvents.ReqCreateRoom, payload, (res) => {
-      if (res.status === 'ok') {
-        setChatData((prev) => {
-          if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
-            return prev;
-          }
-          return [...prev, res.chatRoom];
-        });
-        setActiveChatRoomId(res.chatRoom._id);
-      }
-    });
+    socket.emit(
+      SocketEvents.ReqCreateRoom,
+      payload,
+      (res: { status: string; chatRoom: Chat }) => {
+        if (res.status === 'ok') {
+          setChatData((prev) => {
+            if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
+              return prev;
+            }
+            return [...prev, res.chatRoom];
+          });
+          setActiveChatRoomId(res.chatRoom._id);
+        }
+      },
+    );
     router.push('/chat');
   };
 
