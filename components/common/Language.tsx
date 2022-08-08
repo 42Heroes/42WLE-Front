@@ -28,11 +28,6 @@ const LanguageName = styled.span`
   width: 100%;
 `;
 
-const FlagWrapper = styled.div`
-  display: flex;
-  min-width: 2.3rem;
-`;
-
 const Container = styled.li`
   display: flex;
   align-items: center;

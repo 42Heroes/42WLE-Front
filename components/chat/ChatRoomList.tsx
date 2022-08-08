@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Chat } from '../../interfaces/chat.interface';
 import { unreadMessageState } from '../../recoil/atoms';
