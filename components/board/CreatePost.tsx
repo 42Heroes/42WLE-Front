@@ -5,6 +5,7 @@ import ProfileImage from '../common/ProfileImage';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Button from '../common/Button';
+import { AlertModal } from '../common/Modal';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { createPost } from '../../library/api/board';
@@ -27,6 +28,7 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   const queryClient = useQueryClient();
   const [isImageExist, setIsImageExist] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
       queryClient.invalidateQueries(['board']);
@@ -67,6 +69,11 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
   const onChangeImage = async (
     e: React.ChangeEvent<HTMLInputElement> | any,
   ) => {
+    if (images.length >= 3) {
+      setIsAlertOpen(true);
+      return;
+    }
+
     const selectedImage = e.target.files[0];
 
     if (selectedImage && selectedImage.size <= 2000000) {
@@ -74,6 +81,13 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
       const encodedImage = await encodeBase64ImageFile(selectedImage);
       setImages([...images, encodedImage]);
     }
+  };
+
+  const toggleAlert = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+    setIsAlertOpen(!isAlertOpen);
   };
 
   const removeImage = (i: number) => {
@@ -138,6 +152,12 @@ export default function CreatePost({ toggleModal, setIsModalOpen }: Props) {
           Post
         </StyledPostButton>
       </ButtonContainer>
+      {isAlertOpen && (
+        <AlertModal
+          toggleModal={toggleAlert}
+          mainText="You can upload 3 images maximum."
+        />
+      )}
     </Container>
   );
 }
