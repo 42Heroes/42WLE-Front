@@ -37,5 +37,6 @@ const Container = styled.div`
   cursor: pointer;
   img {
     object-fit: cover;
+    border-radius: 0.8rem;
   }
 `;
