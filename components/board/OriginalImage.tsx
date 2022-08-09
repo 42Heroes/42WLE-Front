@@ -15,8 +15,6 @@ export default function OriginalImage({ toggleModal, imgUrl }: Props) {
         alt="image"
         layout="fill"
         objectFit="contain"
-        // width="100%"
-        // height="100%"
         className="autoImage"
         src={imgUrl}
       />
