@@ -13,15 +13,19 @@ export default function OriginalImage({ toggleModal, imgUrl }: Props) {
     <Container className="unset-img">
       <Image
         alt="image"
+        layout="fill"
         objectFit="contain"
-        width="100%"
-        height="100%"
+        // width="100%"
+        // height="100%"
         className="autoImage"
         src={imgUrl}
-        // onClick={toggleModal}
       />
     </Container>
   );
 }
 
-const Container = styled.div``;
+const Container = styled.div`
+  position: relative;
+  width: 50rem;
+  height: 50rem;
+`;
