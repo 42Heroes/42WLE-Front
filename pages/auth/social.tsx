@@ -1,17 +1,16 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { chatState, loginState } from '../../recoil/atoms';
-import { SocketEvents } from '../../library/socket.events.enum';
+import { loginState } from '../../recoil/atoms';
 import socket from '../../library/socket';
-import { Chat } from '../../interfaces/chat.interface';
 import { fetchAccessTokenWithApplyHeaders } from '../../library/api';
 import LoadingIndicator from '../../components/common/LoadingIndicator';
+import useMessage from '../../hooks/useMessage';
 
 export default function Social() {
   const router = useRouter();
   const setIsLoggedIn = useSetRecoilState(loginState);
-  const setChatData = useSetRecoilState(chatState);
+  const { requestAuthorization, requestInitialData } = useMessage();
 
   const { code } = router.query;
 
@@ -23,20 +22,11 @@ export default function Social() {
         socket.connect();
 
         const payload = { token: `Bearer ${accessToken}` };
-        // socket 유저 인증
-        socket.emit(
-          SocketEvents.Authorization,
-          payload,
-          (res: { status: string; message: string }) => {
-            if (res.status === 'ok') {
-              socket.emit(SocketEvents.ReqInitialData, (res: Chat[]) => {
-                setChatData(res);
-              });
-            } else {
-              console.log('ReqInitialData 실패했습니다.');
-            }
-          },
-        );
+
+        requestAuthorization(payload).then(() => {
+          requestInitialData();
+        });
+
         setIsLoggedIn(true);
         router.replace('/find');
       } catch (error) {

@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { Message } from '../interfaces/chat.interface';
+import { Chat, Message } from '../interfaces/chat.interface';
 import socket from '../library/socket';
 import { SocketEvents } from '../library/socket.events.enum';
 import { chatState } from '../recoil/atoms';
@@ -12,6 +12,28 @@ interface MessagePayload {
 
 const useMessage = () => {
   const setChatData = useSetRecoilState(chatState);
+
+  const requestInitialData = () => {
+    socket.emit(SocketEvents.ReqInitialData, (res: Chat[]) => {
+      setChatData(res);
+    });
+  };
+
+  const requestAuthorization = (payload: { token: string }): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      socket.emit(
+        SocketEvents.Authorization,
+        payload,
+        (res: { status: string; message: string }) => {
+          if (res.status === 'ok') {
+            resolve();
+          } else {
+            reject('Authorization failed');
+          }
+        },
+      );
+    });
+  };
 
   const handleSendMessage = (payload: MessagePayload): Promise<void> => {
     return new Promise((resolve) => {
@@ -36,7 +58,7 @@ const useMessage = () => {
       });
     });
   };
-  return { handleSendMessage };
+  return { handleSendMessage, requestInitialData, requestAuthorization };
 };
 
 export default useMessage;
