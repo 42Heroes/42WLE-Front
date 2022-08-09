@@ -21,12 +21,14 @@ export default function PostImage({ imgUrl }: Props) {
   };
 
   return (
-    <Container onClick={() => setIsImageModalOpen(true)}>
-      <Image src={imgUrl} width="200" height="200" alt="image" />
+    <>
+      <Container onClick={() => setIsImageModalOpen(true)}>
+        <Image src={imgUrl} width="200" height="200" alt="image" />
+      </Container>
       {isImageModalOpen && (
         <ImageModal imgUrl={imgUrl} toggleModal={toggleImageModal} />
       )}
-    </Container>
+    </>
   );
 }
 
