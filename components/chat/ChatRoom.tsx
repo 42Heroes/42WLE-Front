@@ -18,11 +18,10 @@ export default function ChatRoom({ chat, newMessages }: Props) {
   );
   const otherUser = chat.users.find((user) => user._id !== me?._id);
   const lastMessage = chat.messages.length
-    ? chat?.messages[chat.messages.length - 1].content
+    ? chat?.messages[chat.messages.length - 1].type === 'text'
+      ? chat?.messages[chat.messages.length - 1].content
+      : 'Image'
     : '아무도 채팅을 안 했습니당';
-
-  // lastMessage =
-  //   lastMessage.length > 100 ? lastMessage.slice(0, 90) + '...' : lastMessage;
 
   const isActiveRoom = chat._id === activeChatRoomId;
 
