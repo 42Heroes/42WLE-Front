@@ -106,7 +106,6 @@ const BtnBox = styled.div`
 
 const MessageContainer = styled.div`
   flex: 1;
-  border-bottom: 1px solid ${({ theme }) => theme.grayColor};
   overflow: auto;
 `;
 
