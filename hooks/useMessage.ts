@@ -19,6 +19,26 @@ const useMessage = () => {
     });
   };
 
+  const requestCreateRoom = (payload: { target_id: string }): Promise<Chat> => {
+    return new Promise((resolve, reject) => {
+      socket.emit(
+        SocketEvents.ReqCreateRoom,
+        payload,
+        (res: { status: string; chatRoom: Chat }) => {
+          if (res.status === 'ok') {
+            setChatData((prev) => {
+              if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
+                return prev;
+              }
+              return [res.chatRoom, ...prev];
+            });
+            resolve(res.chatRoom);
+          }
+        },
+      );
+    });
+  };
+
   const requestAuthorization = (payload: { token: string }): Promise<void> => {
     return new Promise((resolve, reject) => {
       socket.emit(
@@ -58,7 +78,12 @@ const useMessage = () => {
       });
     });
   };
-  return { handleSendMessage, requestInitialData, requestAuthorization };
+  return {
+    handleSendMessage,
+    requestInitialData,
+    requestAuthorization,
+    requestCreateRoom,
+  };
 };
 
 export default useMessage;
