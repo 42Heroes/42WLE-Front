@@ -1,8 +1,6 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import ChatContent from './ChatContent';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded';
 import {
@@ -10,59 +8,16 @@ import {
   activeChatRoomState,
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
-import useInput from '../../hooks/useInput';
 import { useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
-import useMessage from '../../hooks/useMessage';
-import { activeChatRoomIdState, chatState } from '../../recoil/atoms';
+import ChatInput from './ChatInput';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
-  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
-  const setChatData = useSetRecoilState(chatState);
-  const [value, onChangeInputText, setInputText] = useInput();
-  const [isPending, setIsPending] = useState(false);
-  const messageContainerRef = useRef<HTMLDivElement | null>(null);
-  const SendBtnColor = value.length ? '#8083FF' : '#727272';
-  const { handleRequestCall } = usePeerConnection();
-  const { handleSendMessage, requestCreateRoom } = useMessage();
 
-  const handleInputKeyDown = async (
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (
-      !value ||
-      isPending ||
-      e.code !== 'Enter' ||
-      !activeChatRoom ||
-      !activePartner
-    ) {
-      return;
-    }
-    setIsPending(true);
-    const payload = {
-      chatRoom_id: activeChatRoom?._id,
-      type: 'text',
-      content: value,
-    };
-    if (activeChatRoom.isDummy) {
-      const newChatRoom = await requestCreateRoom({
-        target_id: activePartner?._id,
-      });
-      setChatData((prev) => {
-        const filteredRoom = prev.filter(
-          (room) => room._id !== activeChatRoom?._id,
-        );
-        return filteredRoom;
-      });
-      payload.chatRoom_id = newChatRoom._id;
-      setActiveChatRoomId(newChatRoom._id);
-    }
-    await handleSendMessage(payload);
-    setIsPending(false);
-    setInputText('');
-  };
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const { handleRequestCall } = usePeerConnection();
 
   useEffect(() => {
     if (messageContainerRef.current) {
@@ -107,18 +62,9 @@ export default function ActiveChat() {
           messages={activeChatRoom.messages}
           activePartner={activePartner}
         />
-        <div ref={messageContainerRef}> </div>
+        <div ref={messageContainerRef} />
       </MessageContainer>
-      <MessageInputContainer>
-        <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
-        <input
-          value={value}
-          onChange={onChangeInputText}
-          placeholder="Your messages..."
-          onKeyDown={handleInputKeyDown}
-        />
-        <SendRoundedIcon sx={{ color: SendBtnColor, fontSize: 23 }} />
-      </MessageInputContainer>
+      <ChatInput activeChatRoom={activeChatRoom} />
     </Container>
   );
 }
@@ -182,35 +128,5 @@ const VideoButton = styled.button`
   svg {
     fill: ${({ theme }) => theme.grayColor};
     aspect-ratio: 1;
-  }
-`;
-
-const MessageInputContainer = styled.div`
-  height: 7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  height: 4.5rem;
-  padding: 1.5rem;
-  background-color: #242526;
-  border-radius: 1rem;
-  input {
-    width: 100%;
-    background-color: inherit;
-    margin-left: 1rem;
-    color: ${({ theme }) => theme.fontColor.contentColor};
-    ::placeholder {
-      color: ${({ theme }) => theme.fontColor.contentColor};
-    }
-    &:focus {
-      outline: none;
-    }
-  }
-  svg {
-    &:last-child {
-      transform: rotateZ(-45deg);
-      margin-bottom: 0.5rem;
-    }
   }
 `;

@@ -16,7 +16,7 @@ import useMe from '../../hooks/useMe';
 import CommentsList from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
-import Image from 'next/image';
+import PostImage from './PostImage';
 
 interface Props {
   postData: Post;
@@ -38,8 +38,10 @@ export default function PostCard({ postData }: Props) {
     setIsDeleteModalOpen(!isDeleteModalOpen);
   };
 
-  const toggleEditModal = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.defaultPrevented) {
+  const toggleEditModal = (
+    e: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => {
+    if (e.currentTarget !== e.target) {
       return;
     }
     setIsEditModalOpen(!isEditModalOpen);
@@ -91,7 +93,12 @@ export default function PostCard({ postData }: Props) {
             </BtnBox>
             {me?._id === author._id && (
               <div>
-                <div onClick={() => setIsEditModalOpen(true)}>
+                <div
+                  onClick={() => {
+                    setIsEditModalOpen(true);
+                    setIsBtnBoxOpen(false);
+                  }}
+                >
                   <BtnBox>
                     <EditRoundedIcon />
                     <p>Edit post</p>
@@ -99,7 +106,10 @@ export default function PostCard({ postData }: Props) {
                 </div>
                 <div
                   onClick={() => {
-                    setIsDeleteModalOpen(true);
+                    {
+                      setIsDeleteModalOpen(true);
+                      setIsBtnBoxOpen(false);
+                    }
                   }}
                 >
                   <BtnBox>
@@ -125,9 +135,7 @@ export default function PostCard({ postData }: Props) {
           {postData.contents.img && (
             <ImageContainer>
               {postData.contents.img.map((image, i) => (
-                <ImageWrapper key={i}>
-                  <Image src={image} width="200" height="200" alt="image" />
-                </ImageWrapper>
+                <PostImage imgUrl={image} key={i} />
               ))}
             </ImageContainer>
           )}
@@ -265,13 +273,6 @@ const ContentContainer = styled.div`
 const ImageContainer = styled.div`
   display: flex;
   margin-top: 3rem;
-`;
-
-const ImageWrapper = styled.div`
-  margin-right: 0.8rem;
-  img {
-    object-fit: cover;
-  }
 `;
 
 const LikeCommentCountContainer = styled.div`

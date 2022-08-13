@@ -23,6 +23,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { changeLikeUser } from '../../library/api';
 import { useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
+import { Chat } from '../../interfaces/chat.interface';
 
 interface Props {
   user: User;

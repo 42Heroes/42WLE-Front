@@ -149,7 +149,3 @@ const StyledButton = styled(Button)`
   background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
 `;
-
-const StyledLogo = styled(FTLogo)`
-  margin-left: 1rem;
-`;

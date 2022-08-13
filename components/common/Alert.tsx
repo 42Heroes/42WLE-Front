@@ -4,31 +4,17 @@ import Button from './Button';
 interface Props {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
   mainText: string;
-  buttonText: string;
-  handleButtonClick: () => void;
-  postId?: string;
 }
 
-export default function Confirm({
-  toggleModal,
-  mainText,
-  buttonText,
-  handleButtonClick,
-  postId,
-}: Props) {
+export default function Alert({ toggleModal, mainText }: Props) {
   return (
     <Container>
       <TextContainer>{mainText}</TextContainer>
       <ButtonContainer>
         <div onClick={(e) => toggleModal(e)}>
           <StyledCancelButton type="button" size="small">
-            Cancel
+            OK
           </StyledCancelButton>
-        </div>
-        <div onClick={handleButtonClick}>
-          <StyledDeleteButton type="button" size="small">
-            {buttonText}
-          </StyledDeleteButton>
         </div>
       </ButtonContainer>
     </Container>
@@ -36,8 +22,8 @@ export default function Confirm({
 }
 
 const Container = styled.div`
-  width: 28rem;
-  height: 15rem;
+  width: 35rem;
+  height: 12rem;
   background-color: #242526;
   padding: 1rem;
   border-radius: 1rem;
@@ -52,7 +38,7 @@ const TextContainer = styled.div`
   font-weight: 600;
   line-height: 3rem;
   text-align: center;
-  padding: 1em;
+  padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,15 +47,11 @@ const TextContainer = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
+  margin-bottom: 1rem;
 `;
 
 const StyledCancelButton = styled(Button)`
   background-color: ${({ theme }) => theme.bgColor};
-  border-radius: 1rem;
-`;
-
-const StyledDeleteButton = styled(Button)`
-  background-color: ${({ theme }) => theme.pointColor};
   border-radius: 1rem;
 `;

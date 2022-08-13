@@ -7,6 +7,8 @@ import CreatePost from '../board/CreatePost';
 import Confirm from './Confirm';
 import { Post } from '../../interfaces/board.interface';
 import EditPost from '../board/EditPost';
+import Alert from './Alert';
+import OriginalImage from '../board/OriginalImage';
 
 interface Props {
   user: User;
@@ -14,13 +16,17 @@ interface Props {
 }
 
 interface CreatePostModalProps {
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
 interface EditPostModalProps {
   prevContent: Post;
-  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
@@ -30,6 +36,18 @@ interface ConfirmModalProps {
   buttonText: string;
   handleButtonClick: () => void;
   targetId?: string;
+}
+
+interface AlertModalProps {
+  toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
+  mainText: string;
+}
+
+interface ImageModalProps {
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
+  imgUrl: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -51,9 +69,7 @@ export const CreatePostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
-        {/* <div onClick={(e) => e.preventDefault()}> */}
         <CreatePost toggleModal={toggleModal} setIsModalOpen={setIsModalOpen} />
-        {/* </div> */}
       </Background>
     </ModalPortal>
   );
@@ -67,13 +83,11 @@ export const EditPostModal = ({
   return (
     <ModalPortal>
       <Background onClick={toggleModal}>
-        <div onClick={(e) => e.preventDefault()}>
-          <EditPost
-            prevContent={prevContent}
-            toggleModal={toggleModal}
-            setIsModalOpen={setIsModalOpen}
-          />
-        </div>
+        <EditPost
+          prevContent={prevContent}
+          toggleModal={toggleModal}
+          setIsModalOpen={setIsModalOpen}
+        />
       </Background>
     </ModalPortal>
   );
@@ -97,6 +111,30 @@ export const ConfirmModal = ({
             handleButtonClick={handleButtonClick}
             postId={targetId}
           />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const AlertModal = ({ toggleModal, mainText }: AlertModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <Alert toggleModal={toggleModal} mainText={mainText} />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const ImageModal = ({ toggleModal, imgUrl }: ImageModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <OriginalImage toggleModal={toggleModal} imgUrl={imgUrl} />
         </div>
       </Background>
     </ModalPortal>
