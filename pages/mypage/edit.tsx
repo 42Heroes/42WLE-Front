@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import DragDrop from '../../components/common/DragDrop';
 import { v4 as uuid } from 'uuid';
@@ -26,13 +26,9 @@ import ProtectedPage from '../../components/auth/ProtectedPage';
 export default function ProfileEdit() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: me, isLoading, error } = useMe();
+  const { data: me } = useMe();
   const {
     mutate,
-    isLoading: isUpdateLoading,
-    isError: isUpdateError,
-    error: updateError,
-    isSuccess: isUpdateSuccess,
   } = useMutation(updateMe, {
     onSuccess: () => {
       queryClient.invalidateQueries(['user', 'me']);

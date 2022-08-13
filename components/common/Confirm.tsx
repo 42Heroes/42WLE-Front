@@ -1,6 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { deletePost } from '../../library/api/board';
 import Button from './Button';
 
 interface Props {
