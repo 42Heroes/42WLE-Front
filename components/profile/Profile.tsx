@@ -11,14 +11,12 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import { User } from '../../interfaces/user.interface';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   activeChatRoomIdState,
   chatState,
   loginState,
 } from '../../recoil/atoms';
-import socket from '../../library/socket';
-import { SocketEvents } from '../../library/socket.events.enum';
 import { useRouter } from 'next/router';
 import useMe from '../../hooks/useMe';
 import { useMutation, useQueryClient } from 'react-query';
@@ -39,12 +37,12 @@ export default function Profile({ user, className }: Props) {
   const { mutate: mutateLikeUser } = useMutation(changeLikeUser, {
     onSuccess: () => queryClient.invalidateQueries(['user', 'me']),
   });
-  const setChatData = useSetRecoilState(chatState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
   const isUserModal = user._id !== me?._id;
   const isLikedUser = me?.liked_users.some((liked) => liked._id === user?._id);
   const [isLoginConfirmModalOpen, setLoginConfirmModalOpen] = useState(false);
+  const [chatData, setChatData] = useRecoilState(chatState);
 
   const toggleLoginModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -62,28 +60,31 @@ export default function Profile({ user, className }: Props) {
   };
 
   const handleMessageButtonClick = () => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn || !me) {
       setLoginConfirmModalOpen(true);
       return;
     }
-    const payload = {
-      target_id: user._id,
-    };
-    socket.emit(
-      SocketEvents.ReqCreateRoom,
-      payload,
-      (res: { status: string; chatRoom: Chat }) => {
-        if (res.status === 'ok') {
-          setChatData((prev) => {
-            if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
-              return prev;
-            }
-            return [...prev, res.chatRoom];
-          });
-          setActiveChatRoomId(res.chatRoom._id);
-        }
-      },
-    );
+
+    const isExistRoom = chatData.find((room) => {
+      return room.users.every(
+        (target) => target._id === me?._id || target._id === user._id,
+      );
+    });
+
+    if (isExistRoom) {
+      setActiveChatRoomId(isExistRoom._id);
+    } else {
+      const dummyData = {
+        _id: Date.now().toString(),
+        createdAt: Date.now().toString(),
+        updatedAt: Date.now().toString(),
+        users: [me, user],
+        messages: [],
+        isDummy: true,
+      };
+      setChatData([dummyData, ...chatData]);
+      setActiveChatRoomId(dummyData._id);
+    }
     router.push('/chat');
   };
 
