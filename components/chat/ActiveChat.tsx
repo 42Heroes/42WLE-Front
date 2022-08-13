@@ -14,21 +14,30 @@ import useInput from '../../hooks/useInput';
 import { useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import useMessage from '../../hooks/useMessage';
+import { activeChatRoomIdState, chatState } from '../../recoil/atoms';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
+  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const setChatData = useSetRecoilState(chatState);
   const [value, onChangeInputText, setInputText] = useInput();
   const [isPending, setIsPending] = useState(false);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const { handleRequestCall } = usePeerConnection();
-  const { handleSendMessage } = useMessage();
+  const { handleSendMessage, requestCreateRoom } = useMessage();
 
   const handleInputKeyDown = async (
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (!value || isPending || e.code !== 'Enter' || !activeChatRoom) {
+    if (
+      !value ||
+      isPending ||
+      e.code !== 'Enter' ||
+      !activeChatRoom ||
+      !activePartner
+    ) {
       return;
     }
     setIsPending(true);
@@ -37,6 +46,19 @@ export default function ActiveChat() {
       type: 'text',
       content: value,
     };
+    if (activeChatRoom.isDummy) {
+      const newChatRoom = await requestCreateRoom({
+        target_id: activePartner?._id,
+      });
+      setChatData((prev) => {
+        const filteredRoom = prev.filter(
+          (room) => room._id !== activeChatRoom?._id,
+        );
+        return filteredRoom;
+      });
+      payload.chatRoom_id = newChatRoom._id;
+      setActiveChatRoomId(newChatRoom._id);
+    }
     await handleSendMessage(payload);
     setIsPending(false);
     setInputText('');

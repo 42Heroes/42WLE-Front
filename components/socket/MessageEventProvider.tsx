@@ -22,10 +22,23 @@ export default function MessageEventProvider({ children }: Props) {
     const requestRoomHandler = (res: { status: string; chatRoom: Chat }) => {
       if (res.status === 'ok') {
         setChatData((prev) => {
+          const isExistDummyRoom = prev.find((room) => {
+            return (
+              room.users.every((target) =>
+                res.chatRoom.users.some((user) => user._id === target._id),
+              ) && room.isDummy
+            );
+          });
+          if (isExistDummyRoom) {
+            const filteredRoom = prev.filter(
+              (room) => room._id !== isExistDummyRoom?._id,
+            );
+            return [res.chatRoom, ...filteredRoom];
+          }
           if (prev.some((chatRoom) => chatRoom._id === res.chatRoom._id)) {
             return prev;
           }
-          return [...prev, res.chatRoom];
+          return [res.chatRoom, ...prev];
         });
       }
     };
