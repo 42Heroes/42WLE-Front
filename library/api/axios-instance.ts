@@ -35,7 +35,6 @@ axiosInstance.interceptors.response.use(
       if (shouldRetry) {
         config.retryCount += 1;
         const res = await onSilentRefresh();
-        console.log(res);
 
         return axiosInstance.request(config);
       }

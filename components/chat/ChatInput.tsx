@@ -2,55 +2,60 @@ import styled from 'styled-components';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import useInput from '../../hooks/useInput';
-import socket from '../../library/socket';
-import { SocketEvents } from '../../library/socket.events.enum';
-import { useSetRecoilState } from 'recoil';
-import { chatState } from '../../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { activeChatRoomIdState, chatState } from '../../recoil/atoms';
 import { useState } from 'react';
 import { Chat, Message } from '../../interfaces/chat.interface';
+import useMessage from '../../hooks/useMessage';
+import { activeChatPartnerState } from '../../recoil/selectors';
 
 interface Props {
   activeChatRoom: Chat;
 }
 
 export default function ChatInput({ activeChatRoom }: Props) {
+  const activePartner = useRecoilValue(activeChatPartnerState);
+  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
   const [value, onChangeInputText, setInputText] = useInput();
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const setChatData = useSetRecoilState(chatState);
   const [isPending, setIsPending] = useState(false);
+  const { handleSendMessage, requestCreateRoom } = useMessage();
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!value || isPending) {
+  const handleInputKeyDown = async (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (
+      !value ||
+      isPending ||
+      e.code !== 'Enter' ||
+      !activeChatRoom ||
+      !activePartner
+    ) {
       return;
     }
-    if (e.code === 'Enter') {
-      setIsPending(true);
-      const payload = {
-        chatRoom_id: activeChatRoom?._id,
-        type: 'text',
-        content: value,
-      };
-      socket.emit(SocketEvents.Message, payload, (message: Message) => {
-        setInputText('');
-        setIsPending(false);
-        setChatData((prev) => {
-          const filteredChatRoom = prev.filter(
-            (chatRoom) => chatRoom._id !== message.chatRoom_id,
-          );
-          const target = prev.find(
-            (chatRoom) => chatRoom._id === message.chatRoom_id,
-          );
-          if (target) {
-            const targetRoomMessages = [...target.messages, message];
-            return [
-              { ...target, messages: targetRoomMessages },
-              ...filteredChatRoom,
-            ];
-          }
-          return prev;
-        });
+    setIsPending(true);
+    const payload = {
+      chatRoom_id: activeChatRoom?._id,
+      type: 'text',
+      content: value,
+    };
+    if (activeChatRoom.isDummy) {
+      const newChatRoom = await requestCreateRoom({
+        target_id: activePartner?._id,
       });
+      setChatData((prev) => {
+        const filteredRoom = prev.filter(
+          (room) => room._id !== activeChatRoom?._id,
+        );
+        return filteredRoom;
+      });
+      payload.chatRoom_id = newChatRoom._id;
+      setActiveChatRoomId(newChatRoom._id);
     }
+    await handleSendMessage(payload);
+    setIsPending(false);
+    setInputText('');
   };
 
   return (

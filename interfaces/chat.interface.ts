@@ -6,6 +6,7 @@ export interface Chat {
   updatedAt: string;
   users: User[];
   messages: Message[];
+  isDummy?: boolean;
 }
 
 export interface Message {
