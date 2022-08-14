@@ -1,7 +1,15 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { onSilentRefresh } from './login';
 
 const MAX_RETRY_COUNT = 2;
+
+interface CustomRequestConfig extends AxiosRequestConfig {
+  retryCount?: number;
+}
+
+interface CustomAxiosError extends AxiosError {
+  config: CustomRequestConfig;
+}
 
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -25,7 +33,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
 
-  async function (error: AxiosError) {
+  async function (error: CustomAxiosError) {
     if (error.response?.status === 401) {
       const config = error.config;
 

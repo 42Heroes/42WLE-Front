@@ -195,21 +195,21 @@ export default function CallEventProvider({ children }: Props) {
       await Promise.all(promises);
     };
 
-    const handleRejectCall = (data) => {
+    const handleRejectCall = (data: { roomNo: string }) => {
       console.log('상대방이 조금 바쁜가봐요 ㅠㅠ');
     };
 
-    const handleCancelCall = (data) => {
+    const handleCancelCall = (data: { roomNo: string }) => {
       console.log('상대방이 전화를 취소했습니다', data);
       setCallList((prevCallList) =>
         prevCallList.filter((call) => call.roomNo !== data.roomNo),
       );
     };
 
-    const handleExitUser = (data) => {
+    const handleExitUser = (data: { roomNo: string; socketId: string }) => {
       const { socketId } = data;
       pcs[socketId]?.close();
-      setPcs((prevPcs) => ({ ...prevPcs, [socketId]: undefined }));
+      setPcs((prevPcs) => ({ ...prevPcs, [socketId]: null }));
       if (connectedUsers.length === 0) {
         stopMediaStream();
         setRoomNo('');
