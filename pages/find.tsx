@@ -14,7 +14,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import useMe from '../hooks/useMe';
 import { getUsers } from '../library/api';
-import { useRouter } from 'next/router';
 
 export default function Find() {
   const usersData = useQuery<User[]>('users', getUsers);

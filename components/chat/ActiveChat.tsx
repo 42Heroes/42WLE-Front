@@ -8,13 +8,14 @@ import {
   activeChatRoomState,
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
+
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const { handleRequestCall } = usePeerConnection();
 
@@ -61,7 +62,7 @@ export default function ActiveChat() {
           messages={activeChatRoom.messages}
           activePartner={activePartner}
         />
-        <div ref={messageContainerRef}> </div>
+        <div ref={messageContainerRef} />
       </MessageContainer>
       <ChatInput activeChatRoom={activeChatRoom} />
     </Container>

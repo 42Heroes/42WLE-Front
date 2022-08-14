@@ -3,23 +3,26 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CancelIcon from '@mui/icons-material/Cancel';
 import useInput from '../../hooks/useInput';
-import socket from '../../library/socket';
-import { SocketEvents } from '../../library/socket.events.enum';
-import { useSetRecoilState } from 'recoil';
-import { chatState } from '../../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { activeChatRoomIdState, chatState } from '../../recoil/atoms';
 import { useState } from 'react';
 import { Chat, Message } from '../../interfaces/chat.interface';
 import { encodeBase64ImageFile } from '../../library/ImageConverter';
 import Image from 'next/image';
+import useMessage from '../../hooks/useMessage';
+import { activeChatPartnerState } from '../../recoil/selectors';
 
 interface Props {
   activeChatRoom: Chat;
 }
 
 export default function ChatInput({ activeChatRoom }: Props) {
+  const activePartner = useRecoilValue(activeChatPartnerState);
+  const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
   const [value, onChangeInputText, setInputText] = useInput();
   const setChatData = useSetRecoilState(chatState);
   const [isPending, setIsPending] = useState(false);
+<<<<<<< HEAD
   const [isImageExist, setIsImageExist] = useState(false);
   const [image, setImage] = useState('');
   const SendBtnColor = value.length || isImageExist ? '#8083FF' : '#727272';
@@ -89,6 +92,44 @@ export default function ChatInput({ activeChatRoom }: Props) {
         return prev;
       });
     });
+=======
+  const { handleSendMessage, requestCreateRoom } = useMessage();
+
+  const handleInputKeyDown = async (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (
+      !value ||
+      isPending ||
+      e.code !== 'Enter' ||
+      !activeChatRoom ||
+      !activePartner
+    ) {
+      return;
+    }
+    setIsPending(true);
+    const payload = {
+      chatRoom_id: activeChatRoom?._id,
+      type: 'text',
+      content: value,
+    };
+    if (activeChatRoom.isDummy) {
+      const newChatRoom = await requestCreateRoom({
+        target_id: activePartner?._id,
+      });
+      setChatData((prev) => {
+        const filteredRoom = prev.filter(
+          (room) => room._id !== activeChatRoom?._id,
+        );
+        return filteredRoom;
+      });
+      payload.chatRoom_id = newChatRoom._id;
+      setActiveChatRoomId(newChatRoom._id);
+    }
+    await handleSendMessage(payload);
+    setIsPending(false);
+    setInputText('');
+>>>>>>> develop
   };
 
   return (

@@ -8,6 +8,7 @@ import Confirm from './Confirm';
 import { Post } from '../../interfaces/board.interface';
 import EditPost from '../board/EditPost';
 import Alert from './Alert';
+import OriginalImage from '../board/OriginalImage';
 
 interface Props {
   user: User;
@@ -40,6 +41,13 @@ interface ConfirmModalProps {
 interface AlertModalProps {
   toggleModal: (event: React.MouseEvent<HTMLDivElement>) => void;
   mainText: string;
+}
+
+interface ImageModalProps {
+  toggleModal: (
+    event: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
+  ) => void;
+  imgUrl: string;
 }
 
 export const ProfileModal = ({ user, toggleModal }: Props) => {
@@ -115,6 +123,18 @@ export const AlertModal = ({ toggleModal, mainText }: AlertModalProps) => {
       <Background onClick={toggleModal}>
         <div onClick={(e) => e.preventDefault()}>
           <Alert toggleModal={toggleModal} mainText={mainText} />
+        </div>
+      </Background>
+    </ModalPortal>
+  );
+};
+
+export const ImageModal = ({ toggleModal, imgUrl }: ImageModalProps) => {
+  return (
+    <ModalPortal>
+      <Background onClick={toggleModal}>
+        <div onClick={(e) => e.preventDefault()}>
+          <OriginalImage toggleModal={toggleModal} imgUrl={imgUrl} />
         </div>
       </Background>
     </ModalPortal>

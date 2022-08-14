@@ -9,7 +9,7 @@ import GlobalStyle from '../styles/global';
 import { QueryClient, QueryClientProvider, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Auth from '../components/common/Auth';
-import SocketProvider from '../components/common/SocketEventProvider';
+import SocketProvider from '../components/socket/SocketEventProvider';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
