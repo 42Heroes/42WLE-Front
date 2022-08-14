@@ -5,7 +5,7 @@ import useInput from '../../hooks/useInput';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { activeChatRoomIdState, chatState } from '../../recoil/atoms';
 import { useState } from 'react';
-import { Chat, Message } from '../../interfaces/chat.interface';
+import { Chat } from '../../interfaces/chat.interface';
 import useMessage from '../../hooks/useMessage';
 import { activeChatPartnerState } from '../../recoil/selectors';
 
