@@ -27,6 +27,11 @@ export default function CallEventProvider({ children }: Props) {
           'stun:stun4.l.google.com:19302',
         ],
       },
+      {
+        urls: process.env.NEXT_PUBLIC_TURN_SERVER_URL as string,
+        username: process.env.NEXT_PUBLIC_TURN_SERVER_USERNAME as string,
+        credential: process.env.NEXT_PUBLIC_TURN_SERVER_PASSWORD as string,
+      },
     ],
   };
   const { userMediaStream: localStream, stopMediaStream } =
