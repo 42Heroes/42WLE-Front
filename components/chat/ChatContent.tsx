@@ -17,32 +17,42 @@ interface isMarginNeededProps {
 
 export default function ChatContent({ messages, activePartner }: Props) {
   const me = useRecoilValue(userState);
-  const getLocalDate = (date: Date) => new Date(date).toString().slice(15, 21);
+  const getLocalTime = (date: Date) => new Date(date).toString().slice(15, 21);
+  const getLocalDate = (date: Date) => new Date(date).toString().slice(4, 15);
   return (
     <Container>
       {messages.map((message, index) => {
-        const localDate = getLocalDate(message.createdAt);
+        const localDate = getLocalTime(message.createdAt);
         const isLastMessage = messages[index + 1]
           ? messages[index + 1].user_id !== message.user_id
           : true;
         const isLastTime = messages[index + 1]
-          ? getLocalDate(messages[index].createdAt) !==
-            getLocalDate(messages[index + 1].createdAt)
+          ? getLocalTime(messages[index].createdAt) !==
+            getLocalTime(messages[index + 1].createdAt)
           : true;
         const isFirstMessage = messages[index - 1]
           ? messages[index - 1].user_id !== message.user_id
           : true;
         const isFirstTime = messages[index - 1]
-          ? getLocalDate(messages[index].createdAt) !==
-            getLocalDate(messages[index - 1].createdAt)
+          ? getLocalTime(messages[index].createdAt) !==
+            getLocalTime(messages[index - 1].createdAt)
           : true;
         const isMarginNeeded = isLastMessage || isLastTime;
+        const isDateChanged =
+          messages[index - 1] &&
+          getLocalDate(messages[index - 1].createdAt) !==
+            getLocalDate(messages[index].createdAt)
+            ? true
+            : false;
 
-        return message.user_id === me?._id ? (
-          <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
-            {(isLastMessage || isLastTime) && (
-              <TimeContainer>{localDate}</TimeContainer>
+        return (
+          <>
+            {(index === 0 || isDateChanged) && (
+              <DateWrapper>
+                <p>{getLocalDate(message.createdAt)}</p>
+              </DateWrapper>
             )}
+
             {message.type === 'text' ? (
               <p>{message.content}</p>
             ) : (
@@ -85,7 +95,7 @@ export default function ChatContent({ messages, activePartner }: Props) {
             {(isLastMessage || isLastTime) && (
               <TimeContainer>{localDate}</TimeContainer>
             )}
-          </PartnerMessageContainer>
+          </>
         );
       })}
     </Container>
@@ -96,6 +106,31 @@ const Container = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 2rem 2rem 0 2rem;
+`;
+
+const DateWrapper = styled.div`
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: ${({ theme }) => theme.fontColor.commentColor};
+
+  ::before {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: ${({ theme }) => theme.fontColor.commentColor};
+    font-size: 1rem;
+    margin-right: 1rem;
+  }
+  ::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: ${({ theme }) => theme.fontColor.commentColor};
+    font-size: 1rem;
+    margin-left: 1rem;
+  }
 `;
 
 const UserMessage = styled.div<isMarginNeededProps>`
