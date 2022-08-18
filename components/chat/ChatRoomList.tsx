@@ -31,4 +31,5 @@ export default function ChatRoomList({ chatRooms }: Props) {
 const Container = styled.ul`
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 `;
