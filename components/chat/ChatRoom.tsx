@@ -17,8 +17,11 @@ export default function ChatRoom({ chat, newMessages }: Props) {
     activeChatRoomIdState,
   );
   const otherUser = chat.users.find((user) => user._id !== me?._id);
+
   const lastMessageContent = chat.messages.length
-    ? chat?.messages[chat.messages.length - 1].content
+    ? chat?.messages[chat.messages.length - 1].type === 'text'
+      ? chat?.messages[chat.messages.length - 1].content
+      : 'Image'
     : '아무도 채팅을 안 했습니당';
 
   const getLocalMessageTime = (date: Date) => new Date(date).toString();

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Message } from '../../interfaces/chat.interface';
@@ -51,30 +52,48 @@ export default function ChatContent({ messages, activePartner }: Props) {
                 <p>{getLocalDate(message.createdAt)}</p>
               </DateWrapper>
             )}
-            {message.user_id === me?._id ? (
-              <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
-                {(isLastMessage || isLastTime) && (
-                  <TimeContainer>{localDate}</TimeContainer>
-                )}
-                <p>{message.content}</p>
-              </UserMessage>
+
+            {message.type === 'text' ? (
+              <p>{message.content}</p>
             ) : (
-              <PartnerMessageContainer
-                key={message._id}
-                isMarginNeeded={isMarginNeeded}
-              >
-                <ImageContainer>
-                  {(isFirstMessage || isFirstTime) && (
-                    <ProfileImage src={activePartner.image_url} size="small" />
-                  )}
-                </ImageContainer>
+              <ImageWrapper>
+                <Image
+                  src={message.content}
+                  layout="fill"
+                  objectFit="cover"
+                  alt="image"
+                />
+              </ImageWrapper>
+            )}
+          </UserMessage>
+        ) : (
+          <PartnerMessageContainer
+            key={message._id}
+            isMarginNeeded={isMarginNeeded}
+          >
+            <ImageContainer>
+              {(isFirstMessage || isFirstTime) && (
+                <ProfileImage src={activePartner.image_url} size="small" />
+              )}
+            </ImageContainer>
+            <PartnerMessageWrapper>
+              {message.type === 'text' ? (
                 <PartnerMessage>
                   <p>{message.content}</p>
                 </PartnerMessage>
-                {(isLastMessage || isLastTime) && (
-                  <TimeContainer>{localDate}</TimeContainer>
-                )}
-              </PartnerMessageContainer>
+              ) : (
+                <ImageWrapper>
+                  <Image
+                    src={message.content}
+                    layout="fill"
+                    objectFit="cover"
+                    alt="image"
+                  />
+                </ImageWrapper>
+              )}
+            </PartnerMessageWrapper>
+            {(isLastMessage || isLastTime) && (
+              <TimeContainer>{localDate}</TimeContainer>
             )}
           </>
         );
@@ -142,21 +161,33 @@ const ImageContainer = styled.div`
   min-width: 4rem;
 `;
 
-const PartnerMessage = styled.div`
+const PartnerMessageWrapper = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   margin-left: 2rem;
   margin-right: 1rem;
+  width: max-content;
+  max-width: 80%;
+  word-wrap: break-word;
+`;
+
+const PartnerMessage = styled.div`
   border: 1px solid ${({ theme }) => theme.fontColor.commentColor};
   border-radius: 2rem;
   border-top-left-radius: 0;
-  width: max-content;
   padding: 1rem;
-  max-width: 80%;
-  word-wrap: break-word;
 `;
 
 const TimeContainer = styled.div`
   color: ${({ theme }) => theme.fontColor.titleColor};
   font-size: 1rem;
   margin-right: 1rem;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  img {
+    border-radius: 1rem;
+  }
 `;
