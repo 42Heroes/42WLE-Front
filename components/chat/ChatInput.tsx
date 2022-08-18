@@ -74,14 +74,14 @@ export default function ChatInput({ activeChatRoom }: Props) {
 
     setIsPending(true);
 
-    const file = dataURLtoFile(image, uuid());
-    const uploadUrl = await uploadFileToS3(file, '/chat-image');
-
     const payload = isImageExist
       ? {
           chatRoom_id: activeChatRoom?._id,
           type: 'image',
-          content: uploadUrl,
+          content: await uploadFileToS3(
+            dataURLtoFile(image, uuid()),
+            '/chat-image',
+          ),
         }
       : {
           chatRoom_id: activeChatRoom?._id,
