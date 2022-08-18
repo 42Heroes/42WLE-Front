@@ -26,7 +26,7 @@ export default function ChatRoom({ chat, newMessages }: Props) {
 
   const getLocalMessageTime = (date: Date) => new Date(date).toString();
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  console.log(yesterday);
+
   const lastMessageTime = chat.messages.length
     ? getLocalMessageTime(
         chat?.messages[chat.messages.length - 1].createdAt,
