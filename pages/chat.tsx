@@ -14,7 +14,6 @@ export default function Chat() {
   const chatRooms = useRecoilValue(chatState);
   const callInfo = useRecoilValue(callInfoState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
-  console.log(chatRooms);
 
   return (
     <Container>
@@ -54,6 +53,8 @@ const LeftContainer = styled.div`
   min-width: 30rem;
   height: 100%;
   border-right: 1px solid ${({ theme }) => theme.grayColor};
+  display: flex;
+  flex-direction: column;
 `;
 
 const SearchContainer = styled.div`
