@@ -52,48 +52,54 @@ export default function ChatContent({ messages, activePartner }: Props) {
                 <p>{getLocalDate(message.createdAt)}</p>
               </DateWrapper>
             )}
-
-            {message.type === 'text' ? (
-              <p>{message.content}</p>
-            ) : (
-              <ImageWrapper>
-                <Image
-                  src={message.content}
-                  layout="fill"
-                  objectFit="cover"
-                  alt="image"
-                />
-              </ImageWrapper>
-            )}
-          </UserMessage>
-        ) : (
-          <PartnerMessageContainer
-            key={message._id}
-            isMarginNeeded={isMarginNeeded}
-          >
-            <ImageContainer>
-              {(isFirstMessage || isFirstTime) && (
-                <ProfileImage src={activePartner.image_url} size="small" />
-              )}
-            </ImageContainer>
-            <PartnerMessageWrapper>
-              {message.type === 'text' ? (
-                <PartnerMessage>
+            {message.user_id === me?._id ? (
+              <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
+                {(isLastMessage || isLastTime) && (
+                  <TimeContainer>{localDate}</TimeContainer>
+                )}
+                {message.type === 'text' ? (
                   <p>{message.content}</p>
-                </PartnerMessage>
-              ) : (
-                <ImageWrapper>
-                  <Image
-                    src={message.content}
-                    layout="fill"
-                    objectFit="cover"
-                    alt="image"
-                  />
-                </ImageWrapper>
-              )}
-            </PartnerMessageWrapper>
-            {(isLastMessage || isLastTime) && (
-              <TimeContainer>{localDate}</TimeContainer>
+                ) : (
+                  <ImageWrapper>
+                    <Image
+                      src={message.content}
+                      layout="fill"
+                      objectFit="cover"
+                      alt="image"
+                    />
+                  </ImageWrapper>
+                )}
+              </UserMessage>
+            ) : (
+              <PartnerMessageContainer
+                key={message._id}
+                isMarginNeeded={isMarginNeeded}
+              >
+                <ImageContainer>
+                  {(isFirstMessage || isFirstTime) && (
+                    <ProfileImage src={activePartner.image_url} size="small" />
+                  )}
+                </ImageContainer>
+                <PartnerMessageWrapper>
+                  {message.type === 'text' ? (
+                    <PartnerMessage>
+                      <p>{message.content}</p>
+                    </PartnerMessage>
+                  ) : (
+                    <ImageWrapper>
+                      <Image
+                        src={message.content}
+                        layout="fill"
+                        objectFit="cover"
+                        alt="image"
+                      />
+                    </ImageWrapper>
+                  )}
+                </PartnerMessageWrapper>
+                {(isLastMessage || isLastTime) && (
+                  <TimeContainer>{localDate}</TimeContainer>
+                )}
+              </PartnerMessageContainer>
             )}
           </>
         );
