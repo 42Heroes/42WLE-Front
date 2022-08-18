@@ -17,12 +17,28 @@ export default function ChatRoom({ chat, newMessages }: Props) {
     activeChatRoomIdState,
   );
   const otherUser = chat.users.find((user) => user._id !== me?._id);
-  const lastMessage = chat.messages.length
+  const lastMessageContent = chat.messages.length
     ? chat?.messages[chat.messages.length - 1].content
     : '아무도 채팅을 안 했습니당';
 
-  // lastMessage =
-  //   lastMessage.length > 100 ? lastMessage.slice(0, 90) + '...' : lastMessage;
+  const getLocalMessageTime = (date: Date) => new Date(date).toString();
+  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+  console.log(yesterday);
+  const lastMessageTime = chat.messages.length
+    ? getLocalMessageTime(
+        chat?.messages[chat.messages.length - 1].createdAt,
+      ).slice(4, 16) === new Date().toString().slice(4, 16)
+      ? getLocalMessageTime(
+          chat?.messages[chat.messages.length - 1].createdAt,
+        ).slice(16, 21)
+      : getLocalMessageTime(
+          chat?.messages[chat.messages.length - 1].createdAt,
+        ).slice(4, 16) === getLocalMessageTime(yesterday).slice(4, 16)
+      ? 'yesterday'
+      : getLocalMessageTime(
+          chat?.messages[chat.messages.length - 1].createdAt,
+        ).slice(4, 10)
+    : '';
 
   const isActiveRoom = chat._id === activeChatRoomId;
 
@@ -39,14 +55,17 @@ export default function ChatRoom({ chat, newMessages }: Props) {
         <ProfileImage src={otherUser?.image_url ?? ''} size="medium" />
       </ImageContainer>
       <MessageContainer>
-        <h1>{otherUser?.nickname}</h1>
-        <p>{lastMessage}</p>
+        <MessageTopContainer>
+          <h1>{otherUser?.nickname}</h1>
+          <TimeContainer>{lastMessageTime}</TimeContainer>
+        </MessageTopContainer>
+        <MessageBottomContainer>
+          <p>{lastMessageContent}</p>
+          {newMessages !== 0 && (
+            <MessageNotification>{newMessages}</MessageNotification>
+          )}
+        </MessageBottomContainer>
       </MessageContainer>
-      {newMessages !== 0 && (
-        <MessageNotification>
-          <p>{newMessages}</p>
-        </MessageNotification>
-      )}
     </Container>
   );
 }
@@ -67,15 +86,31 @@ const ImageContainer = styled.div`
 `;
 
 const MessageContainer = styled.div`
-  padding: 0.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const MessageTopContainer = styled.div`
+  padding-left: 1.5rem;
   color: ${({ theme }) => theme.fontColor.titleColor};
-  width: 80%;
+  width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: space-between;
 
   h1 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
   }
+`;
+
+const MessageBottomContainer = styled.div`
+  padding-left: 1.5rem;
+  color: ${({ theme }) => theme.fontColor.titleColor};
+  width: 100%;
+  height: 100%;
+  display: flex;
   p {
     font-size: 1.2rem;
     width: 100%;
@@ -89,6 +124,11 @@ const MessageContainer = styled.div`
   }
 `;
 
+const TimeContainer = styled.div`
+  color: ${({ theme }) => theme.fontColor.titleColor};
+  font-size: 1rem;
+`;
+
 const MessageNotification = styled.div`
   background-color: ${({ theme }) => theme.newChat};
   border-radius: 100%;
@@ -98,8 +138,6 @@ const MessageNotification = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 2rem;
-  p {
-    color: ${({ theme }) => theme.fontColor.titleColor};
-    font-weight: bold;
-  }
+  color: ${({ theme }) => theme.fontColor.titleColor};
+  font-weight: bold;
 `;
