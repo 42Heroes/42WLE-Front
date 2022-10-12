@@ -37,8 +37,9 @@ export default function EditPost({
 
   const [content, setContent] = useState(prevContent.contents.text);
   const [isImageExist, setIsImageExist] = useState(
-    prevContent.contents.img ? true : false,
+    prevContent.contents.img.length ? true : false,
   );
+  console.log(isImageExist);
   const [images, setImages] = useState<string[]>(prevContent.contents.img);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
