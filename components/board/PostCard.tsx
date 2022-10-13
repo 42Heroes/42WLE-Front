@@ -9,7 +9,7 @@ import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
@@ -17,6 +17,8 @@ import CommentsList from './CommentList';
 import { useMutation, useQueryClient } from 'react-query';
 import { deletePost, likePost } from '../../library/api/board';
 import PostImage from './PostImage';
+import OutsideClickHandler from 'react-outside-click-handler';
+import useToggle from '../../hooks/useToggle';
 
 interface Props {
   postData: Post;
@@ -26,37 +28,25 @@ export default function PostCard({ postData }: Props) {
   const author = postData.author;
   const { data: me } = useMe();
   const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
-  const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
+  const [isBtnBoxOpen, toggleBtnBox] = useToggle(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  const ButtonBoxRef = useRef<HTMLDivElement | null>(null);
-  const MoreButtonRef = useRef<HTMLDivElement | null>(null);
+  const ButtonBoxRef = useRef<HTMLDivElement>(null);
+  const MoreButtonRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutSide = (e: MouseEvent) => {
-    if (
-      ButtonBoxRef.current === null ||
-      MoreButtonRef.current === null ||
-      !(e.target instanceof Element)
-    )
-      return;
-    console.log(ButtonBoxRef.current.contains(e.target));
-    if (
-      isBtnBoxOpen &&
-      !ButtonBoxRef.current.contains(e.target) &&
-      !MoreButtonRef.current.contains(e.target)
-    ) {
-      setIsBtnBoxOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isBtnBoxOpen)
-      document.addEventListener('mousedown', handleClickOutSide);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutSide);
-    };
-  });
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (!ButtonBoxRef.current || !MoreButtonRef.current) return;
+      if (
+        ButtonBoxRef.current.contains(e.target as any) ||
+        MoreButtonRef.current.contains(e.target as any)
+      )
+        return;
+      toggleBtnBox();
+    },
+    [toggleBtnBox],
+  );
 
   const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -111,45 +101,47 @@ export default function PostCard({ postData }: Props) {
           </UserInfoContainer>
           <MoreButtonContainer
             ref={MoreButtonRef}
-            onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
+            onClick={() => toggleBtnBox()}
           >
             <MoreHorizIcon sx={{ fontSize: 30 }} />
           </MoreButtonContainer>
         </ProfileContainer>
         {isBtnBoxOpen && (
-          <ToggleBtnBox ref={ButtonBoxRef}>
-            <BtnBox>
-              <BookmarkBorderRoundedIcon /> <p>Save post</p>
-            </BtnBox>
-            {me?._id === author._id && (
-              <div>
-                <div
-                  onClick={() => {
-                    setIsEditModalOpen(true);
-                    setIsBtnBoxOpen(false);
-                  }}
-                >
-                  <BtnBox>
-                    <EditRoundedIcon />
-                    <p>Edit post</p>
-                  </BtnBox>
+          <OutsideClickHandler onOutsideClick={handleOutsideClick}>
+            <ToggleBtnBox ref={ButtonBoxRef}>
+              <BtnBox>
+                <BookmarkBorderRoundedIcon /> <p>Save post</p>
+              </BtnBox>
+              {me?._id === author._id && (
+                <div>
+                  <div
+                    onClick={() => {
+                      setIsEditModalOpen(true);
+                      toggleBtnBox();
+                    }}
+                  >
+                    <BtnBox>
+                      <EditRoundedIcon />
+                      <p>Edit post</p>
+                    </BtnBox>
+                  </div>
+                  <div
+                    onClick={() => {
+                      {
+                        setIsDeleteModalOpen(true);
+                        toggleBtnBox();
+                      }
+                    }}
+                  >
+                    <BtnBox>
+                      <DeleteRoundedIcon />
+                      <p>Delete post</p>
+                    </BtnBox>
+                  </div>
                 </div>
-                <div
-                  onClick={() => {
-                    {
-                      setIsDeleteModalOpen(true);
-                      setIsBtnBoxOpen(false);
-                    }
-                  }}
-                >
-                  <BtnBox>
-                    <DeleteRoundedIcon />
-                    <p>Delete post</p>
-                  </BtnBox>
-                </div>
-              </div>
-            )}
-          </ToggleBtnBox>
+              )}
+            </ToggleBtnBox>
+          </OutsideClickHandler>
         )}
         {isDeleteModalOpen && (
           <ConfirmModal
