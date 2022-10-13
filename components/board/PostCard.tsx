@@ -9,7 +9,7 @@ import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
@@ -30,6 +30,33 @@ export default function PostCard({ postData }: Props) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const ButtonBoxRef = useRef<HTMLDivElement | null>(null);
+  const MoreButtonRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClickOutSide = (e: MouseEvent) => {
+    if (
+      ButtonBoxRef.current === null ||
+      MoreButtonRef.current === null ||
+      !(e.target instanceof Element)
+    )
+      return;
+    console.log(ButtonBoxRef.current.contains(e.target));
+    if (
+      isBtnBoxOpen &&
+      !ButtonBoxRef.current.contains(e.target) &&
+      !MoreButtonRef.current.contains(e.target)
+    ) {
+      setIsBtnBoxOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isBtnBoxOpen)
+      document.addEventListener('mousedown', handleClickOutSide);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide);
+    };
+  });
 
   const toggleDeleteModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.defaultPrevented) {
@@ -82,12 +109,15 @@ export default function PostCard({ postData }: Props) {
               <p>{createdAt}</p>
             </UserInfo>
           </UserInfoContainer>
-          <MoreButtonContainer onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}>
+          <MoreButtonContainer
+            ref={MoreButtonRef}
+            onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
+          >
             <MoreHorizIcon sx={{ fontSize: 30 }} />
           </MoreButtonContainer>
         </ProfileContainer>
         {isBtnBoxOpen && (
-          <ToggleBtnBox>
+          <ToggleBtnBox ref={ButtonBoxRef}>
             <BtnBox>
               <BookmarkBorderRoundedIcon /> <p>Save post</p>
             </BtnBox>
