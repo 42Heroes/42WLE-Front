@@ -70,10 +70,7 @@ const usePeerConnection = () => {
       setRoomNo(roomId);
       setIsCalling(true);
       setCallList((prevCallList) => {
-        const filteredCallList = prevCallList.filter(
-          (call) => call.roomNo !== roomId,
-        );
-        return filteredCallList;
+        return prevCallList.filter((call) => call.roomNo !== roomId);
       });
     });
   };
