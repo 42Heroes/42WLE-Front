@@ -24,6 +24,29 @@ export default function CommentContent({ postData, commentData }: Props) {
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
   const [value, onChangeInputText] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
+
+  // 코멘트 생성시간 표시
+  const now = new Date();
+  const commentCreatedAt = new Date(commentData.createdAt);
+  const commentCreatedTimeDiffHour = Math.floor(
+    (now.getTime() - commentCreatedAt.getTime()) / 1000 / 60 / 60,
+  );
+  const commentCreatedTimeDiffMin = Math.floor(
+    (now.getTime() - commentCreatedAt.getTime()) / 1000 / 60,
+  );
+  const displayCommentCreatedAt =
+    commentCreatedTimeDiffHour < 24
+      ? commentCreatedTimeDiffHour == 0
+        ? commentCreatedTimeDiffMin == 0
+          ? 'now'
+          : commentCreatedTimeDiffMin == 1
+          ? `${commentCreatedTimeDiffMin} min ago`
+          : `${commentCreatedTimeDiffMin} mins ago`
+        : commentCreatedTimeDiffHour == 1
+        ? `${commentCreatedTimeDiffHour} hour ago`
+        : `${commentCreatedTimeDiffHour} hours ago`
+      : commentCreatedAt.toString().slice(4, 16);
+
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
     onSuccess: () => {
@@ -81,15 +104,22 @@ export default function CommentContent({ postData, commentData }: Props) {
       </ProfileImageWrapper>
       {!isEditInputOpen && (
         <CommentContainer>
-          <CommentBox>
-            <AuthorInfo>
-              <p>{commentData.author.nickname}</p>
-              <span>
-                {commentData.author.campus} • {commentData.author.country}
-              </span>
-            </AuthorInfo>
-            <h1>{commentData.content}</h1>
-          </CommentBox>
+          <CommentWrapper>
+            <CommentBox>
+              <AuthorInfo>
+                <p>{commentData.author.nickname}</p>
+                <span>
+                  {commentData.author.campus} • {commentData.author.country}
+                </span>
+              </AuthorInfo>
+              <h1>{commentData.content}</h1>
+            </CommentBox>
+            <ButtonTimeContainer>
+              <ButtonWrapper>Like</ButtonWrapper>
+              <ButtonWrapper>Reply</ButtonWrapper>
+              <TimeWrapper>{displayCommentCreatedAt}</TimeWrapper>
+            </ButtonTimeContainer>
+          </CommentWrapper>
           {me?._id === commentData.author._id && (
             <MoreHorizIcon
               sx={{ fontSize: 17 }}
@@ -98,6 +128,7 @@ export default function CommentContent({ postData, commentData }: Props) {
           )}
         </CommentContainer>
       )}
+
       {isBtnBoxOpen && (
         <ToggleBtnBox>
           <BtnBox
@@ -149,7 +180,7 @@ export default function CommentContent({ postData, commentData }: Props) {
 }
 
 const Container = styled.div`
-  margin-top: 1.8rem;
+  margin-top: 1rem;
   display: flex;
   position: relative;
   svg {
@@ -166,6 +197,8 @@ const ProfileImageWrapper = styled.div`
 const CommentContainer = styled.div`
   display: flex;
 `;
+
+const CommentWrapper = styled.div``;
 
 const CommentBox = styled.div`
   background-color: #3a3b3c;
@@ -194,6 +227,26 @@ const CommentBox = styled.div`
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const ButtonTimeContainer = styled.div`
+  display: flex;
+  font-size: 1.1rem;
+  padding: 0.5rem 1.5rem;
+`;
+
+const ButtonWrapper = styled.div`
+  margin-right: 1.1rem;
+  color: ${({ theme }) => theme.fontColor.contentColor};
+  &:hover {
+    cursor: pointer;
+    color: ${({ theme }) => theme.fontColor.titleColor};
+    transform: scale(1.05);
+  }
+`;
+
+const TimeWrapper = styled.div`
+  color: ${({ theme }) => theme.fontColor.commentColor};
 `;
 
 const ToggleBtnBox = styled.div`
