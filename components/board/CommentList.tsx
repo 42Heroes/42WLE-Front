@@ -76,7 +76,7 @@ export default function CommentList({ postData }: Props) {
 const Container = styled.div`
   width: 65rem;
   margin: 0 3rem;
-  padding: 2rem 2.5rem;
+  padding: 2rem 2.5rem 1rem 2.5rem;
   background-color: #242526;
   border-top: 1px solid ${({ theme }) => theme.grayColor};
   border-radius: 0 0 1rem 1rem;
@@ -85,6 +85,7 @@ const Container = styled.div`
 const WriteCommentContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 2rem;
 `;
 
 const WriteCommentBox = styled.div<{ disabled: boolean }>`
