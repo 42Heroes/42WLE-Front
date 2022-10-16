@@ -8,25 +8,47 @@ import {
   activeChatRoomState,
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
+import * as _ from 'lodash';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
-
-  const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const { handleRequestCall } = usePeerConnection();
 
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const [scrollState, setScrollState] = useState(true);
+
+  const scrollEvent = _.debounce(() => {
+    const scrollTop = messageContainerRef.current?.scrollTop; // 스크롤 위치
+    const clientHeight = messageContainerRef.current?.clientHeight; // 요소의 높이
+    const scrollHeight = messageContainerRef.current?.scrollHeight; // 스크롤의 높이
+
+    if (!scrollTop || !clientHeight || !scrollHeight) return;
+    // 스크롤이 맨 아래에 있을때
+    setScrollState(
+      scrollTop + clientHeight >= scrollHeight - 100 ? true : false,
+    );
+  }, 100);
+
+  const scroll = useCallback(scrollEvent, [scrollEvent]);
+
   useEffect(() => {
-    if (messageContainerRef.current) {
-      messageContainerRef.current.scrollIntoView({
+    if (scrollState) {
+      scrollRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
       });
     }
   }, [activeChatRoom?.messages]);
+
+  useEffect(() => {
+    messageContainerRef.current?.addEventListener('scroll', scroll);
+  });
 
   if (!activeChatRoom || !activePartner) {
     return null;
@@ -57,12 +79,12 @@ export default function ActiveChat() {
           <SearchIcon sx={{ fontSize: 25 }} onClick={handleSearchBtnClick} />
         </BtnBox>
       </NameContainer>
-      <MessageContainer>
+      <MessageContainer ref={messageContainerRef}>
         <ChatContent
           messages={activeChatRoom.messages}
           activePartner={activePartner}
         />
-        <div ref={messageContainerRef} />
+        <div ref={scrollRef} />
       </MessageContainer>
       <ChatInput activeChatRoom={activeChatRoom} />
     </Container>
