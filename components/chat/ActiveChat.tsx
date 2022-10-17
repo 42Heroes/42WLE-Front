@@ -99,7 +99,9 @@ export default function ActiveChat() {
         />
         {isShowLastMessageButton && (
           <ShowLastMessageButton onClick={handleLastMessageBtnClick}>
-            <ProfileImage src={activePartner.image_url} size="small" />
+            <ProfileImageWrapper>
+              <ProfileImage src={activePartner.image_url} size="small" />
+            </ProfileImageWrapper>
             <LastMessageWrapper>
               <LastMessageUsername>
                 {activePartner.nickname}
@@ -182,7 +184,7 @@ const VideoButton = styled.button`
 `;
 
 const ShowLastMessageButton = styled.div`
-  background-color: pink;
+  background-color: ${({ theme }) => theme.fontColor.contentColor};
   position: fixed;
   height: 5rem;
   width: 100%;
@@ -194,6 +196,10 @@ const ShowLastMessageButton = styled.div`
   bottom: 6.5rem;
 `;
 
+const ProfileImageWrapper = styled.div`
+  min-width: 3rem;
+`;
+
 const LastMessageWrapper = styled.div`
   margin-left: 1rem;
 `;
@@ -202,4 +208,11 @@ const LastMessageUsername = styled.div`
   font-weight: 600;
 `;
 
-const LastMessageContent = styled.div``;
+const LastMessageContent = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+`;
