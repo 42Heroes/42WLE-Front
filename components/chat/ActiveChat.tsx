@@ -107,10 +107,12 @@ export default function ActiveChat() {
                 {activePartner.nickname}
               </LastMessageUsername>
               <LastMessageContent>
-                {
-                  activeChatRoom.messages[activeChatRoom.messages.length - 1]
-                    .content
-                }
+                <p>
+                  {
+                    activeChatRoom.messages[activeChatRoom.messages.length - 1]
+                      .content
+                  }
+                </p>
               </LastMessageContent>
             </LastMessageWrapper>
           </ShowLastMessageButton>
@@ -209,10 +211,11 @@ const LastMessageUsername = styled.div`
 `;
 
 const LastMessageContent = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
 `;
