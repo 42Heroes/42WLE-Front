@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Message } from '../../interfaces/chat.interface';
 import { User } from '../../interfaces/user.interface';
 import { userState } from '../../recoil/atoms';
 import ProfileImage from '../common/ProfileImage';
+import ChatImage from './ChatImage';
 
 interface Props {
   messages: Message[];
@@ -61,12 +61,7 @@ export default function ChatContent({ messages, activePartner }: Props) {
                   <p>{message.content}</p>
                 ) : (
                   <ImageWrapper>
-                    <Image
-                      src={message.content}
-                      layout="fill"
-                      objectFit="cover"
-                      alt="image"
-                    />
+                    <ChatImage key={index} imgUrl={message.content} />
                   </ImageWrapper>
                 )}
               </UserMessage>
@@ -87,12 +82,7 @@ export default function ChatContent({ messages, activePartner }: Props) {
                     </PartnerMessage>
                   ) : (
                     <ImageWrapper>
-                      <Image
-                        src={message.content}
-                        layout="fill"
-                        objectFit="cover"
-                        alt="image"
-                      />
+                      <ChatImage key={index} imgUrl={message.content} />
                     </ImageWrapper>
                   )}
                 </PartnerMessageWrapper>

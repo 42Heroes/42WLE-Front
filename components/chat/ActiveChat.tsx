@@ -8,7 +8,7 @@ import {
   activeChatRoomState,
 } from '../../recoil/selectors';
 import ProfileImage from '../common/ProfileImage';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
 
