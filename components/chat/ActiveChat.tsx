@@ -48,7 +48,7 @@ export default function ActiveChat() {
     } else {
       setIsShowLastMessageButton(true);
     }
-  }, [activeChatRoom?.messages, scrollState]);
+  }, [activeChatRoom?.messages]);
 
   useEffect(() => {
     messageContainerRef.current?.addEventListener('scroll', scroll);
@@ -64,6 +64,15 @@ export default function ActiveChat() {
 
   const handleVideoBtnClick = () => {
     handleRequestCall(activeChatRoom._id);
+  };
+
+  const handleLastMessageBtnClick = () => {
+    scrollRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
+    setScrollState(true);
+    setIsShowLastMessageButton(false);
   };
 
   return (
@@ -89,7 +98,7 @@ export default function ActiveChat() {
           activePartner={activePartner}
         />
         {isShowLastMessageButton && (
-          <ShowLastMessageButton onClick={() => setScrollState(true)}>
+          <ShowLastMessageButton onClick={handleLastMessageBtnClick}>
             <ProfileImage src={activePartner.image_url} size="small" />
             <LastMessageWrapper>
               <LastMessageUsername>
