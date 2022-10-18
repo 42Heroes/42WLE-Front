@@ -13,6 +13,7 @@ import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
 import * as _ from 'lodash';
 import ShowLastMessageButton from './ShowLastMessageButton';
+import { CostExplorer } from 'aws-sdk';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
@@ -29,17 +30,14 @@ export default function ActiveChat() {
     const scrollTop = messageContainerRef.current?.scrollTop; // 스크롤 위치(스크롤바에 의해 가려져 보이지 않는 위쪽 콘텐츠의 높이)
     const clientHeight = messageContainerRef.current?.clientHeight; // 요소의 높이
     const scrollHeight = messageContainerRef.current?.scrollHeight; // 스크롤의 높이
-    if (!scrollTop || !clientHeight || !scrollHeight) return;
-
-    const isBottomCondition =
-      scrollTop + clientHeight >= scrollHeight - 100 ? false : true;
 
     if (!scrollTop || !clientHeight || !scrollHeight) return;
-    // 스크롤이 맨 아래에 있을때
-    setScrollState(
-      scrollTop + clientHeight >= scrollHeight - 100 ? true : false,
-    );
-    setIsShowLastMessageButton(false);
+
+    const isAtBottom =
+      scrollTop + clientHeight >= scrollHeight - 100 ? true : false;
+
+    setScrollState(isAtBottom);
+    if (isAtBottom) setIsShowLastMessageButton(false);
   }, 100);
 
   const scroll = useCallback(scrollEvent, [scrollEvent]);
@@ -54,7 +52,7 @@ export default function ActiveChat() {
         behavior: 'smooth',
         block: 'end',
       });
-
+      console.log(scrollState);
       // 스크롤이 맨 아래에 있지 않고 상대방이 보낸 메시지면 -> showLastMessageButton 띄우기
     } else {
       setIsShowLastMessageButton(true);
