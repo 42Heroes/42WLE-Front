@@ -40,13 +40,23 @@ export default function ActiveChat() {
   const scroll = useCallback(scrollEvent, [scrollEvent]);
 
   useEffect(() => {
-    if (scrollState) {
+    // 스크롤이 맨 아래에 있으면 -> 메시지 왔을 때스크롤 맨 아래로 내리기
+    if (
+      scrollState ||
+      activeChatRoom?.messages.slice(-1)[0].user_id !== activePartner?._id
+    ) {
       scrollRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
       });
+      // 스크롤이 맨 아래에 있지 않으면
     } else {
-      setIsShowLastMessageButton(true);
+      // 상대방의 메시지면 -> showLastMessageButton 띄우기
+      if (
+        activeChatRoom?.messages.slice(-1)[0].user_id === activePartner?._id
+      ) {
+        setIsShowLastMessageButton(true);
+      }
     }
   }, [activeChatRoom?.messages]);
 
