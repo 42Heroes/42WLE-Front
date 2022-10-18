@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
 import * as _ from 'lodash';
+import ShowLastMessageButton from './ShowLastMessageButton';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
@@ -28,15 +29,14 @@ export default function ActiveChat() {
     const scrollTop = messageContainerRef.current?.scrollTop; // 스크롤 위치(스크롤바에 의해 가려져 보이지 않는 위쪽 콘텐츠의 높이)
     const clientHeight = messageContainerRef.current?.clientHeight; // 요소의 높이
     const scrollHeight = messageContainerRef.current?.scrollHeight; // 스크롤의 높이
-
     if (!scrollTop || !clientHeight || !scrollHeight) return;
+
+    const isBottomCondition = scrollTop + clientHeight >= scrollHeight - 100;
     // 스크롤이 맨 아래에 있을때
-    setScrollState(
-      scrollTop + clientHeight >= scrollHeight - 100 ? true : false,
-    );
+    setScrollState(isBottomCondition);
     setIsShowLastMessageButton(false);
   }, 100);
-
+  console.log(isShowLastMessageButton);
   const scroll = useCallback(scrollEvent, [scrollEvent]);
 
   useEffect(() => {
@@ -68,14 +68,6 @@ export default function ActiveChat() {
     return null;
   }
 
-  const handleSearchBtnClick = () => {
-    return;
-  };
-
-  const handleVideoBtnClick = () => {
-    handleRequestCall(activeChatRoom._id);
-  };
-
   const handleLastMessageBtnClick = () => {
     scrollRef.current?.scrollIntoView({
       behavior: 'smooth',
@@ -83,6 +75,14 @@ export default function ActiveChat() {
     });
     setScrollState(true);
     setIsShowLastMessageButton(false);
+  };
+
+  const handleSearchBtnClick = () => {
+    return;
+  };
+
+  const handleVideoBtnClick = () => {
+    handleRequestCall(activeChatRoom._id);
   };
 
   return (
@@ -108,24 +108,7 @@ export default function ActiveChat() {
           activePartner={activePartner}
         />
         {isShowLastMessageButton && (
-          <ShowLastMessageButton onClick={handleLastMessageBtnClick}>
-            <ProfileImageWrapper>
-              <ProfileImage src={activePartner.image_url} size="small" />
-            </ProfileImageWrapper>
-            <LastMessageWrapper>
-              <LastMessageUsername>
-                {activePartner.nickname}
-              </LastMessageUsername>
-              <LastMessageContent>
-                <p>
-                  {
-                    activeChatRoom.messages[activeChatRoom.messages.length - 1]
-                      .content
-                  }
-                </p>
-              </LastMessageContent>
-            </LastMessageWrapper>
-          </ShowLastMessageButton>
+          <ShowLastMessageButton onClick={handleLastMessageBtnClick} />
         )}
         <div ref={scrollRef} />
       </MessageContainer>
@@ -173,6 +156,8 @@ const BtnBox = styled.div`
 const MessageContainer = styled.div`
   flex: 1;
   overflow: auto;
+  width: 100%;
+  position: relative;
 `;
 
 const VideoButton = styled.button`
@@ -192,40 +177,5 @@ const VideoButton = styled.button`
   svg {
     fill: ${({ theme }) => theme.grayColor};
     aspect-ratio: 1;
-  }
-`;
-
-const ShowLastMessageButton = styled.div`
-  background-color: ${({ theme }) => theme.fontColor.contentColor};
-  position: fixed;
-  height: 5rem;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 1.5rem;
-  cursor: pointer;
-  // 채팅 인풋에 이미지가 있을 때 위치를 조정해주어야 함
-  bottom: 6.5rem;
-`;
-
-const ProfileImageWrapper = styled.div`
-  min-width: 3rem;
-`;
-
-const LastMessageWrapper = styled.div`
-  margin-left: 1rem;
-`;
-
-const LastMessageUsername = styled.div`
-  font-weight: 600;
-`;
-
-const LastMessageContent = styled.div`
-  p {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
   }
 `;
