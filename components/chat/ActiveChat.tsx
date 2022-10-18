@@ -31,16 +31,21 @@ export default function ActiveChat() {
     const scrollHeight = messageContainerRef.current?.scrollHeight; // 스크롤의 높이
     if (!scrollTop || !clientHeight || !scrollHeight) return;
 
-    const isBottomCondition = scrollTop + clientHeight >= scrollHeight - 100;
+    const isBottomCondition =
+      scrollTop + clientHeight >= scrollHeight - 100 ? false : true;
+
+    if (!scrollTop || !clientHeight || !scrollHeight) return;
     // 스크롤이 맨 아래에 있을때
-    setScrollState(isBottomCondition);
+    setScrollState(
+      scrollTop + clientHeight >= scrollHeight - 100 ? true : false,
+    );
     setIsShowLastMessageButton(false);
   }, 100);
-  console.log(isShowLastMessageButton);
+
   const scroll = useCallback(scrollEvent, [scrollEvent]);
 
   useEffect(() => {
-    // 스크롤이 맨 아래에 있으면 -> 메시지 왔을 때스크롤 맨 아래로 내리기
+    // 스크롤이 맨 아래에 있거나 내가 보낸 메시지면 -> 메시지 왔을 때 스크롤 맨 아래로 내리기
     if (
       scrollState ||
       activeChatRoom?.messages.slice(-1)[0].user_id !== activePartner?._id
@@ -49,14 +54,10 @@ export default function ActiveChat() {
         behavior: 'smooth',
         block: 'end',
       });
-      // 스크롤이 맨 아래에 있지 않으면
+
+      // 스크롤이 맨 아래에 있지 않고 상대방이 보낸 메시지면 -> showLastMessageButton 띄우기
     } else {
-      // 상대방의 메시지면 -> showLastMessageButton 띄우기
-      if (
-        activeChatRoom?.messages.slice(-1)[0].user_id === activePartner?._id
-      ) {
-        setIsShowLastMessageButton(true);
-      }
+      setIsShowLastMessageButton(true);
     }
   }, [activeChatRoom?.messages]);
 
