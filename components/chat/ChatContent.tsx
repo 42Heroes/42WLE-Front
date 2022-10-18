@@ -5,6 +5,7 @@ import { User } from '../../interfaces/user.interface';
 import { userState } from '../../recoil/atoms';
 import ProfileImage from '../common/ProfileImage';
 import ChatImage from './ChatImage';
+import Image from 'next/image';
 
 interface Props {
   messages: Message[];
@@ -19,82 +20,93 @@ export default function ChatContent({ messages, activePartner }: Props) {
   const me = useRecoilValue(userState);
   const getLocalTime = (date: Date) => new Date(date).toString().slice(15, 21);
   const getLocalDate = (date: Date) => new Date(date).toString().slice(4, 15);
-  return (
-    <Container>
-      {messages.map((message, index) => {
-        const localDate = getLocalTime(message.createdAt);
-        const isLastMessage = messages[index + 1]
-          ? messages[index + 1].user_id !== message.user_id
-          : true;
-        const isLastTime = messages[index + 1]
-          ? getLocalTime(messages[index].createdAt) !==
-            getLocalTime(messages[index + 1].createdAt)
-          : true;
-        const isFirstMessage = messages[index - 1]
-          ? messages[index - 1].user_id !== message.user_id
-          : true;
-        const isFirstTime = messages[index - 1]
-          ? getLocalTime(messages[index].createdAt) !==
-            getLocalTime(messages[index - 1].createdAt)
-          : true;
-        const isMarginNeeded = isLastMessage || isLastTime;
-        const isDateChanged =
-          messages[index - 1] &&
-          getLocalDate(messages[index - 1].createdAt) !==
-            getLocalDate(messages[index].createdAt)
-            ? true
-            : false;
 
-        return (
-          <>
-            {(index === 0 || isDateChanged) && (
-              <DateWrapper>
-                <p>{getLocalDate(message.createdAt)}</p>
-              </DateWrapper>
-            )}
-            {message.user_id === me?._id ? (
-              <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
-                {(isLastMessage || isLastTime) && (
-                  <TimeContainer>{localDate}</TimeContainer>
-                )}
-                {message.type === 'text' ? (
-                  <p>{message.content}</p>
-                ) : (
-                  <ImageWrapper>
-                    <ChatImage key={index} imgUrl={message.content} />
-                  </ImageWrapper>
-                )}
-              </UserMessage>
-            ) : (
-              <PartnerMessageContainer
-                key={message._id}
-                isMarginNeeded={isMarginNeeded}
-              >
-                <ImageContainer>
-                  {(isFirstMessage || isFirstTime) && (
-                    <ProfileImage src={activePartner.image_url} size="small" />
+  return (
+    <>
+      <Container>
+        {messages.map((message, index) => {
+          const localDate = getLocalTime(message.createdAt);
+          const isLastMessage = messages[index + 1]
+            ? messages[index + 1].user_id !== message.user_id
+            : true;
+          const isLastTime = messages[index + 1]
+            ? getLocalTime(messages[index].createdAt) !==
+              getLocalTime(messages[index + 1].createdAt)
+            : true;
+          const isFirstMessage = messages[index - 1]
+            ? messages[index - 1].user_id !== message.user_id
+            : true;
+          const isFirstTime = messages[index - 1]
+            ? getLocalTime(messages[index].createdAt) !==
+              getLocalTime(messages[index - 1].createdAt)
+            : true;
+          const isMarginNeeded = isLastMessage || isLastTime;
+          const isDateChanged =
+            messages[index - 1] &&
+            getLocalDate(messages[index - 1].createdAt) !==
+              getLocalDate(messages[index].createdAt)
+              ? true
+              : false;
+
+          return (
+            <>
+              {(index === 0 || isDateChanged) && (
+                <DateWrapper>
+                  <p>{getLocalDate(message.createdAt)}</p>
+                </DateWrapper>
+              )}
+              {message.user_id === me?._id ? (
+                <UserMessage key={message._id} isMarginNeeded={isMarginNeeded}>
+                  {(isLastMessage || isLastTime) && (
+                    <TimeContainer>{localDate}</TimeContainer>
                   )}
-                </ImageContainer>
-                <PartnerMessageWrapper>
                   {message.type === 'text' ? (
-                    <PartnerMessage>
-                      <p>{message.content}</p>
-                    </PartnerMessage>
+                    <p>{message.content}</p>
                   ) : (
                     <ImageWrapper>
                       <ChatImage key={index} imgUrl={message.content} />
                     </ImageWrapper>
                   )}
-                </PartnerMessageWrapper>
-                {(isLastMessage || isLastTime) && (
-                  <TimeContainer>{localDate}</TimeContainer>
-                )}
-              </PartnerMessageContainer>
-            )}
-          </>
-        );
-      })}
-    </Container>
+                </UserMessage>
+              ) : (
+                <PartnerMessageContainer
+                  key={message._id}
+                  isMarginNeeded={isMarginNeeded}
+                >
+                  <ImageContainer>
+                    {(isFirstMessage || isFirstTime) && (
+                      <ProfileImage
+                        src={activePartner.image_url}
+                        size="small"
+                      />
+                    )}
+                  </ImageContainer>
+                  <PartnerMessageWrapper>
+                    {message.type === 'text' ? (
+                      <PartnerMessage>
+                        <p>{message.content}</p>
+                      </PartnerMessage>
+                    ) : (
+                      <ImageWrapper>
+                        <Image
+                          src={message.content}
+                          layout="fill"
+                          objectFit="cover"
+                          alt="image"
+                        />
+                      </ImageWrapper>
+                    )}
+                  </PartnerMessageWrapper>
+                  {(isLastMessage || isLastTime) && (
+                    <TimeContainer>{localDate}</TimeContainer>
+                  )}
+                </PartnerMessageContainer>
+              )}
+            </>
+          );
+        })}
+      </Container>
+    </>
   );
 }
 
