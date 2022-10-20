@@ -4,6 +4,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import CancelIcon from '@mui/icons-material/Cancel';
 import ProfileImage from '../common/ProfileImage';
 import useMe from '../../hooks/useMe';
 import { useCallback, useRef, useState } from 'react';
@@ -24,7 +25,7 @@ export default function CommentContent({ postData, commentData }: Props) {
   const { data: me } = useMe();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
-  const [value, onChangeInputText] = useInput(commentData.content);
+  const [value, onChangeInputText, setValue] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const commentCreatedAt = showCreatedAt(commentData.createdAt);
   const ButtonBoxRef = useRef<HTMLDivElement>(null);
@@ -43,6 +44,11 @@ export default function CommentContent({ postData, commentData }: Props) {
     },
     [toggleBtnBox],
   );
+
+  const cancelEdit = () => {
+    setIsEditInputOpen(false);
+    setValue(commentData.content);
+  }
 
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
@@ -170,7 +176,9 @@ export default function CommentContent({ postData, commentData }: Props) {
             onChange={onChangeInputText}
             onKeyDown={handleInputKeyDown}
           />
+          <CancelIcon id='cancelBtn' onClick={() => cancelEdit()}/>
           <SendRoundedIcon
+              id='sendBtn'
             sx={{ color: SendBtnColor, fontSize: 23 }}
             onClick={postUpdatedComment}
           />
@@ -300,7 +308,14 @@ const WriteCommentBox = styled.div<{ disabled: boolean }>`
       outline: none;
     }
   }
-  svg {
+  #cancelBtn {
+    border-radius: 50%;
+    background-color: #727272;
+    color: #242526;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  #sendBtn {
     &:last-child {
       transform: rotateZ(-45deg);
       margin-bottom: 0.5rem;
