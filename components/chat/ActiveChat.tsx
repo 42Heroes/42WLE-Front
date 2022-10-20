@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import ChatContent from './ChatContent';
-import SearchIcon from '@mui/icons-material/Search';
 import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded';
+import PhoneDisabledRoundedIcon from '@mui/icons-material/PhoneDisabledRounded';
 import {
   activeChatPartnerState,
   activeChatRoomState,
@@ -11,6 +11,8 @@ import ProfileImage from '../common/ProfileImage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
+import toast from 'react-hot-toast';
+import { isCallingState } from '../../recoil/atoms';
 import * as _ from 'lodash';
 import ShowLastMessageButton from './ShowLastMessageButton';
 import { CostExplorer } from 'aws-sdk';
@@ -18,9 +20,11 @@ import { CostExplorer } from 'aws-sdk';
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
-  const { handleRequestCall } = usePeerConnection();
+  const isCalling = useRecoilValue(isCallingState);
 
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const { handleRequestCall, handleEndCall } = usePeerConnection();
+
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const [scrollState, setScrollState] = useState(true);
@@ -52,7 +56,6 @@ export default function ActiveChat() {
         behavior: 'smooth',
         block: 'end',
       });
-      console.log(scrollState);
       // 스크롤이 맨 아래에 있지 않고 상대방이 보낸 메시지면 -> showLastMessageButton 띄우기
     } else {
       setIsShowLastMessageButton(true);
@@ -76,12 +79,20 @@ export default function ActiveChat() {
     setIsShowLastMessageButton(false);
   };
 
-  const handleSearchBtnClick = () => {
-    return;
+  const handleVideoButtonClick = () => {
+    toast.promise(handleRequestCall(activeChatRoom._id), {
+      loading: 'Calling...',
+      success: 'Calling...',
+      error: 'Failed to call, check the network or camera permission',
+    });
   };
 
-  const handleVideoBtnClick = () => {
-    handleRequestCall(activeChatRoom._id);
+  const handleEndButtonClick = () => {
+    toast.promise(handleEndCall(), {
+      loading: 'Please wait...',
+      success: 'Success to call end',
+      error: 'Failed to end call',
+    });
   };
 
   return (
@@ -91,15 +102,17 @@ export default function ActiveChat() {
           <ProfileImage src={activePartner.image_url} size="small" />
           <h1>{activePartner.nickname}</h1>
         </PartnerNameBox>
-        <BtnBox>
-          <VideoButton>
-            <VideocamRoundedIcon
-              sx={{ fontSize: 25 }}
-              onClick={handleVideoBtnClick}
-            />
-          </VideoButton>
-          <SearchIcon sx={{ fontSize: 25 }} onClick={handleSearchBtnClick} />
-        </BtnBox>
+        <ButtonContainer>
+          {isCalling ? (
+            <VideoButton onClick={handleEndButtonClick} isCalling>
+              <PhoneDisabledRoundedIcon sx={{ fontSize: 25 }} />
+            </VideoButton>
+          ) : (
+            <VideoButton onClick={handleVideoButtonClick}>
+              <VideocamRoundedIcon sx={{ fontSize: 25 }} />
+            </VideoButton>
+          )}
+        </ButtonContainer>
       </NameContainer>
       <MessageContainer ref={messageContainerRef}>
         <ChatContent
@@ -142,7 +155,7 @@ const PartnerNameBox = styled.div`
   align-items: center;
 `;
 
-const BtnBox = styled.div`
+const ButtonContainer = styled.div`
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -159,7 +172,7 @@ const MessageContainer = styled.div`
   position: relative;
 `;
 
-const VideoButton = styled.button`
+const VideoButton = styled.button<{ isCalling?: boolean }>`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -168,9 +181,10 @@ const VideoButton = styled.button`
   aspect-ratio: 1;
   transition: all 0.1s ease-in-out;
   &:hover {
-    background-color: #121212;
+    background-color: #242526;
+
     svg {
-      fill: ${({ theme }) => theme.pointColor};
+      fill: ${({ isCalling }) => (isCalling ? '#eb4d4b' : '#2ecc71')};
     }
   }
   svg {
