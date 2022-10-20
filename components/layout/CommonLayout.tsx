@@ -6,6 +6,7 @@ import usePeerConnection from '../../hooks/usePeerConnection';
 import CallList from '../call/CallList';
 import Header from './Header';
 import Nav from './Nav';
+import { Toaster } from 'react-hot-toast';
 
 interface Props {
   children: React.ReactElement;
@@ -29,6 +30,7 @@ export default function CommonLayout({ children, headerText }: Props) {
       <Nav />
       <Main>{children}</Main>
       <CallList />
+      <Toaster />
     </Container>
   );
 }
