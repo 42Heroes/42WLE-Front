@@ -6,12 +6,14 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ProfileImage from '../common/ProfileImage';
 import useMe from '../../hooks/useMe';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteComment, updateComment } from '../../library/api/board';
 import useInput from '../../hooks/useInput';
 import showCreatedAt from '../../library/showCreatedAt';
+import OutsideClickHandler from 'react-outside-click-handler';
+import useToggle from '../../hooks/useToggle';
 
 interface Props {
   postData: Post;
@@ -20,12 +22,27 @@ interface Props {
 
 export default function CommentContent({ postData, commentData }: Props) {
   const { data: me } = useMe();
-  const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
   const [value, onChangeInputText] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
   const commentCreatedAt = showCreatedAt(commentData.createdAt);
+  const ButtonBoxRef = useRef<HTMLDivElement>(null);
+  const MoreButtonRef = useRef<HTMLDivElement>(null);
+  const [isBtnBoxOpen, toggleBtnBox] = useToggle(false);
+
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (!ButtonBoxRef.current || !MoreButtonRef.current) return;
+      if (
+        ButtonBoxRef.current.contains(e.target as any) ||
+        MoreButtonRef.current.contains(e.target as any)
+      )
+        return;
+      toggleBtnBox();
+    },
+    [toggleBtnBox],
+  );
 
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
@@ -101,36 +118,40 @@ export default function CommentContent({ postData, commentData }: Props) {
             </ButtonTimeContainer>
           </CommentWrapper>
           {me?._id === commentData.author._id && (
-            <MoreHorizIcon
-              sx={{ fontSize: 17 }}
-              onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
-            />
+            <MoreButtonContainer
+              ref={MoreButtonRef}
+              onClick={() => toggleBtnBox()}
+            >
+              <MoreHorizIcon sx={{ fontSize: 17 }} />
+            </MoreButtonContainer>
           )}
         </CommentContainer>
       )}
 
       {isBtnBoxOpen && (
-        <ToggleBtnBox>
-          <BtnBox
-            onClick={() => {
-              setIsEditInputOpen(true);
-              setIsBtnBoxOpen(false);
-            }}
-          >
-            <EditRoundedIcon sx={{ fontSize: 13 }} />
-            <p>Edit</p>
-          </BtnBox>
+        <OutsideClickHandler onOutsideClick={handleOutsideClick}>
+          <ToggleBtnBox ref={ButtonBoxRef}>
+            <BtnBox
+              onClick={() => {
+                setIsEditInputOpen(true);
+                toggleBtnBox();
+              }}
+            >
+              <EditRoundedIcon sx={{ fontSize: 13 }} />
+              <p>Edit</p>
+            </BtnBox>
 
-          <BtnBox
-            onClick={() => {
-              setIsDeleteModalOpen(true);
-              setIsBtnBoxOpen(false);
-            }}
-          >
-            <DeleteRoundedIcon sx={{ fontSize: 13 }} />
-            <p>Delete</p>
-          </BtnBox>
-        </ToggleBtnBox>
+            <BtnBox
+              onClick={() => {
+                setIsDeleteModalOpen(true);
+                toggleBtnBox();
+              }}
+            >
+              <DeleteRoundedIcon sx={{ fontSize: 13 }} />
+              <p>Delete</p>
+            </BtnBox>
+          </ToggleBtnBox>
+        </OutsideClickHandler>
       )}
       {isDeleteModalOpen && (
         <ConfirmModal
@@ -290,5 +311,12 @@ const WriteCommentBox = styled.div<{ disabled: boolean }>`
       `
     cursor: pointer;
   `}
+  }
+`;
+
+const MoreButtonContainer = styled.div`
+  svg {
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    cursor: pointer;
   }
 `;

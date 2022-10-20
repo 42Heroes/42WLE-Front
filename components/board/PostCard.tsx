@@ -9,7 +9,7 @@ import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ConfirmModal, EditPostModal } from '../common/Modal';
 import { Post } from '../../interfaces/board.interface';
 import useMe from '../../hooks/useMe';
@@ -19,6 +19,7 @@ import { deletePost, likePost } from '../../library/api/board';
 import PostImage from './PostImage';
 import OutsideClickHandler from 'react-outside-click-handler';
 import useToggle from '../../hooks/useToggle';
+import showCreatedAt from '../../library/showCreatedAt';
 
 interface Props {
   postData: Post;
@@ -27,7 +28,7 @@ interface Props {
 export default function PostCard({ postData }: Props) {
   const author = postData.author;
   const { data: me } = useMe();
-  const createdAt = new Date(postData.createdAt).toString().slice(0, 16);
+  const createdAt = showCreatedAt(postData.createdAt);
   const [isBtnBoxOpen, toggleBtnBox] = useToggle(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
