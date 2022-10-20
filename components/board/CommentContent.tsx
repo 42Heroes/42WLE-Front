@@ -4,13 +4,17 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import CancelIcon from '@mui/icons-material/Cancel';
 import ProfileImage from '../common/ProfileImage';
 import useMe from '../../hooks/useMe';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ConfirmModal } from '../common/Modal';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteComment, updateComment } from '../../library/api/board';
 import useInput from '../../hooks/useInput';
+import showCreatedAt from '../../library/showCreatedAt';
+import OutsideClickHandler from 'react-outside-click-handler';
+import useToggle from '../../hooks/useToggle';
 
 interface Props {
   postData: Post;
@@ -19,11 +23,33 @@ interface Props {
 
 export default function CommentContent({ postData, commentData }: Props) {
   const { data: me } = useMe();
-  const [isBtnBoxOpen, setIsBtnBoxOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
-  const [value, onChangeInputText] = useInput(commentData.content);
+  const [value, onChangeInputText, setValue] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
+  const commentCreatedAt = showCreatedAt(commentData.createdAt);
+  const ButtonBoxRef = useRef<HTMLDivElement>(null);
+  const MoreButtonRef = useRef<HTMLDivElement>(null);
+  const [isBtnBoxOpen, toggleBtnBox] = useToggle(false);
+
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (!ButtonBoxRef.current || !MoreButtonRef.current) return;
+      if (
+        ButtonBoxRef.current.contains(e.target as any) ||
+        MoreButtonRef.current.contains(e.target as any)
+      )
+        return;
+      toggleBtnBox();
+    },
+    [toggleBtnBox],
+  );
+
+  const cancelEdit = () => {
+    setIsEditInputOpen(false);
+    setValue(commentData.content);
+  }
+
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
     onSuccess: () => {
@@ -81,45 +107,57 @@ export default function CommentContent({ postData, commentData }: Props) {
       </ProfileImageWrapper>
       {!isEditInputOpen && (
         <CommentContainer>
-          <CommentBox>
-            <AuthorInfo>
-              <p>{commentData.author.nickname}</p>
-              <span>
-                {commentData.author.campus} • {commentData.author.country}
-              </span>
-            </AuthorInfo>
-            <h1>{commentData.content}</h1>
-          </CommentBox>
+          <CommentWrapper>
+            <CommentBox>
+              <AuthorInfo>
+                <p>{commentData.author.nickname}</p>
+                <span>
+                  {commentData.author.campus} • {commentData.author.country}
+                </span>
+              </AuthorInfo>
+              <h1>{commentData.content}</h1>
+            </CommentBox>
+            <ButtonTimeContainer>
+              <ButtonWrapper>Like</ButtonWrapper>
+              <ButtonWrapper>Reply</ButtonWrapper>
+              <TimeWrapper>{commentCreatedAt}</TimeWrapper>
+            </ButtonTimeContainer>
+          </CommentWrapper>
           {me?._id === commentData.author._id && (
-            <MoreHorizIcon
-              sx={{ fontSize: 17 }}
-              onClick={() => setIsBtnBoxOpen(!isBtnBoxOpen)}
-            />
+            <MoreButtonContainer
+              ref={MoreButtonRef}
+              onClick={() => toggleBtnBox()}
+            >
+              <MoreHorizIcon sx={{ fontSize: 17 }} />
+            </MoreButtonContainer>
           )}
         </CommentContainer>
       )}
-      {isBtnBoxOpen && (
-        <ToggleBtnBox>
-          <BtnBox
-            onClick={() => {
-              setIsEditInputOpen(true);
-              setIsBtnBoxOpen(false);
-            }}
-          >
-            <EditRoundedIcon sx={{ fontSize: 13 }} />
-            <p>Edit</p>
-          </BtnBox>
 
-          <BtnBox
-            onClick={() => {
-              setIsDeleteModalOpen(true);
-              setIsBtnBoxOpen(false);
-            }}
-          >
-            <DeleteRoundedIcon sx={{ fontSize: 13 }} />
-            <p>Delete</p>
-          </BtnBox>
-        </ToggleBtnBox>
+      {isBtnBoxOpen && (
+        <OutsideClickHandler onOutsideClick={handleOutsideClick}>
+          <ToggleBtnBox ref={ButtonBoxRef}>
+            <BtnBox
+              onClick={() => {
+                setIsEditInputOpen(true);
+                toggleBtnBox();
+              }}
+            >
+              <EditRoundedIcon sx={{ fontSize: 13 }} />
+              <p>Edit</p>
+            </BtnBox>
+
+            <BtnBox
+              onClick={() => {
+                setIsDeleteModalOpen(true);
+                toggleBtnBox();
+              }}
+            >
+              <DeleteRoundedIcon sx={{ fontSize: 13 }} />
+              <p>Delete</p>
+            </BtnBox>
+          </ToggleBtnBox>
+        </OutsideClickHandler>
       )}
       {isDeleteModalOpen && (
         <ConfirmModal
@@ -138,7 +176,9 @@ export default function CommentContent({ postData, commentData }: Props) {
             onChange={onChangeInputText}
             onKeyDown={handleInputKeyDown}
           />
+          <CancelIcon id='cancelBtn' onClick={() => cancelEdit()}/>
           <SendRoundedIcon
+              id='sendBtn'
             sx={{ color: SendBtnColor, fontSize: 23 }}
             onClick={postUpdatedComment}
           />
@@ -149,11 +189,10 @@ export default function CommentContent({ postData, commentData }: Props) {
 }
 
 const Container = styled.div`
-  margin-top: 1.8rem;
+  margin-top: 1rem;
   display: flex;
   position: relative;
   svg {
-    color: ${({ theme }) => theme.fontColor.contentColor};
     cursor: pointer;
     margin-left: 0.5rem;
   }
@@ -166,6 +205,8 @@ const ProfileImageWrapper = styled.div`
 const CommentContainer = styled.div`
   display: flex;
 `;
+
+const CommentWrapper = styled.div``;
 
 const CommentBox = styled.div`
   background-color: #3a3b3c;
@@ -194,6 +235,26 @@ const CommentBox = styled.div`
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const ButtonTimeContainer = styled.div`
+  display: flex;
+  font-size: 1.1rem;
+  padding: 0.5rem 1.5rem;
+`;
+
+const ButtonWrapper = styled.div`
+  margin-right: 1.1rem;
+  color: ${({ theme }) => theme.fontColor.contentColor};
+  &:hover {
+    cursor: pointer;
+    color: ${({ theme }) => theme.fontColor.titleColor};
+    transform: scale(1.05);
+  }
+`;
+
+const TimeWrapper = styled.div`
+  color: ${({ theme }) => theme.fontColor.commentColor};
 `;
 
 const ToggleBtnBox = styled.div`
@@ -247,7 +308,14 @@ const WriteCommentBox = styled.div<{ disabled: boolean }>`
       outline: none;
     }
   }
-  svg {
+  #cancelBtn {
+    border-radius: 50%;
+    background-color: #727272;
+    color: #242526;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  #sendBtn {
     &:last-child {
       transform: rotateZ(-45deg);
       margin-bottom: 0.5rem;
@@ -257,5 +325,12 @@ const WriteCommentBox = styled.div<{ disabled: boolean }>`
       `
     cursor: pointer;
   `}
+  }
+`;
+
+const MoreButtonContainer = styled.div`
+  svg {
+    color: ${({ theme }) => theme.fontColor.contentColor};
+    cursor: pointer;
   }
 `;

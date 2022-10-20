@@ -12,7 +12,7 @@ export default function StartPost() {
     <Container>
       {me && <ProfileImage src={me.image_url} size="medium" />}
       <InputContainer>
-        <input placeholder="Start a new post..." />
+        <div>Start a new post...</div>
         <ImageOutlinedIcon sx={{ color: '#727272', fontSize: 23 }} />
       </InputContainer>
     </Container>
@@ -40,16 +40,10 @@ const InputContainer = styled.div`
   justify-content: center;
   padding: 1.5rem;
 
-  input {
+  div {
     width: 100%;
     background-color: inherit;
     margin-left: 1rem;
     color: ${({ theme }) => theme.fontColor.contentColor};
-    ::placeholder {
-      color: ${({ theme }) => theme.fontColor.contentColor};
-    }
-    &:focus {
-      outline: none;
-    }
   }
 `;

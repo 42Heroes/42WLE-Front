@@ -10,7 +10,6 @@ interface Props {
 
 export default function PostImage({ imgUrl }: Props) {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  console.log(isImageModalOpen);
   const toggleImageModal = (
     e: React.MouseEvent<HTMLDivElement | SVGSVGElement>,
   ) => {
