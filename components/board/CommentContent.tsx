@@ -11,6 +11,7 @@ import { ConfirmModal } from '../common/Modal';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteComment, updateComment } from '../../library/api/board';
 import useInput from '../../hooks/useInput';
+import showCreatedAt from '../../library/showCreatedAt';
 
 interface Props {
   postData: Post;
@@ -24,28 +25,7 @@ export default function CommentContent({ postData, commentData }: Props) {
   const [isEditInputOpen, setIsEditInputOpen] = useState(false);
   const [value, onChangeInputText] = useInput(commentData.content);
   const SendBtnColor = value.length ? '#8083FF' : '#727272';
-
-  // 코멘트 생성시간 표시
-  const now = new Date();
-  const commentCreatedAt = new Date(commentData.createdAt);
-  const commentCreatedTimeDiffHour = Math.floor(
-    (now.getTime() - commentCreatedAt.getTime()) / 1000 / 60 / 60,
-  );
-  const commentCreatedTimeDiffMin = Math.floor(
-    (now.getTime() - commentCreatedAt.getTime()) / 1000 / 60,
-  );
-  const displayCommentCreatedAt =
-    commentCreatedTimeDiffHour < 24
-      ? commentCreatedTimeDiffHour == 0
-        ? commentCreatedTimeDiffMin == 0
-          ? 'now'
-          : commentCreatedTimeDiffMin == 1
-          ? `${commentCreatedTimeDiffMin} min ago`
-          : `${commentCreatedTimeDiffMin} mins ago`
-        : commentCreatedTimeDiffHour == 1
-        ? `${commentCreatedTimeDiffHour} hour ago`
-        : `${commentCreatedTimeDiffHour} hours ago`
-      : commentCreatedAt.toString().slice(4, 16);
+  const commentCreatedAt = showCreatedAt(commentData.createdAt);
 
   const queryClient = useQueryClient();
   const { mutate: deleteCommentMutate } = useMutation(deleteComment, {
@@ -117,7 +97,7 @@ export default function CommentContent({ postData, commentData }: Props) {
             <ButtonTimeContainer>
               <ButtonWrapper>Like</ButtonWrapper>
               <ButtonWrapper>Reply</ButtonWrapper>
-              <TimeWrapper>{displayCommentCreatedAt}</TimeWrapper>
+              <TimeWrapper>{commentCreatedAt}</TimeWrapper>
             </ButtonTimeContainer>
           </CommentWrapper>
           {me?._id === commentData.author._id && (
