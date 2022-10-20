@@ -185,7 +185,6 @@ const Container = styled.div`
   display: flex;
   position: relative;
   svg {
-    color: ${({ theme }) => theme.fontColor.contentColor};
     cursor: pointer;
     margin-left: 0.5rem;
   }
