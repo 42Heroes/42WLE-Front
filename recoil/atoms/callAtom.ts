@@ -23,6 +23,11 @@ export const isCallingState = atom({
   default: false,
 });
 
+export const isOverlayOpenState = atom({
+  key: 'isOverlayOpenState',
+  default: false,
+});
+
 export const roomNoState = atom({
   key: 'roomNoState',
   default: '',

@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { localStreamState } from '../../recoil/atoms';
-import { callInfoState } from '../../recoil/selectors';
+import { isOverlayOpenState, localStreamState } from '../../recoil/atoms';
+import { activeChatRoomState, callInfoState } from '../../recoil/selectors';
 import media from '../../styles/media';
 import LocalVideo from './LocalVideo';
 import RemoteVideo from './RemoteVideo';
@@ -9,8 +9,13 @@ import RemoteVideo from './RemoteVideo';
 export default function ActiveVideoCall() {
   const localStream = useRecoilValue(localStreamState);
   const { users } = useRecoilValue(callInfoState);
+  const callInfo = useRecoilValue(callInfoState);
+  const activeChatRoom = useRecoilValue(activeChatRoomState);
+  const isOverlayOpen = useRecoilValue(isOverlayOpenState);
 
-  return (
+  return callInfo.isCalling &&
+    callInfo.roomNo === activeChatRoom?._id &&
+    !isOverlayOpen ? (
     <Container>
       {users.map((user) => (
         <RemoteVideo
@@ -22,7 +27,7 @@ export default function ActiveVideoCall() {
       ))}
       <LocalVideo stream={localStream} playsInline autoPlay />
     </Container>
-  );
+  ) : null;
 }
 
 const Container = styled.div`

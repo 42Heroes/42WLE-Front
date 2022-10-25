@@ -1,16 +1,17 @@
 import styled from 'styled-components';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { callInfoState } from '../../recoil/selectors';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import RemoteVideo from './RemoteVideo';
-import { activeChatRoomIdState } from '../../recoil/atoms';
+import { activeChatRoomIdState, isOverlayOpenState } from '../../recoil/atoms';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 export default function CallOverlay() {
   const { isCalling, users, roomNo } = useRecoilValue(callInfoState);
   const setActiveChatRoomId = useSetRecoilState(activeChatRoomIdState);
+  const [isOverlayOpen, setIsOverlayOpen] = useRecoilState(isOverlayOpenState);
   const [isDragging, setIsDragging] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({
     x: 0,
@@ -23,6 +24,7 @@ export default function CallOverlay() {
 
   const handleClickCallTitle = () => {
     setActiveChatRoomId(roomNo);
+    setIsOverlayOpen(true);
     router.push('/chat');
   };
 
@@ -45,7 +47,7 @@ export default function CallOverlay() {
     });
   }, []);
 
-  return isCalling && router.pathname !== '/chat' ? (
+  return isCalling && (isOverlayOpen || router.pathname !== '/chat') ? (
     <Draggable
       nodeRef={ref}
       bounds="parent"

@@ -1,8 +1,9 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import ChatContent from './ChatContent';
 import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded';
 import PhoneDisabledRoundedIcon from '@mui/icons-material/PhoneDisabledRounded';
+import FeaturedVideoRoundedIcon from '@mui/icons-material/FeaturedVideoRounded';
 import {
   activeChatPartnerState,
   activeChatRoomState,
@@ -12,15 +13,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import usePeerConnection from '../../hooks/usePeerConnection';
 import ChatInput from './ChatInput';
 import toast from 'react-hot-toast';
-import { isCallingState } from '../../recoil/atoms';
+import { isCallingState, isOverlayOpenState } from '../../recoil/atoms';
 import * as _ from 'lodash';
 import ShowLastMessageButton from './ShowLastMessageButton';
-import { CostExplorer } from 'aws-sdk';
 
 export default function ActiveChat() {
   const activePartner = useRecoilValue(activeChatPartnerState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
   const isCalling = useRecoilValue(isCallingState);
+  const setIsOverlay = useSetRecoilState(isOverlayOpenState);
 
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const { handleRequestCall, handleEndCall } = usePeerConnection();
@@ -37,8 +38,7 @@ export default function ActiveChat() {
 
     if (!scrollTop || !clientHeight || !scrollHeight) return;
 
-    const isAtBottom =
-      scrollTop + clientHeight >= scrollHeight - 100 ? true : false;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
 
     setScrollState(isAtBottom);
     if (isAtBottom) setIsShowLastMessageButton(false);
@@ -70,13 +70,17 @@ export default function ActiveChat() {
     return null;
   }
 
-  const handleLastMessageBtnClick = () => {
+  const handleLastMessageButtonClick = () => {
     scrollRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'end',
     });
     setScrollState(true);
     setIsShowLastMessageButton(false);
+  };
+
+  const handleOverlayButtonClick = () => {
+    setIsOverlay((prev) => !prev);
   };
 
   const handleVideoButtonClick = () => {
@@ -104,9 +108,14 @@ export default function ActiveChat() {
         </PartnerNameBox>
         <ButtonContainer>
           {isCalling ? (
-            <VideoButton onClick={handleEndButtonClick} isCalling>
-              <PhoneDisabledRoundedIcon sx={{ fontSize: 25 }} />
-            </VideoButton>
+            <>
+              <VideoButton onClick={handleOverlayButtonClick}>
+                <FeaturedVideoRoundedIcon sx={{ fontSize: 25 }} />
+              </VideoButton>
+              <VideoButton onClick={handleEndButtonClick} isCalling>
+                <PhoneDisabledRoundedIcon sx={{ fontSize: 25 }} />
+              </VideoButton>
+            </>
           ) : (
             <VideoButton onClick={handleVideoButtonClick}>
               <VideocamRoundedIcon sx={{ fontSize: 25 }} />
@@ -120,7 +129,7 @@ export default function ActiveChat() {
           activePartner={activePartner}
         />
         {isShowLastMessageButton && (
-          <ShowLastMessageButton onClick={handleLastMessageBtnClick} />
+          <ShowLastMessageButton onClick={handleLastMessageButtonClick} />
         )}
         <div ref={scrollRef} />
       </MessageContainer>
