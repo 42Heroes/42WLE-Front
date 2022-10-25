@@ -22,11 +22,15 @@ export default function ChatRoom({ chat, newMessages }: Props) {
     ? chat?.messages[chat.messages.length - 1].type === 'text'
       ? chat?.messages[chat.messages.length - 1].content
       : 'Image'
-    : '아무도 채팅을 안 했습니당';
+    : 'No messages...';
 
+  // date 를 브라우저 접속한 곳의 시간으로 변환
   const getLocalMessageTime = (date: Date) => new Date(date).toString();
+
+  // 어제 시간?
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
 
+  // 오늘 보낸 메시지면 시간으로 표시, 어제 보낸 메시지면 어제 이전에 보낸 메시지면 날짜로 표시
   const lastMessageTime = chat.messages.length
     ? getLocalMessageTime(
         chat?.messages[chat.messages.length - 1].createdAt,
@@ -64,7 +68,7 @@ export default function ChatRoom({ chat, newMessages }: Props) {
         </MessageTopContainer>
         <MessageBottomContainer>
           <p>{lastMessageContent}</p>
-          {newMessages !== 0 && (
+          {newMessages > 0 && (
             <MessageNotification>{newMessages}</MessageNotification>
           )}
         </MessageBottomContainer>
@@ -79,8 +83,8 @@ const Container = styled.li<{ isActive: boolean }>`
   display: flex;
   align-items: center;
   padding: 2rem;
-  background-color: ${(prop) => prop.isActive && '#242526'};
-  border-radius: ${(prop) => prop.isActive && '2rem 0 2rem 0'};
+  background-color: ${({ isActive }) => isActive && '#242526'};
+  border-radius: ${(isActive) => isActive && '2rem 0 2rem 0'};
   cursor: pointer;
 `;
 
