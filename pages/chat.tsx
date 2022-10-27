@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import CommonLayout from '../components/layout/CommonLayout';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRecoilValue } from 'recoil';
-import { chatState } from '../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { activeChatRoomIdState, chatState } from '../recoil/atoms';
 import ChatRoomList from '../components/chat/ChatRoomList';
 import ActiveChat from '../components/chat/ActiveChat';
 import ActiveVideoCall from '../components/call/ActiveVideoCall';
@@ -14,6 +14,11 @@ export default function Chat() {
   const chatRooms = useRecoilValue(chatState);
   const callInfo = useRecoilValue(callInfoState);
   const activeChatRoom = useRecoilValue(activeChatRoomState);
+  const setActiveChatRoom = useSetRecoilState(activeChatRoomIdState);
+
+  useEffect(() => {
+    return setActiveChatRoom('');
+  }, []);
 
   return (
     <Container>
