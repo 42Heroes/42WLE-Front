@@ -135,6 +135,7 @@ export default function ChatInput({ activeChatRoom }: Props) {
               onChange={onChangeInputText}
               placeholder="Your messages..."
               onKeyDown={handleInputKeyDown}
+              maxLength={500}
             />
           </>
         )}

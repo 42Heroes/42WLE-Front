@@ -32,4 +32,8 @@ const Container = styled.ul`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  -ms-overflow-style: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
