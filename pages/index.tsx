@@ -5,31 +5,31 @@ import Link from 'next/link';
 import media from '../styles/media';
 import FTLogo from '../public/assets/icons/42Logo.svg';
 import { ReactElement } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { loginState } from '../recoil/atoms';
-import { logoutUser } from '../library/api';
-import { useQueryClient } from 'react-query';
 import { useRegister } from '../hooks/useRegister';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
-  const queryClient = useQueryClient();
-
+  const isLoggedIn = useRecoilValue(loginState);
+  const { logout } = useAuth();
   const [registerUser] = useRegister();
-  const { l_language, n_language } = registerUser;
-  const startPage = l_language.length && n_language.length ? '/find' : 'learn';
 
-  const handleLogoutClick = () => {
-    setIsLoggedIn(false);
-    logoutUser();
-    queryClient.removeQueries('me');
-  };
+  const { l_language, n_language } = registerUser;
+
+  const startPage = l_language.length && n_language.length ? '/find' : 'learn';
 
   return (
     <Container>
       <TopContainer>
         {isLoggedIn ? (
-          <LogOutButton type="button" size="medium" onClick={handleLogoutClick}>
+          <LogOutButton
+            type="button"
+            size="medium"
+            onClick={() => {
+              logout('/');
+            }}
+          >
             Logout
           </LogOutButton>
         ) : (

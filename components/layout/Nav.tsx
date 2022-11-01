@@ -7,10 +7,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useQueryClient } from 'react-query';
-import { chatState, loginState, unreadMessageState } from '../../recoil/atoms';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { logoutUser } from '../../library/api';
+import { loginState, unreadMessageState } from '../../recoil/atoms';
+import { useRecoilValue } from 'recoil';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Prop {
   isActive: boolean;
@@ -18,18 +17,9 @@ interface Prop {
 
 export default function Nav() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
-  const setChatData = useSetRecoilState(chatState);
+  const isLoggedIn = useRecoilValue(loginState);
   const unreadMessages = useRecoilValue(unreadMessageState);
-
-  const handleLogoutButtonClick = async () => {
-    await logoutUser();
-    queryClient.removeQueries(['user', 'me']);
-    router.replace('/find');
-    setChatData([]);
-    setIsLoggedIn(false);
-  };
+  const { logout } = useAuth();
 
   const handleLoginButtonClick = () => {
     router.push('/login');
@@ -69,7 +59,9 @@ export default function Nav() {
           <IconContainer
             isActive={false}
             as="button"
-            onClick={handleLogoutButtonClick}
+            onClick={() => {
+              logout('/find');
+            }}
           >
             <LogoutIcon sx={{ fontSize: 25 }} />
           </IconContainer>
