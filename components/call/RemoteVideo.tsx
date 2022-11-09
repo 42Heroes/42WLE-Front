@@ -12,7 +12,7 @@ interface Props {
 export default function RemoteVideo({ stream, autoPlay, playsInline }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [callStatus, setCallStatus] = useState({
-    mute: false,
+    audio: true,
     camera: true,
   });
 
@@ -24,9 +24,9 @@ export default function RemoteVideo({ stream, autoPlay, playsInline }: Props) {
 
   const toggleMute = () => {
     stream?.getAudioTracks().forEach((track) => {
-      track.enabled = !callStatus.mute;
+      track.enabled = !callStatus.audio;
     });
-    setCallStatus({ ...callStatus, mute: !callStatus.mute });
+    setCallStatus({ ...callStatus, audio: !callStatus.audio });
   };
 
   const toggleCamera = () => {
@@ -40,7 +40,7 @@ export default function RemoteVideo({ stream, autoPlay, playsInline }: Props) {
     <Container>
       <Video ref={videoRef} autoPlay={autoPlay} playsInline={playsInline} />
       <VideoNav
-        isMuted={callStatus.mute}
+        isAudioOn={callStatus.audio}
         isCameraOn={callStatus.camera}
         onToggleMute={toggleMute}
         onToggleCamera={toggleCamera}

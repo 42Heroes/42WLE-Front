@@ -10,7 +10,7 @@ interface Props {
   onToggleMute: () => void;
   onToggleCamera: () => void;
   onEndCall?: () => void;
-  isMuted: boolean;
+  isAudioOn: boolean;
   isCameraOn: boolean;
 }
 
@@ -19,7 +19,7 @@ export default function VideoNav({
   onToggleCamera,
   onEndCall,
   isCameraOn,
-  isMuted,
+  isAudioOn,
 }: Props) {
   const [isHovering, setIsHovering] = useState(false);
 
@@ -37,8 +37,8 @@ export default function VideoNav({
         <Button isActive={isCameraOn} onClick={onToggleCamera}>
           {isCameraOn ? <VideocamIcon /> : <VideocamOffIcon />}
         </Button>
-        <Button isActive={!isMuted} onClick={onToggleMute}>
-          {isMuted ? <MicOffIcon /> : <MicIcon />}
+        <Button isActive={isAudioOn} onClick={onToggleMute}>
+          {isAudioOn ? <MicIcon /> : <MicOffIcon />}
         </Button>
         {onEndCall && (
           <EndButton onClick={onEndCall}>

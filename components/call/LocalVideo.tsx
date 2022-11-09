@@ -14,15 +14,15 @@ export default function LocalVideo({ autoPlay, playsInline, stream }: Props) {
   const { handleEndCall } = usePeerConnection();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [localCallStatus, setLocalCallStatus] = useState({
-    mute: false,
+    audio: true,
     camera: true,
   });
 
   const toggleMute = () => {
     stream?.getAudioTracks().forEach((track) => {
-      track.enabled = !localCallStatus.mute;
+      track.enabled = !localCallStatus.audio;
     });
-    setLocalCallStatus({ ...localCallStatus, mute: !localCallStatus.mute });
+    setLocalCallStatus({ ...localCallStatus, audio: !localCallStatus.audio });
   };
 
   const toggleCamera = () => {
@@ -47,7 +47,7 @@ export default function LocalVideo({ autoPlay, playsInline, stream }: Props) {
         muted
       />
       <VideoNav
-        isMuted={localCallStatus.mute}
+        isAudioOn={localCallStatus.audio}
         isCameraOn={localCallStatus.camera}
         onToggleMute={toggleMute}
         onToggleCamera={toggleCamera}
