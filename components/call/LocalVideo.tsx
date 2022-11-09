@@ -40,7 +40,12 @@ export default function LocalVideo({ autoPlay, playsInline, stream }: Props) {
 
   return (
     <Container>
-      <Video ref={videoRef} autoPlay={autoPlay} playsInline={playsInline} />
+      <Video
+        ref={videoRef}
+        autoPlay={autoPlay}
+        playsInline={playsInline}
+        muted
+      />
       <VideoNav
         isMuted={localCallStatus.mute}
         isCameraOn={localCallStatus.camera}
